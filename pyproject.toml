@@ -1,0 +1,13 @@
+[project]
+name = "lidar2sim"
+version = "0.1.0"
+description = "Облако точек помещения → сцена Isaac Sim с коллизиями"
+requires-python = ">=3.10,<3.13"
+dependencies = ["open3d>=0.18", "numpy", "scipy", "usd-core", "pyyaml"]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["lidar2sim"]

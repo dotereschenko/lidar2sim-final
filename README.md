@@ -1,0 +1,77 @@
+# lidar2sim
+
+Задача хакатона «Сцены для симулятора из лидарного скана». Нужен конвейер одной командой: на входе облако точек помещения, на выходе сцена Isaac Sim с коллизиями и отчёт проверки.
+
+В репозитории — рабочее базовое решение. Конвейер уже проходит от облака до сцены, которая загружается в Isaac Sim. Ваша задача — сделать сцену точной и физически корректной. Как именно — решаете вы.
+
+## Запуск за 15 минут
+
+Нужен Python 3.10–3.12: под 3.13 и новее нет пакетов Open3D.
+
+```bash
+uv venv --python 3.11 .venv
+uv pip install --python .venv/bin/python -e .
+
+.venv/bin/python tools/make_test_room.py data/test_room
+.venv/bin/python -m lidar2sim --input data/test_room/scene.ply \
+    --manifest data/test_room/manifest.json --trajectory data/test_room/trajectory.csv \
+    --config configs/baseline.yaml --out out/baseline
+.venv/bin/python tools/quick_eval.py data/test_room out/baseline
+```
+
+Без `uv` подойдёт обычный `python -m venv .venv && .venv/bin/pip install -e .`.
+
+Тестовая комната (`tools/make_test_room.py`) нужна, чтобы проверить окружение до получения данных хакатона:
+- помещение 6×4×2,7 м;
+- перегородка с проёмом, ящик и круглая колонна;
+- шум дальности 2 см и выпадения точек.
+
+## Контракт
+
+**Вход**
+| Файл | Содержимое |
+|---|---|
+| `scene.ply` | Облако точек: XYZ в метрах, ось Z вверх, единая система координат |
+| `manifest.json` | Границы сцены (`bounds_min`, `bounds_max`), оси, источник, версия данных |
+| `trajectory.csv` | Положения лидара во время съёмки: `t,x,y,z` |
+| `config.yaml` | Параметры конвейера |
+
+**Выход** — в папке `--out`:
+| Файл | Содержимое |
+|---|---|
+| `visual.ply` | Сетка для отображения |
+| `collision.ply` | Сетка для физики |
+| `scene.usd` | Сцена Isaac Sim: метры, ось Z вверх, `/World/Visual` и `/World/Collision` со статическим коллайдером |
+| `report.json` | Хеш входа, параметры, время каждого шага, размер сеток |
+
+Названия файлов и структура `scene.usd` — интерфейс, по которому проверяется результат. Внутри конвейера можно менять что угодно.
+
+## Проверки
+
+- `tools/quick_eval.py` — быстрые геометрические проверки на тестовой комнате: отклонение от эталона, лишняя геометрия, пол, проём. Принимает несколько папок с результатами и выводит их рядом, удобно сравнивать свои версии.
+- `tools/isaac_physics_test.py` — тесты физики в Isaac Sim 6.2 на тестовой комнате. Корпус робота — коробка 0,4×0,4×0,3 м:
+  - пол — 10 позиций по 30 с;
+  - препятствия — 10 подходов на 0,2 м/с, проникновение не больше 2 см;
+  - проезд через проём.
+
+  Запуск:
+
+  ```bash
+  <isaac-sim>/python.sh tools/isaac_physics_test.py --scene out/baseline/scene.usd \
+      --manifest data/test_room/manifest.json --out out/baseline/physics.json
+  ```
+
+Метрики приёмки на данных хакатона — расстояние до набора B, 10 контрольных размеров и тесты физики сцены — выдаются вместе с данными.
+
+## Базовое решение
+
+Как устроено и что показывает на тестовой комнате — [docs/baseline.md](docs/baseline.md).
+
+| Путь | Что |
+|---|---|
+| `lidar2sim/baseline.py` | Базовое решение |
+| `lidar2sim/common.py` | Чтение входа, подготовка облака, экспорт PLY/USD, отчёт |
+| `configs/baseline.yaml` | Параметры базового решения |
+| `tools/make_test_room.py` | Тестовая комната |
+| `tools/quick_eval.py` | Быстрые проверки |
+| `tools/isaac_physics_test.py` | Тесты физики в Isaac Sim |
