@@ -1,0 +1,9 @@
+# H19: independent B evaluation in the pinned common region
+
+Keep the default scene_a_gt_diagnostic CLI unchanged. Add explicit --mode b or --mode gt with --annotations PACKAGE and --scans DATA. The positional data directory still supplies GT. Both new modes validate H18 annotation/NPZ hashes and pinned A/B/GT hashes before evaluating anything. Reconstruction never receives B.
+
+Both visual and collision get precision fraction, completeness median/p95, individual checks, exact unrounded metrics and provenance. Precision follows the existing v1 profile: uniform-area mesh samples in the common A/B region measured to GT triangles, <=5 cm and >=92%. Do not relabel this as independent B precision. Completeness uses B returns in the common region in mode b, or saved uniform-area GT samples in mode gt; distances are to reconstructed triangles. Uniform-area sampling applies to mesh precision and GT references; B completeness is a seeded return-weighted sample, explicitly labeled, with no invented B surface triangulation. Thresholds remain the existing profile values; organizer agreement is still H3.
+
+Require at least 1000 eligible reference and mesh samples; error for empty/undersampled regions. Sample deterministically per evaluation independent of solution ordering. Save counts and excluded fractions, mode/reference labels and hashes for every mesh/input. Existing partial PoC semantics remain: implemented geometry may pass but dimensions/physics/performance are not inferred. CLI computes all requested reports before writing to prevent partial overwrites on input errors.
+
+Tests use real plane fixtures, shifted collision geometry, corrupted package hashes and insufficient samples. Real validation runs GT, baseline and filtered in both modes; report exact evidence without claiming acceptance on unmeasured groups.

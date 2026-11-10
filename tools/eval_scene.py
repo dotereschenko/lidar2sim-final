@@ -88,14 +88,116 @@ def evaluate(out, gt_scene, ref, profile, provenance):
     }
 
 
-def main(data, *outs, profile=None):
+def load_common_reference(data, scans, annotations, mode, profile):
+    from lidar2sim.annotations import cloud_array, observed_by_both
+    from tools.make_dense_scan import digest
+    data, scans, annotations = map(Path, (data, scans, annotations))
+    if mode not in ('b', 'gt'):
+        raise ValueError('Common evaluation mode must be b or gt')
+    metadata = json.loads((annotations/'annotations.json').read_text())
+    if metadata.get('schema_version') != 1 or metadata.get('units') != 'm' or metadata.get('up_axis') != 'Z':
+        raise ValueError('Invalid annotation schema or coordinates')
+    for path, expected in [(data/'gt_mesh.ply', metadata['inputs_sha256']['gt_mesh.ply']),
+                           *[(scans/f'{n}.ply',metadata['inputs_sha256'][f'{n}.ply']) for n in ('A','B')],
+                           (annotations/'eval_region.npz',metadata['artifacts_sha256']['eval_region.npz'])]:
+        if digest(path) != expected:
+            raise ValueError(f'Annotation input hash mismatch: {path.name}')
+    region = metadata['region']
+    minimum = region['min_common_samples']
+    if type(minimum) is not int or minimum < 1000:
+        raise ValueError('Minimum common sample count must be at least 1000')
+    a,b = [cloud_array(np.asarray(o3d.io.read_point_cloud(str(scans/f'{n}.ply')).points)) for n in ('A','B')]
+    with np.load(annotations/'eval_region.npz', allow_pickle=False) as saved:
+        points = cloud_array(saved['points_m'])
+        mask = saved['common_mask']
+        ca,cb = saved['a_neighbors'],saved['b_neighbors']
+        if (mask.dtype != np.bool_ or mask.shape != (len(points),) or
+                ca.shape != mask.shape or cb.shape != mask.shape or
+                not np.isfinite(ca).all() or not np.isfinite(cb).all() or
+                (ca<0).any() or (cb<0).any() or
+                not np.array_equal(mask,(ca>=region['min_neighbors']) & (cb>=region['min_neighbors']))):
+            raise ValueError('Invalid saved common region arrays')
+        if len(points) != region['samples'] or int(mask.sum()) != region['common_samples'] or mask.sum() < minimum:
+            raise ValueError('Insufficient or inconsistent common region samples')
+        reference = points[mask]
+    if mode == 'b':
+        observed,_,_ = observed_by_both(b,a,b,region['radius_m'],region['min_neighbors'])
+        reference = b[observed]
+    eligible = len(reference)
+    count = min(eligible,profile['geometry']['samples'])
+    if count < minimum:
+        raise ValueError('Insufficient eligible reference samples')
+    indices = np.random.default_rng(profile['geometry']['seed']).choice(eligible,count,replace=False)
+    reference = reference[indices].astype(np.float32)
+    return {'reference':reference,'a':a,'b':b,'region':region,'minimum':minimum,'mode':mode,
+            'provenance':{'annotations_sha256':digest(annotations/'annotations.json'),
+                          'region_sha256':digest(annotations/'eval_region.npz'),
+                          'inputs_sha256':metadata['inputs_sha256'],
+                          'annotation_status':metadata.get('status','unknown'),
+                          'reference_type':'B_returns' if mode=='b' else 'GT_surface',
+                          'reference_weighting':'sensor_return_weighted' if mode=='b' else 'uniform_surface_area',
+                          'eligible_reference_samples':eligible,'reference_samples':count,
+                          'region_rule':region}}
+
+
+def evaluate_common(out, gt_scene, context, profile, provenance):
+    from lidar2sim.annotations import observed_by_both
+    from tools.make_dense_scan import digest
+    out = Path(out)
+    g, region = profile['geometry'], context['region']
+    meshes = {}
+    for name in g['meshes']:
+        path = out/f'{name}.ply'
+        mesh = read_mesh(path)
+        points = sample(mesh,profile)
+        observed,_,_ = observed_by_both(points,context['a'],context['b'],region['radius_m'],region['min_neighbors'])
+        if int(observed.sum()) < context['minimum']:
+            raise ValueError(f'{name}: insufficient common-region mesh samples')
+        precision = gt_scene.compute_distance(o3d.core.Tensor(points[observed].astype(np.float32))).numpy()
+        completeness = raycasting(mesh).compute_distance(o3d.core.Tensor(context['reference'])).numpy()
+        if not np.isfinite(precision).all() or not np.isfinite(completeness).all():
+            raise ValueError('Nonfinite geometry distances')
+        raw = {'precision_fraction':float((precision<=g['precision_distance_m']).mean()),
+               'median_m':float(np.median(completeness)),
+               'p95_m':float(np.percentile(completeness,95,method='linear'))}
+        checks = {'precision':raw['precision_fraction']>=g['precision_min_fraction'],
+                  'median':raw['median_m']<=g['completeness_median_max_m'],
+                  'p95':raw['p95_m']<=g['completeness_p95_max_m']}
+        meshes[name] = {'raw_metrics':raw,'passed':checks,'sha256':digest(path),
+                        'precision_reference':'GT_triangles','precision_direction':'mesh_surface_to_GT',
+                        'completeness_reference':context['provenance']['reference_type'],
+                        'completeness_direction':'reference_to_mesh_triangles',
+                        'surface_samples':len(points),'common_surface_samples':int(observed.sum()),
+                        'excluded_surface_fraction':float((~observed).mean())}
+    status = 'passed' if all(all(m['passed'].values()) for m in meshes.values()) else 'failed'
+    return {'evaluation_mode':'independent_b_common_region' if context['mode']=='b' else 'gt_common_region',
+            'meshes':meshes,'acceptance_profile':provenance,'reference_provenance':context['provenance'],
+            'evaluator_sha256':digest(__file__),'geometry_status':status,
+            'coverage':{'visual_completeness':'measured','collision_completeness':'measured',
+                        'dimensions':'not_run','physics':'not_run','performance':'not_run'},
+            'poc_status':overall_status({'geometry':status,'remaining_groups':'not_run'})}
+
+
+def main(data, *outs, profile=None, mode="diagnostic", annotations=None, scans=None):
     rules, provenance = load_profile(profile)
-    gt, ref, share = region(Path(data), rules)
-    gt_scene = raycasting(gt)
-    print(f'диагностика A/GT: видимая область {share * 100:.0f}% поверхности сцены')
-    rows = [(Path(out), evaluate(Path(out), gt_scene, ref, rules, provenance)) for out in outs]
+    if mode == 'diagnostic':
+        if annotations is not None or scans is not None:
+            raise ValueError('--annotations/--scans require explicit --mode b or gt')
+        gt, ref, share = region(Path(data), rules)
+        gt_scene = raycasting(gt)
+        print(f'диагностика A/GT: видимая область {share * 100:.0f}% поверхности сцены')
+        rows = [(Path(out), evaluate(Path(out), gt_scene, ref, rules, provenance)) for out in outs]
+    else:
+        if annotations is None or scans is None:
+            raise ValueError('--mode b/gt requires --annotations and --scans')
+        context = load_common_reference(data,scans,annotations,mode,rules)
+        gt_scene = raycasting(read_mesh(Path(data)/'gt_mesh.ply'))
+        rows = [(Path(out),evaluate_common(out,gt_scene,context,rules,provenance)) for out in outs]
     for out, result in rows:
-        (out / 'eval_scene.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+        (out / 'eval_scene.json').write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
+        if mode != 'diagnostic':
+            print(f'{out}: {result["evaluation_mode"]}; geometry={result["geometry_status"]}; PoC={result["poc_status"]}')
+            continue
         print(f'{out}: {result["extra_5cm_pct"]}% visual, {result["extra_5cm_pct_collision"]}% collision; '
               f'медиана {result["median_cm"]} см, p95 {result["p95_cm"]} см; '
               f'четыре реализованные проверки: {result["geometry_status"]}; PoC: {result["poc_status"]}')
@@ -106,8 +208,11 @@ if __name__ == '__main__':
     ap.add_argument('data')
     ap.add_argument('outs', nargs='+')
     ap.add_argument('--profile')
+    ap.add_argument('--mode', choices=['diagnostic','b','gt'], default='diagnostic')
+    ap.add_argument('--annotations')
+    ap.add_argument('--scans')
     args = ap.parse_args()
     try:
-        main(args.data, *args.outs, profile=args.profile)
-    except (ValueError, OSError) as exc:
+        main(args.data, *args.outs, profile=args.profile, mode=args.mode, annotations=args.annotations, scans=args.scans)
+    except (ValueError, OSError, KeyError, TypeError) as exc:
         ap.exit(1, f'evaluation error: {exc}\n')
