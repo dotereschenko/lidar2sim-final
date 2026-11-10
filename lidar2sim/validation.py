@@ -177,6 +177,9 @@ def validate_outputs(directory):
                 raise ContractError("scene.usd: Collision должен иметь purpose=guide")
     try:
         report = json.loads((directory / "report.json").read_text())
+        if isinstance(report, dict) and report.get("schema_version") is not None:
+            from .reporting import validate_report
+            validate_report(report)
         if not isinstance(report, dict) or report.get("status") == "failed":
             raise ValueError("отчёт не содержит успешную генерацию")
         if not isinstance(report.get("params"), dict):

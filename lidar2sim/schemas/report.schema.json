@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dotereschenko/lidar2sim/report.schema.json",
+  "title": "LiDAR2Sim run report v1",
+  "type": "object",
+  "required": ["schema_version", "solution", "status", "total_s"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "solution": {"type": "string", "minLength": 1},
+    "status": {"enum": ["generated", "failed"]},
+    "total_s": {"type": "number", "minimum": 0},
+    "created_at": {"type": "string"},
+    "input": {
+      "type": "object", "required": ["path", "sha256", "points"],
+      "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "points": {"type": "integer", "minimum": 4}}
+    },
+    "params": {"type": "object"},
+    "sources": {
+      "type": "object",
+      "required": ["cloud", "manifest", "trajectory", "config"],
+      "additionalProperties": {"anyOf": [{"$ref": "#/$defs/file"}, {"type": "null"}]}
+    },
+    "code": {
+      "type": "object",
+      "required": ["commit", "branch", "dirty", "source_sha256", "files"],
+      "properties": {
+        "commit": {"type": ["string", "null"]},
+        "branch": {"type": ["string", "null"]},
+        "dirty": {"type": ["boolean", "null"]},
+        "source_sha256": {"$ref": "#/$defs/hash"},
+        "files": {"type": "object", "additionalProperties": {"$ref": "#/$defs/hash"}}
+      }
+    },
+    "runtime": {"type": "object", "required": ["python", "platform", "architecture", "packages"]},
+    "timings_s": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+    "outputs": {
+      "type": "object", "required": ["visual_triangles", "collision_triangles"],
+      "additionalProperties": {"type": "integer", "minimum": 1}
+    },
+    "artifacts": {
+      "type": "object", "required": ["visual.ply", "collision.ply", "scene.usd"],
+      "additionalProperties": {"$ref": "#/$defs/file"}
+    },
+    "checks": {
+      "type": "object", "required": ["contract", "geometry", "physics"],
+      "additionalProperties": {"$ref": "#/$defs/check"}
+    },
+    "acceptance": {
+      "type": "object", "required": ["status"],
+      "properties": {"status": {"enum": ["passed", "failed", "not_run", "incomplete"]}}
+    },
+    "threshold_profile": {
+      "type": "object", "required": ["status", "source", "details"],
+      "properties": {
+        "status": {"enum": ["provided", "not_provided"]},
+        "source": {"anyOf": [{"$ref": "#/$defs/file"}, {"type": "null"}]},
+        "details": {"type": ["object", "null"]}
+      }
+    },
+    "error": {
+      "type": "object", "required": ["type", "message"],
+      "properties": {"type": {"type": "string"}, "message": {"type": "string"}}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "generated"}}},
+      "then": {"required": ["input", "params", "sources", "code", "runtime", "timings_s", "outputs", "artifacts", "checks", "acceptance", "threshold_profile"]},
+      "else": {"required": ["error"]}
+    }
+  ],
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "file": {
+      "type": "object", "required": ["path", "sha256", "bytes"],
+      "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "bytes": {"type": "integer", "minimum": 0}}
+    },
+    "check": {
+      "type": "object", "required": ["status"],
+      "properties": {"status": {"enum": ["passed", "failed", "not_run"]}, "wall_s": {"type": ["number", "null"], "minimum": 0}}
+    }
+  }
+}

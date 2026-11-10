@@ -139,7 +139,10 @@ def export_usd(path, visual, collision):
         raise ContractError("scene.usd: не удалось сохранить слой")
 
 
-def write_outputs(out, visual, collision, report):
+def write_outputs(out, visual, collision, report, started_at=None):
+    from .reporting import acceptance, file_record
+
+    export_started = time.perf_counter()
     out = Path(out)
     validate_mesh(visual, "visual")
     validate_mesh(collision, "collision")
@@ -155,19 +158,33 @@ def write_outputs(out, visual, collision, report):
                 raise ContractError(f"{name}: не удалось записать PLY")
         export_usd(staged / "scene.usd", visual, collision)
         report["status"] = "generated"
+        if report.get("schema_version") == 1:
+            report["artifacts"] = {}
+            for name in ("visual.ply", "collision.ply", "scene.usd"):
+                record = file_record(staged / name)
+                record["path"] = name
+                report["artifacts"][name] = record
         (staged / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
-        validate_outputs(staged)
+        contract = validate_outputs(staged)
         out.mkdir(parents=True, exist_ok=True)
-        # Отчёт публикуется последним и служит отметкой завершённого экспорта.
-        for name in ("visual.ply", "collision.ply", "scene.usd", "report.json"):
+        for name in ("visual.ply", "collision.ply", "scene.usd"):
             os.replace(staged / name, out / name)
+        if report.get("schema_version") == 1:
+            report["checks"]["contract"] = contract
+            report["acceptance"] = acceptance(report["checks"], report["threshold_profile"])
+            report["timings_s"]["export_and_validation"] = round(time.perf_counter() - export_started, 6)
+        if started_at is not None:
+            report["total_s"] = round(time.perf_counter() - started_at, 6)
+        # Время включает экспорт, обратное чтение файлов и первичную запись отчёта.
+        (staged / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
+        os.replace(staged / "report.json", out / "report.json")
 
 
 def write_failure_report(out, error, elapsed):
     """Ошибка нового запуска заменяет прежнюю отметку успешного результата."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    report = {"status": "failed", "solution": "baseline", "total_s": round(elapsed, 3),
+    report = {"schema_version": 1, "status": "failed", "solution": "baseline", "total_s": round(elapsed, 3),
               "error": {"type": type(error).__name__, "message": str(error)}}
     with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=out, delete=False) as stream:
         tmp = Path(stream.name)
