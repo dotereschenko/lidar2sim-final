@@ -83,3 +83,17 @@ class IndependentEvaluationTests(unittest.TestCase):
             (other/'collision.ply').unlink()
             result=run([out,other]);self.assertNotEqual(result.returncode,0)
             self.assertEqual(before[0],(out/'eval_scene.json').read_bytes())
+
+    def test_b_sampling_does_not_overweight_dense_return_clusters(self):
+        from tools.eval_scene import load_common_reference
+        with tempfile.TemporaryDirectory() as tmp:
+            data,scans,package,out=self.fixture(Path(tmp))
+            path=scans/'B.ply';points=np.asarray(o3d.io.read_point_cloud(str(path)).points)
+            points=np.concatenate([points,np.tile([.1,.1,.01],(10000,1))])
+            o3d.io.write_point_cloud(str(path),o3d.geometry.PointCloud(o3d.utility.Vector3dVector(points)))
+            meta=json.loads((package/'annotations.json').read_text());meta['inputs_sha256']['B.ply']=digest(path)
+            (package/'annotations.json').write_text(json.dumps(meta))
+            profile,_=load_profile();profile['geometry']['samples']=2000
+            ctx=load_common_reference(data,scans,package,'b',profile)
+            self.assertGreater(float(ctx['reference'][:,0].mean()),.45)
+            self.assertLess(float(ctx['reference'][:,0].mean()),.55)

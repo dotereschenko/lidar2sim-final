@@ -1,9 +1,9 @@
-"""Диагностика геометрии на A и GT (не независимая приёмка по B).
+"""Geometry evaluation: legacy A/GT diagnostic, or pinned common-region B/GT.
 
-    python tools/eval_scene.py data/scene_a out/baseline [out/other ...] [--profile rules.yaml]
-
-Полнота visual измеряется на GT в области с ≥10 точками A в радиусе 10 см.
-Полнота collision, B, размеры, физика и остальные группы PoC здесь не проверяются.
+Default CLI remains backward compatible. Explicit --mode b/gt requires
+--annotations and --scans. Mesh precision uses GT triangles; completeness
+uses uniform-area GT anchors or their nearest real B returns, separately
+for visual and collision. Other PoC groups remain unmeasured.
 """
 import argparse
 import json
@@ -89,7 +89,7 @@ def evaluate(out, gt_scene, ref, profile, provenance):
 
 
 def load_common_reference(data, scans, annotations, mode, profile):
-    from lidar2sim.annotations import cloud_array, observed_by_both
+    from lidar2sim.annotations import cloud_array
     from tools.make_dense_scan import digest
     data, scans, annotations = map(Path, (data, scans, annotations))
     if mode not in ('b', 'gt'):
@@ -120,22 +120,30 @@ def load_common_reference(data, scans, annotations, mode, profile):
         if len(points) != region['samples'] or int(mask.sum()) != region['common_samples'] or mask.sum() < minimum:
             raise ValueError('Insufficient or inconsistent common region samples')
         reference = points[mask]
-    if mode == 'b':
-        observed,_,_ = observed_by_both(b,a,b,region['radius_m'],region['min_neighbors'])
-        reference = b[observed]
     eligible = len(reference)
     count = min(eligible,profile['geometry']['samples'])
     if count < minimum:
         raise ValueError('Insufficient eligible reference samples')
     indices = np.random.default_rng(profile['geometry']['seed']).choice(eligible,count,replace=False)
     reference = reference[indices].astype(np.float32)
+    mapping = None
+    if mode == 'b':
+        distance, nearest = cKDTree(b).query(reference,workers=1)
+        if not np.isfinite(distance).all() or (distance > region['radius_m']).any():
+            raise ValueError('Saved common region lacks nearby B support')
+        reference = b[nearest].astype(np.float32)
+        mapping = {'anchor_to_B_max_m':float(distance.max()),
+                   'anchor_to_B_median_m':float(np.median(distance)),
+                   'unique_B_returns':int(len(np.unique(nearest))),
+                   'repeated_returns':'retain repeated nearest returns with their area-anchor weights'}
     return {'reference':reference,'a':a,'b':b,'region':region,'minimum':minimum,'mode':mode,
             'provenance':{'annotations_sha256':digest(annotations/'annotations.json'),
                           'region_sha256':digest(annotations/'eval_region.npz'),
                           'inputs_sha256':metadata['inputs_sha256'],
                           'annotation_status':metadata.get('status','unknown'),
                           'reference_type':'B_returns' if mode=='b' else 'GT_surface',
-                          'reference_weighting':'sensor_return_weighted' if mode=='b' else 'uniform_surface_area',
+                          'reference_weighting':'uniform_GT_area_anchors_nearest_B_return' if mode=='b' else 'uniform_surface_area',
+                          'B_anchor_mapping':mapping,
                           'eligible_reference_samples':eligible,'reference_samples':count,
                           'region_rule':region}}
 
