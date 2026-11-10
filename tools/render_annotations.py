@@ -44,7 +44,9 @@ def render(scans, annotations, output):
             line(p,q,panel,[210,35,35])
             # Labels above the line midpoint; D09/D10 offset to avoid overlap.
             x,y=pixels([(p+q)/2],panel);x,y=int(x[0])+3,int(y[0])-13
-            if item['id']=='D10':y+=24
+            if item['id'] in ('D04','D05','D06','D10'):y+=24
+            if item['id']=='D07':x-=25
+            if item['id']=='D09':x+=15
             for digit in item['id'][1:]:
                 bitmap=np.array(list(FONT[int(digit)])).reshape(5,3)=='1'
                 for row,col in zip(*np.where(bitmap)):
