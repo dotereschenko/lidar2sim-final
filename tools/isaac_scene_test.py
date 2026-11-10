@@ -18,11 +18,16 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--scene", required=True)
 ap.add_argument("--config", required=True)
 ap.add_argument("--out", required=True)
+ap.add_argument("--cpu-threads", type=int, default=4, help="число рабочих потоков Isaac/PhysX")
 args = ap.parse_args()
+if args.cpu_threads < 1:
+    ap.error("--cpu-threads должен быть ≥ 1")
 
 from isaacsim import SimulationApp  # noqa: E402
 
-app = SimulationApp({"headless": True})
+app = SimulationApp({"headless": True, "disable_viewport_updates": True,
+                     "limit_cpu_threads": args.cpu_threads,
+                     "extra_args": [f"--/persistent/physics/numThreads={args.cpu_threads}"]})
 
 import numpy as np  # noqa: E402
 import omni.usd  # noqa: E402
@@ -75,6 +80,7 @@ for f in cfg["floor"]:
     low = min(step()[2] for _ in range(int(30 / DT))) - BODY[2] / 2
     drop = f["floor_z"] - low
     res["floor"].append({**f, "drop_m": round(float(drop), 4), "ok": bool(drop < P["floor_drop_m"])})
+    print(f"floor {len(res['floor'])}/{len(cfg['floor'])}", flush=True)
 
 for o in cfg["obstacles"]:
     place(o["start"], o["floor_z"])
@@ -91,6 +97,7 @@ for o in cfg["obstacles"]:
     fell = o["floor_z"] - low > P["floor_drop_m"]
     res["obstacles"].append({**o, "travel_m": round(best, 3), "penetration_m": round(pen, 4),
                              "fell": bool(fell), "ok": bool(pen <= P["penetration_m"] and not fell)})
+    print(f"obstacles {len(res['obstacles'])}/{len(cfg['obstacles'])}", flush=True)
 
 for r in cfg["routes"]:
     pts = np.array(r["points"])
@@ -122,6 +129,7 @@ for r in cfg["routes"]:
     res["routes"].append({"name": r["name"], "length_m": r["length_m"], "status": status,
                           "reached_point": int(k), "of": len(pts), "at": p[:2].round(2).tolist(),
                           "time_s": round(t, 1), "ok": status == "ok"})
+    print(f"routes {len(res['routes'])}/{len(cfg['routes'])}", flush=True)
 
 res["summary"] = {key: f'{sum(x["ok"] for x in res[key])}/{len(res[key])}'
                   for key in ("floor", "obstacles", "routes")}

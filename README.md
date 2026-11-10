@@ -85,8 +85,15 @@ CPU-конвейер проверяется на Ubuntu `x86_64`. Для физ�
 
 ```bash
 <isaac-sim>/python.sh tools/isaac_scene_test.py --scene out/baseline/scene.usd \
-    --config data/scene_a/test_config.json --out out/baseline/physics.json
+    --config data/scene_a/test_config.json --out out/baseline/physics.json --cpu-threads 4
 ```
+
+`--cpu-threads` задаёт рабочие потоки Isaac и PhysX (по умолчанию 4).
+В контейнере согласуйте это число с выделенным CPU-бюджетом. Обновление viewport
+отключено; шаг времени, длительность и критерии физических тестов сохраняются.
+Это соответствует настройкам из
+[рекомендаций NVIDIA по производительности](https://docs.isaacsim.omniverse.nvidia.com/6.2.0/reference_material/sim_performance_optimization_handbook.html#cpu-thread-count-optimizations).
+Скрипт выводит ход проверки по позициям пола, препятствиям и маршрутам.
 
 Как получить доступ к Isaac Sim на нашей машине, расскажем отдельно.
 
