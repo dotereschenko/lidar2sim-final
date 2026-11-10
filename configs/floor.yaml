@@ -1,0 +1,4 @@
+# Остальные параметры совпадают с baseline по умолчанию.
+repair_floor: true
+floor_cell: 0.10
+floor_support_radius: 0.25
