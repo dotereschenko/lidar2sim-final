@@ -113,6 +113,25 @@ def validate_physics_config(config, profile):
             vector = obstacle.get(key)
             if not isinstance(vector, list) or len(vector) != 2 or not all(_finite(x) for x in vector):
                 raise ValueError(f'physics config obstacle.{key} must be a finite XY vector')
+        if obstacle['free_m'] < 0 or abs(sum(x * x for x in obstacle['dir']) - 1) > 1e-6:
+            raise ValueError('physics config obstacle needs nonnegative free_m and unit direction')
+
+    for floor in config['floor']:
+        if not isinstance(floor, dict) or not _finite(floor.get('floor_z')):
+            raise ValueError('physics config floor.floor_z must be finite')
+        xy = floor.get('xy')
+        if not isinstance(xy, list) or len(xy) != 2 or not all(_finite(x) for x in xy):
+            raise ValueError('physics config floor.xy must be a finite XY vector')
+    for route in config['routes']:
+        if not isinstance(route, dict) or not _finite(route.get('floor_z', 0.0)):
+            raise ValueError('physics config route.floor_z must be finite')
+        if not _finite(route.get('length_m')) or route['length_m'] <= 0:
+            raise ValueError('physics config route.length_m must be positive')
+        points = route.get('points')
+        if not isinstance(points, list) or len(points) < 2 or any(
+            not isinstance(p, list) or len(p) != 2 or not all(_finite(x) for x in p) for p in points
+        ):
+            raise ValueError('physics config route.points must contain at least two finite XY vectors')
 
 
 def upper_bound_passed(value, limit):

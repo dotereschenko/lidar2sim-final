@@ -155,3 +155,18 @@ class AcceptanceTest(unittest.TestCase):
             changed['obstacles'][0][field] = value
             with self.subTest(field=field, value=value), self.assertRaises(ValueError):
                 self.a.validate_physics_config(changed, self.profile)
+
+    def test_physics_floor_routes_and_direction_are_validated_before_isaac(self):
+        cfg = json.loads((ROOT / 'data/scene_a/test_config.json').read_text())
+        cases = [('floor', 'floor_z', float('nan')), ('floor', 'xy', [0]),
+                 ('routes', 'floor_z', float('inf')), ('routes', 'points', []),
+                 ('routes', 'points', [[0, 0], [1, float('nan')]]),
+                 ('routes', 'length_m', 0), ('obstacles', 'dir', [0, 2]),
+                 ('obstacles', 'dir', [0, 0]), ('obstacles', 'free_m', -1)]
+        for group, field, value in cases:
+            changed = copy.deepcopy(cfg)
+            changed[group][0][field] = value
+            with self.subTest(group=group, field=field), self.assertRaises(ValueError):
+                self.a.validate_physics_config(changed, self.profile)
+        cfg['routes'][0]['floor_z'] = 2.5
+        self.a.validate_physics_config(cfg, self.profile)
