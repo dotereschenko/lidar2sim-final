@@ -66,6 +66,21 @@ CPU-конвейер проверяется на Ubuntu `x86_64`. Для физ�
 
 `tools/eval_scene.py` принимает несколько папок с результатами и выводит их рядом — удобно сравнивать свои версии.
 
+Для версии с отсечением неподдержанной геометрии и локальным восстановлением пола
+используйте `configs/poc.yaml`:
+
+```bash
+.venv/bin/python -m lidar2sim --input data/scene_a/A.ply \
+    --manifest data/scene_a/manifest.json --trajectory data/scene_a/trajectory_A.csv \
+    --config configs/poc.yaml --out out/poc
+.venv/bin/python tools/eval_scene.py data/scene_a out/baseline out/poc
+```
+
+Конфигурация бейзлайна сохраняет исходный алгоритм. Новые этапы и результаты
+сравнения описаны в [docs/baseline.md](docs/baseline.md#отсечение-и-восстановление-пола).
+В `report.json.refinement` записываются число удалённых граней, модель и площадь
+пола, объём его наблюдений и число треугольников, отклонённых из-за перепада высоты.
+
 Физика проверяется в Isaac Sim 6.2:
 
 ```bash
@@ -182,9 +197,12 @@ uv run --locked pytest
 |---|---|
 | `lidar2sim/baseline.py` | Базовое решение |
 | `lidar2sim/common.py` | Чтение входа, подготовка облака, экспорт PLY/USD, отчёт |
+| `lidar2sim/refinement.py` | Отсечение неподдержанной геометрии, восстановление локальных разрывов пола |
 | `configs/baseline.yaml` | Параметры базового решения |
+| `configs/poc.yaml` | Параметры улучшенного Poisson |
 | `data/scene_a/` | Данные сцены A |
 | `tools/fetch_gt.py` | Точная геометрия сцены A: скачать у NVIDIA и собрать |
 | `tools/eval_scene.py` | Проверки геометрии на сцене хакатона |
+| `tools/compare_reconstruction.py` | Сравнение отсечения, достройки пола и их сочетания на одной исходной сетке |
 | `tools/isaac_scene_test.py` | Тесты физики в Isaac Sim по `test_config.json` |
 | `tools/make_test_room.py`, `tools/quick_eval.py`, `tools/isaac_physics_test.py` | Тестовая комната: данные, быстрые проверки, физика |

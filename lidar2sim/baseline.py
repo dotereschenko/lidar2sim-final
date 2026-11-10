@@ -16,6 +16,13 @@ PARAMS = {
     "density_quantile": 0.03,
     "visual_triangles": 200_000,
     "collision_triangles": 20_000,
+    "support_distance": 0.0,
+    "floor_distance": 0.0,
+    "floor_cell": 0.08,
+    "floor_max_edge": 1.0,
+    "floor_max_slope_deg": 10.0,
+    "floor_min_points": 100,
+    "floor_clearance": 0.4,
 }
 
 
@@ -27,9 +34,19 @@ def run(pcd, meta, traj, params=None):
     with t("poisson"):
         mesh = poisson(pcd, p["poisson_depth"], p["density_quantile"])
         mesh = clean(mesh.crop(pcd.get_axis_aligned_bounding_box()))
+    refinement = {}
+    if p["support_distance"] or p["floor_distance"]:
+        from .refinement import recover_floor, trim_unsupported
+        with t("refinement"):
+            if p["support_distance"]:
+                mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
+            if p["floor_distance"]:
+                mesh, refinement["floor"] = recover_floor(mesh, pcd, traj, p)
     with t("decimate"):
         visual = decimate(mesh, p["visual_triangles"])
         collision = decimate(mesh, p["collision_triangles"])
-    report = {"solution": "baseline", "params": p, "points_after_voxel": len(pcd.points),
-              "timings_s": t.steps}
+    report = {"solution": "supported_poisson" if refinement else "baseline", "params": p,
+              "points_after_voxel": len(pcd.points), "timings_s": t.steps}
+    if refinement:
+        report["refinement"] = refinement
     return visual, collision, report

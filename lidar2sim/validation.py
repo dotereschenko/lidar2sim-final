@@ -40,22 +40,35 @@ def validate_params(params, defaults):
     if unknown:
         raise ContractError("config.yaml: неизвестные параметры: " + ", ".join(map(repr, unknown)))
     result = {**defaults, **params}
-    for key in ("voxel", "outlier_std", "normal_radius", "density_quantile"):
+    for key in ("voxel", "outlier_std", "normal_radius", "density_quantile",
+                "support_distance", "floor_distance", "floor_cell", "floor_max_edge",
+                "floor_max_slope_deg", "floor_clearance"):
         value = result[key]
         if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
             raise ContractError(f"config.yaml: {key} должен быть конечным числом")
         if key == "density_quantile":
             if not 0 <= value < 1:
                 raise ContractError("config.yaml: density_quantile должен быть в [0, 1)")
+        elif key in ("support_distance", "floor_distance"):
+            if value < 0:
+                raise ContractError(f"config.yaml: {key} должен быть неотрицательным")
+        elif key == "floor_max_slope_deg":
+            if not 0 < value <= 20:
+                raise ContractError("config.yaml: floor_max_slope_deg должен быть в (0, 20]")
         elif value <= 0:
             raise ContractError(f"config.yaml: {key} должен быть больше нуля")
         result[key] = float(value)
     for key, minimum in (("outlier_neighbors", 2), ("normal_max_nn", 3),
-                         ("poisson_depth", 2), ("visual_triangles", 1), ("collision_triangles", 1)):
+                         ("poisson_depth", 2), ("visual_triangles", 1), ("collision_triangles", 1),
+                         ("floor_min_points", 3)):
         value = result[key]
         if isinstance(value, bool) or not isinstance(value, Integral) or value < minimum:
             raise ContractError(f"config.yaml: {key} должен быть целым числом ≥ {minimum}")
         result[key] = int(value)
+    if result["floor_max_edge"] < 2 * result["floor_cell"]:
+        raise ContractError("config.yaml: floor_max_edge должен быть ≥ 2 * floor_cell")
+    if result["floor_distance"] >= result["floor_clearance"]:
+        raise ContractError("config.yaml: floor_distance должен быть меньше floor_clearance")
     return result
 
 
