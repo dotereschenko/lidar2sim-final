@@ -8,27 +8,54 @@
 
 В репозитории — рабочее базовое решение. Конвейер уже проходит от облака до сцены, которая загружается в Isaac Sim. Ваша задача — сделать сцену точной и физически корректной. Как именно — решаете вы.
 
-## Запуск за 15 минут
+Правила и пороги — [docs/rules.md](docs/rules.md).
+
+## Данные
+
+Сцена A — западное крыло офиса из Isaac Sim: кабинет с мебелью и Г-образный коридор. Облако снято лидаром на высоте 1,3 м по маршруту через сцену. Оно грязное, как настоящее SLAM-облако: шум дальности, выпадения, точки-призраки в воздухе и дрейф совмещения — стены местами двоятся.
+
+| Файл | Содержимое |
+|---|---|
+| `A.ply` | Облако точек, 249 тыс. точек: XYZ в метрах, ось Z вверх |
+| `trajectory_A.csv` | Положения лидара во время съёмки: `t,x,y,z` |
+| `manifest.json` | Границы сцены, оси, описание файлов |
+| `gt_mesh.ply` | Точная геометрия сцены — только для самопроверки, на вход конвейеру её подавать нельзя |
+| `test_config.json` | Тесты физики сцены A для `tools/isaac_scene_test.py` |
+
+```bash
+python tools/get_data.py                                  # скачать и проверить контрольную сумму
+python tools/get_data.py --archive scene_a_v1.tar.gz      # или распаковать уже полученный архив
+```
+
+Данные лягут в `data/scene_a/`. Пока ссылки в `configs/data.json` нет, архив выдают организаторы.
+
+## Запуск
 
 Нужен Python 3.10–3.12: под 3.13 и новее нет пакетов Open3D.
 
 ```bash
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python -e .
+.venv/bin/python tools/get_data.py --archive scene_a_v1.tar.gz
 
-.venv/bin/python tools/make_test_room.py data/test_room
-.venv/bin/python -m lidar2sim --input data/test_room/scene.ply \
-    --manifest data/test_room/manifest.json --trajectory data/test_room/trajectory.csv \
+.venv/bin/python -m lidar2sim --input data/scene_a/A.ply \
+    --manifest data/scene_a/manifest.json --trajectory data/scene_a/trajectory_A.csv \
     --config configs/baseline.yaml --out out/baseline
-.venv/bin/python tools/quick_eval.py data/test_room out/baseline
+.venv/bin/python tools/eval_scene.py data/scene_a out/baseline
 ```
 
 Без `uv` подойдёт обычный `python -m venv .venv && .venv/bin/pip install -e .`.
 
-Тестовая комната (`tools/make_test_room.py`) нужна, чтобы проверить окружение до получения данных хакатона:
-- помещение 6×4×2,7 м;
-- перегородка с проёмом, ящик и круглая колонна;
-- шум дальности 2 см и выпадения точек.
+`tools/eval_scene.py` принимает несколько папок с результатами и выводит их рядом — удобно сравнивать свои версии.
+
+Физика проверяется в Isaac Sim 6.2:
+
+```bash
+<isaac-sim>/python.sh tools/isaac_scene_test.py --scene out/baseline/scene.usd \
+    --config data/scene_a/test_config.json --out out/baseline/physics.json
+```
+
+Как получить доступ к Isaac Sim на нашей машине, расскажем отдельно.
 
 ## Контракт
 
@@ -50,50 +77,43 @@ uv pip install --python .venv/bin/python -e .
 
 Названия файлов и структура `scene.usd` — интерфейс, по которому проверяется результат. Внутри конвейера можно менять что угодно.
 
-## Проверки
+## Ориентиры на сцене A
 
-- `tools/quick_eval.py` — быстрые геометрические проверки на тестовой комнате: отклонение от эталона, лишняя геометрия, пол, проём. Принимает несколько папок с результатами и выводит их рядом, удобно сравнивать свои версии.
-- `tools/isaac_physics_test.py` — тесты физики в Isaac Sim 6.2 на тестовой комнате. Корпус робота — коробка 0,4×0,4×0,3 м:
-  - пол — 10 позиций по 30 с;
-  - препятствия — 10 подходов на 0,2 м/с, проникновение не больше 2 см;
-  - проезд через проём.
+Базовое решение против нашего внутреннего. Его цифры — желаемый уровень. Для него взят худший из пяти прогонов: цифры от прогона к прогону немного гуляют. Как оно устроено, не раскрываем: подход выбираете вы.
 
-  Запуск:
+| Проверка | Порог | Базовое | Желаемый уровень |
+|---|---|---|---|
+| Сетка в пределах 5 см от эталона, visual | ≥ 92% | 88,2% | ≥ 94,7% |
+| То же, collision | ≥ 92% | 88,6% | ≥ 93,1% |
+| Эталон → сетка в области, которую видел A, медиана / p95 | ≤ 3 / ≤ 10 см | 1,7 / 4,8 см | ≤ 1,6 / ≤ 4,2 см |
+| Isaac Sim: пол, позиций без провала | ≥ 9 из 10 | 8 из 10 | ≥ 9 из 10 |
+| Isaac Sim: препятствия, проникновение ≤ 3,5 см | 10 из 10 | 10 из 10 | 10 из 10 |
+| Isaac Sim: маршруты пройдены | ≥ 4 из 5 | 5 из 5 | ≥ 4 из 5 |
+| Время | — | ~12 с | ~30 с |
 
-  ```bash
-  <isaac-sim>/python.sh tools/isaac_physics_test.py --scene out/baseline/scene.usd \
-      --manifest data/test_room/manifest.json --out out/baseline/physics.json
-  ```
+Базовое решение не проходит два порога: лишняя геометрия и пол.
 
-Метрики приёмки на данных хакатона — расстояние до набора B, 10 контрольных размеров и тесты физики сцены — выдаются вместе с данными.
+## Тестовая комната
 
-## Ориентиры
+Синтетическая комната 6×4×2,7 м с перегородкой, проёмом, ящиком и колонной — дымовой тест окружения, данные хакатона для неё не нужны. Подробно — [docs/baseline.md](docs/baseline.md).
 
-Чего можно добиться на тестовой комнате: базовое решение против нашего внутреннего решения. Его цифры — желаемый уровень. Как оно устроено, не раскрываем: подход выбираете вы.
+```bash
+.venv/bin/python tools/make_test_room.py data/test_room
+.venv/bin/python -m lidar2sim --input data/test_room/scene.ply \
+    --manifest data/test_room/manifest.json --trajectory data/test_room/trajectory.csv \
+    --config configs/baseline.yaml --out out/test_room
+.venv/bin/python tools/quick_eval.py data/test_room out/test_room
+```
 
-| Проверка | Базовое | Желаемый уровень |
-|---|---|---|
-| Расстояние от эталона до сетки, медиана / p95 | 0,28 / 1,24 см | 0,07 / 0,56 см |
-| Доля сетки в пределах 10 см от эталона | 100% | ≥ 99,8% |
-| Пол держит (лучи вниз по всей комнате) | 97,4% | 100% |
-| Пол в пятне, где у лидара нет точек | 0% | 100% |
-| Проём перекрыт | 0% | 0% |
-| Isaac Sim: пол, позиций без провала | 8 из 10 | 10 из 10 |
-| Isaac Sim: препятствия, проникновение ≤ 2 см | 10 из 10 | 10 из 10 |
-| Isaac Sim: проезд через проём | проходит | проходит |
-| Время | ~8 с | ~3 с |
-
-Ориентиры на сцене хакатона публикуются вместе с данными и заменяют эту таблицу.
-
-## Базовое решение
-
-Как устроено и что показывает на тестовой комнате — [docs/baseline.md](docs/baseline.md).
+## Файлы
 
 | Путь | Что |
 |---|---|
 | `lidar2sim/baseline.py` | Базовое решение |
 | `lidar2sim/common.py` | Чтение входа, подготовка облака, экспорт PLY/USD, отчёт |
 | `configs/baseline.yaml` | Параметры базового решения |
-| `tools/make_test_room.py` | Тестовая комната |
-| `tools/quick_eval.py` | Быстрые проверки |
-| `tools/isaac_physics_test.py` | Тесты физики в Isaac Sim |
+| `configs/data.json` | Где брать данные и их контрольные суммы |
+| `tools/get_data.py` | Загрузка данных |
+| `tools/eval_scene.py` | Проверки геометрии на сцене хакатона |
+| `tools/isaac_scene_test.py` | Тесты физики в Isaac Sim по `test_config.json` |
+| `tools/make_test_room.py`, `tools/quick_eval.py`, `tools/isaac_physics_test.py` | Тестовая комната: данные, быстрые проверки, физика |
