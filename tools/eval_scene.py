@@ -1,94 +1,113 @@
-"""Проверки геометрии на сцене хакатона по выданным данным: облаку A и точной геометрии сцены.
+"""Диагностика геометрии на A и GT (не независимая приёмка по B).
 
-    python tools/eval_scene.py data/scene_a out/baseline [out/other ...]
+    python tools/eval_scene.py data/scene_a out/baseline [out/other ...] [--profile rules.yaml]
 
-1. Лишняя геометрия: точки, набранные равномерно по площади сетки, — доля в пределах 5 см
-   от точной геометрии. Порог — не меньше 92%. Считается для visual и для collision.
-2. Полнота: точки точной геометрии в области, которую видел A, — расстояние до сетки,
-   медиана ≤ 3 см и p95 ≤ 10 см. Областью считается поверхность, у которой не меньше 10 точек A
-   в радиусе 10 см: за то, чего в облаке нет, решение не отвечает.
-
-На приёмке вторую проверку считаем по отдельному облаку B той же сцены, снятому с другого маршрута.
-B участникам не выдаётся, поэтому здесь её заменяет точная геометрия: числа близкие, но не те же.
-Контрольные размеры появятся вместе с разметкой сцены.
+Полнота visual измеряется на GT в области с ≥10 точками A в радиусе 10 см.
+Полнота collision, B, размеры, физика и остальные группы PoC здесь не проверяются.
 """
+import argparse
 import json
 import sys
 from pathlib import Path
+
+# Source-checkout scripts also run by absolute path outside the repository cwd.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from lidar2sim.acceptance import geometry_checks, load_profile, overall_status
 
 import numpy as np
 import open3d as o3d
 from scipy.spatial import cKDTree
 
-THRESHOLDS = {"extra_5cm_pct": 92.0, "median_cm": 3.0, "p95_cm": 10.0}
-SAMPLES = 300_000
+
+def read_mesh(path):
+    mesh = o3d.io.read_triangle_mesh(str(path))
+    vertices, triangles = np.asarray(mesh.vertices), np.asarray(mesh.triangles)
+    if (not len(vertices) or not len(triangles) or not np.isfinite(vertices).all()
+            or triangles.min() < 0 or triangles.max() >= len(vertices)
+            or not np.isfinite(mesh.get_surface_area()) or mesh.get_surface_area() <= 0):
+        raise ValueError(f'empty or invalid mesh: {path}')
+    return mesh
 
 
 def raycasting(mesh):
-    s = o3d.t.geometry.RaycastingScene()
-    s.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(mesh))
-    return s
+    scene = o3d.t.geometry.RaycastingScene()
+    scene.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(mesh))
+    return scene
 
 
-def region(data):
-    """Точки точной геометрии в области, которую видел A. Считается один раз на набор данных."""
-    gt = o3d.io.read_triangle_mesh(str(data / "gt_mesh.ply"))
-    A = np.asarray(o3d.io.read_point_cloud(str(data / "A.ply")).points)
-    pts = np.asarray(gt.sample_points_uniformly(SAMPLES).points)
-    seen = cKDTree(A).query_ball_point(pts, 0.10, return_length=True) >= 10
-    return gt, pts[seen], seen.mean()
+def sample(mesh, profile):
+    g = profile['geometry']
+    o3d.utility.random.seed(g['seed'])
+    return np.asarray(mesh.sample_points_uniformly(g['samples']).points)
 
 
-def extra_within(mesh, gt_scene, dist):
-    s = np.asarray(mesh.sample_points_uniformly(SAMPLES).points)
-    d = gt_scene.compute_distance(o3d.core.Tensor(s.astype(np.float32))).numpy()
-    return float((d < dist).mean()) * 100
+def region(data, profile):
+    """GT sample in the observed A region; the coverage rule is diagnostic only."""
+    gt = read_mesh(data / 'gt_mesh.ply')
+    points_a = np.asarray(o3d.io.read_point_cloud(str(data / 'A.ply')).points)
+    if not len(points_a) or not np.isfinite(points_a).all():
+        raise ValueError('A point cloud must be nonempty and finite')
+    pts = sample(gt, profile)
+    seen = cKDTree(points_a).query_ball_point(pts, 0.10, return_length=True) >= 10
+    if not seen.any():
+        raise ValueError('empty reference region observed by A')
+    return gt, pts[seen], float(seen.mean())
 
 
-def evaluate(out, gt_scene, ref):
-    vis = o3d.io.read_triangle_mesh(str(out / "visual.ply"))
-    col = o3d.io.read_triangle_mesh(str(out / "collision.ply"))
-    d = raycasting(vis).compute_distance(o3d.core.Tensor(ref.astype(np.float32))).numpy()
-    r = {
-        "extra_5cm_pct": round(extra_within(vis, gt_scene, 0.05), 1),
-        "extra_5cm_pct_collision": round(extra_within(col, gt_scene, 0.05), 1),
-        "median_cm": round(float(np.median(d)) * 100, 2),
-        "p95_cm": round(float(np.percentile(d, 95)) * 100, 2),
+def extra_within(mesh, gt_scene, profile):
+    points = sample(mesh, profile)
+    distances = gt_scene.compute_distance(o3d.core.Tensor(points.astype(np.float32))).numpy()
+    if not np.isfinite(distances).all():
+        raise ValueError('nonfinite precision distances')
+    return float((distances <= profile['geometry']['precision_distance_m']).mean()) * 100
+
+
+def evaluate(out, gt_scene, ref, profile, provenance):
+    if not len(ref) or not np.isfinite(ref).all():
+        raise ValueError('reference must be nonempty and finite')
+    vis = read_mesh(out / 'visual.ply')
+    col = read_mesh(out / 'collision.ply')
+    distances = raycasting(vis).compute_distance(o3d.core.Tensor(ref.astype(np.float32))).numpy()
+    if not np.isfinite(distances).all():
+        raise ValueError('nonfinite completeness distances')
+    raw = {
+        'extra_5cm_pct': extra_within(vis, gt_scene, profile),
+        'extra_5cm_pct_collision': extra_within(col, gt_scene, profile),
+        'median_cm': float(np.median(distances)) * 100,
+        'p95_cm': float(np.percentile(distances, 95, method='linear')) * 100,
     }
-    r["passed"] = {
-        "лишняя геометрия, visual": r["extra_5cm_pct"] >= THRESHOLDS["extra_5cm_pct"],
-        "лишняя геометрия, collision": r["extra_5cm_pct_collision"] >= THRESHOLDS["extra_5cm_pct"],
-        "полнота, медиана": r["median_cm"] <= THRESHOLDS["median_cm"],
-        "полнота, p95": r["p95_cm"] <= THRESHOLDS["p95_cm"],
+    passed = geometry_checks(raw, profile)
+    status = 'passed' if all(passed.values()) else 'failed'
+    return {
+        **{key: round(value, 1 if key.startswith('extra_') else 2) for key, value in raw.items()},
+        'passed': passed, 'raw_metrics': raw, 'acceptance_profile': provenance,
+        'evaluation_mode': 'scene_a_gt_diagnostic',
+        'coverage': {'collision_completeness': 'not_run'},
+        'geometry_status': status,
+        'poc_status': overall_status({'implemented_geometry': status, 'remaining_groups': 'not_run'}),
     }
-    return r
 
 
-def main(data, *outs):
-    o3d.utility.random.seed(0)   # выборка точек случайная: с зерном числа повторяются
-    data = Path(data)
-    gt, ref, share = region(data)
+def main(data, *outs, profile=None):
+    rules, provenance = load_profile(profile)
+    gt, ref, share = region(Path(data), rules)
     gt_scene = raycasting(gt)
-    print(f"оценка идёт по области, которую видел A: {share * 100:.0f}% всей поверхности сцены\n")
-    rows = {Path(o).name: evaluate(Path(o), gt_scene, ref) for o in outs}
-    labels = [
-        ("extra_5cm_pct", f"сетка в 5 см от эталона, % (≥ {THRESHOLDS['extra_5cm_pct']:g})"),
-        ("extra_5cm_pct_collision", "  то же для collision, %"),
-        ("median_cm", f"эталон → сетка, медиана, см (≤ {THRESHOLDS['median_cm']:g})"),
-        ("p95_cm", f"эталон → сетка, p95, см (≤ {THRESHOLDS['p95_cm']:g})"),
-    ]
-    w = max(12, *(len(n) + 2 for n in rows))
-    print(f"{'':46}" + "".join(f"{n:>{w}}" for n in rows))
-    for key, label in labels:
-        print(f"{label:46}" + "".join(f"{r[key]:>{w}}" for r in rows.values()))
-    print(f"{'все проверки пройдены':46}" + "".join(f"{('да' if all(r['passed'].values()) else 'нет'):>{w}}"
-                                                  for r in rows.values()))
-    for name, r in rows.items():
-        (Path(outs[list(rows).index(name)]) / "eval_scene.json").write_text(
-            json.dumps(r, ensure_ascii=False, indent=2))
+    print(f'диагностика A/GT: видимая область {share * 100:.0f}% поверхности сцены')
+    rows = [(Path(out), evaluate(Path(out), gt_scene, ref, rules, provenance)) for out in outs]
+    for out, result in rows:
+        (out / 'eval_scene.json').write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+        print(f'{out}: {result["extra_5cm_pct"]}% visual, {result["extra_5cm_pct_collision"]}% collision; '
+              f'медиана {result["median_cm"]} см, p95 {result["p95_cm"]} см; '
+              f'четыре реализованные проверки: {result["geometry_status"]}; PoC: {result["poc_status"]}')
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        sys.exit(__doc__)
-    main(*sys.argv[1:])
+if __name__ == '__main__':
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('data')
+    ap.add_argument('outs', nargs='+')
+    ap.add_argument('--profile')
+    args = ap.parse_args()
+    try:
+        main(args.data, *args.outs, profile=args.profile)
+    except (ValueError, OSError) as exc:
+        ap.exit(1, f'evaluation error: {exc}\n')
