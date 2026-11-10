@@ -1,5 +1,9 @@
 .venv/
 __pycache__/
 *.egg-info/
-data/
+data/*
+!data/scene_a/
 out/
+# собирается tools/fetch_gt.py: ассеты NVIDIA не распространяем
+data/scene_a/gt_mesh.ply
+data/scene_a/nvidia/

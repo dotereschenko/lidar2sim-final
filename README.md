@@ -19,15 +19,16 @@
 | `A.ply` | Облако точек, 249 тыс. точек: XYZ в метрах, ось Z вверх |
 | `trajectory_A.csv` | Положения лидара во время съёмки: `t,x,y,z` |
 | `manifest.json` | Границы сцены, оси, описание файлов |
-| `gt_mesh.ply` | Точная геометрия сцены — только для самопроверки, на вход конвейеру её подавать нельзя |
+| `gt_mesh.ply` | Точная геометрия сцены — только для самопроверки, на вход конвейеру её подавать нельзя. Собирается скриптом, см. ниже |
 | `test_config.json` | Тесты физики сцены A для `tools/isaac_scene_test.py` |
 
+Облако, траектория и тесты лежат в репозитории, в `data/scene_a/`. Точную геометрию сцены соберите один раз сами:
+
 ```bash
-python tools/get_data.py                                  # скачать и проверить контрольную сумму
-python tools/get_data.py --archive scene_a_v1.tar.gz      # или распаковать уже полученный архив
+.venv/bin/python tools/fetch_gt.py data/scene_a
 ```
 
-Данные лягут в `data/scene_a/`. Пока ссылки в `configs/data.json` нет, архив выдают организаторы.
+Сцена — ассет NVIDIA Isaac Sim, и выкладывать её мы не можем. Скрипт скачивает её с открытого сервера ассетов NVIDIA (~10 МБ, без текстур), собирает `gt_mesh.ply` и сверяет с нашим эталоном. Пользуетесь вы ею на условиях [NVIDIA Isaac Sim Additional Software and Materials License](https://docs.isaacsim.omniverse.nvidia.com/6.2.0/common/license-isaac-sim-additional.html).
 
 ## Запуск
 
@@ -36,7 +37,7 @@ python tools/get_data.py --archive scene_a_v1.tar.gz      # или распак�
 ```bash
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python -e .
-.venv/bin/python tools/get_data.py --archive scene_a_v1.tar.gz
+.venv/bin/python tools/fetch_gt.py data/scene_a
 
 .venv/bin/python -m lidar2sim --input data/scene_a/A.ply \
     --manifest data/scene_a/manifest.json --trajectory data/scene_a/trajectory_A.csv \
@@ -112,8 +113,8 @@ uv pip install --python .venv/bin/python -e .
 | `lidar2sim/baseline.py` | Базовое решение |
 | `lidar2sim/common.py` | Чтение входа, подготовка облака, экспорт PLY/USD, отчёт |
 | `configs/baseline.yaml` | Параметры базового решения |
-| `configs/data.json` | Где брать данные и их контрольные суммы |
-| `tools/get_data.py` | Загрузка данных |
+| `data/scene_a/` | Данные сцены A |
+| `tools/fetch_gt.py` | Точная геометрия сцены A: скачать у NVIDIA и собрать |
 | `tools/eval_scene.py` | Проверки геометрии на сцене хакатона |
 | `tools/isaac_scene_test.py` | Тесты физики в Isaac Sim по `test_config.json` |
 | `tools/make_test_room.py`, `tools/quick_eval.py`, `tools/isaac_physics_test.py` | Тестовая комната: данные, быстрые проверки, физика |

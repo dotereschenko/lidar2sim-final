@@ -1,0 +1,34 @@
+{
+  "scene": "scene_a",
+  "version": 1,
+  "units": "m",
+  "up_axis": "Z",
+  "bounds_min": [
+    -24.2,
+    8.0,
+    -0.2
+  ],
+  "bounds_max": [
+    -14.2,
+    27.2,
+    3.4
+  ],
+  "source": "Isaac Sim 6.2, Environments/Office: западное крыло, стекло убрано",
+  "lidar": {
+    "height_m": 1.3,
+    "max_range_m": 20,
+    "note": "облако собрано по ходу съёмки: шум дальности, выпадения, точки-призраки и дрейф совмещения, как у SLAM"
+  },
+  "files": {
+    "A.ply": "облако точек для работы",
+    "trajectory_A.csv": "положения лидара: t,x,y,z",
+    "gt_mesh.ply": "точная геометрия сцены, только для самопроверки; собирается tools/fetch_gt.py",
+    "test_config.json": "тесты физики для tools/isaac_scene_test.py"
+  },
+  "gt": {
+    "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/Environments/Office/office.usd",
+    "triangles": 1344195,
+    "area_m2": 1688.716,
+    "note": "собирается tools/fetch_gt.py; сцена — ассет NVIDIA Isaac Sim, в репозитории не лежит"
+  }
+}
