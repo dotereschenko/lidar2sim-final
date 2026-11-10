@@ -25,7 +25,7 @@ Interface: generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_si
 
 Files: README.md and docs/validation/hackathon-13-independent-scans.json.
 
-- [ ] Run `.venv/bin/python tools/make_ab_scans.py data/scene_a data/scene_ab_candidate --trajectory-a configs/scans/trajectory_A_candidate.csv` and again into data/scene_ab_repeat.
-- [ ] Compare manifests and every output hash; audit finite/unique points and record actual metrics in tracked validation JSON.
-- [ ] Copy candidate files into spark:/home/unknown641/lidar2sim-data/scene_ab_candidate and verify SHA256 remotely.
-- [ ] Document CLI, B isolation, metrics and unresolved H3 decision. Commit and push evidence; update Plane with branch and concrete results, retaining In Progress.
+- [x] Run `.venv/bin/python tools/make_ab_scans.py data/scene_a data/scene_ab_candidate --trajectory-a configs/scans/trajectory_A_candidate.csv` and again into data/scene_ab_repeat.
+- [x] Compare manifests and every output hash; audit finite/unique points and record actual metrics in tracked validation JSON.
+- [x] Copy candidate files into spark:/home/unknown641/lidar2sim-data/scene_ab_candidate and verify SHA256 remotely.
+- [x] Document CLI, B isolation, metrics and unresolved H3 decision. Commit and push evidence; update Plane with branch and concrete results, retaining In Progress.
