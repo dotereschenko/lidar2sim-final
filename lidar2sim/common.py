@@ -1,12 +1,17 @@
 """Общие шаги конвейера: чтение входа, подготовка облака, экспорт и отчёт."""
 import hashlib
 import json
+import os
+import tempfile
 import time
 from pathlib import Path
 
 import numpy as np
 import open3d as o3d
 from scipy.spatial import cKDTree
+
+from .validation import (ContractError, load_trajectory, validate_manifest,
+                         validate_mesh, validate_outputs, validate_point_cloud)
 
 
 class Timer:
@@ -37,14 +42,16 @@ def sha256(path):
 
 
 def load_inputs(ply, manifest=None, trajectory=None):
+    if Path(ply).suffix.lower() != ".ply" or not Path(ply).is_file():
+        raise ContractError(f"{ply}: требуется существующий PLY-файл")
+    try:
+        meta = json.loads(Path(manifest).read_text()) if manifest else {"units": "m", "up_axis": "Z"}
+    except json.JSONDecodeError as exc:
+        raise ContractError(f"manifest.json: некорректный JSON, строка {exc.lineno}") from exc
+    validate_manifest(meta)
     pcd = o3d.io.read_point_cloud(str(ply))
-    if not pcd.has_points():
-        raise ValueError(f"{ply}: пустое облако")
-    meta = json.loads(Path(manifest).read_text()) if manifest else {}
-    traj = None
-    if trajectory:
-        # формат: заголовок, затем t,x,y,z[,...] — берём координаты
-        traj = np.loadtxt(trajectory, delimiter=",", skiprows=1, ndmin=2)[:, 1:4]
+    validate_point_cloud(pcd, str(ply))
+    traj = load_trajectory(trajectory) if trajectory else None
     return pcd, meta, traj
 
 
@@ -53,9 +60,11 @@ def preprocess(pcd, meta, traj, p):
     if "bounds_min" in meta and "bounds_max" in meta:
         box = o3d.geometry.AxisAlignedBoundingBox(meta["bounds_min"], meta["bounds_max"])
         pcd = pcd.crop(box)
+        validate_point_cloud(pcd, "облако после обрезки")
     pcd, _ = pcd.remove_statistical_outlier(nb_neighbors=p["outlier_neighbors"],
                                             std_ratio=p["outlier_std"])
     pcd = pcd.voxel_down_sample(p["voxel"])
+    validate_point_cloud(pcd, "облако после фильтрации и прореживания")
     pcd.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=p["normal_radius"],
                                                               max_nn=p["normal_max_nn"]))
     orient_normals(pcd, traj)
@@ -126,17 +135,44 @@ def export_usd(path, visual, collision):
     UsdPhysics.CollisionAPI.Apply(col.GetPrim())
     UsdPhysics.MeshCollisionAPI.Apply(col.GetPrim()).CreateApproximationAttr(UsdPhysics.Tokens.none)
     col.CreatePurposeAttr(UsdGeom.Tokens.guide)   # в рендер не попадает
-    stage.GetRootLayer().Save()
+    if not stage.GetRootLayer().Save():
+        raise ContractError("scene.usd: не удалось сохранить слой")
 
 
 def write_outputs(out, visual, collision, report):
     out = Path(out)
-    out.mkdir(parents=True, exist_ok=True)
-    o3d.io.write_triangle_mesh(str(out / "visual.ply"), visual)
-    o3d.io.write_triangle_mesh(str(out / "collision.ply"), collision)
-    export_usd(out / "scene.usd", visual, collision)
+    validate_mesh(visual, "visual")
+    validate_mesh(collision, "collision")
+    out.parent.mkdir(parents=True, exist_ok=True)
     report["outputs"] = {
         "visual_triangles": len(visual.triangles),
         "collision_triangles": len(collision.triangles),
     }
-    (out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2))
+    with tempfile.TemporaryDirectory(dir=out.parent, prefix=".lidar2sim-") as tmp:
+        staged = Path(tmp)
+        for name, mesh in (("visual.ply", visual), ("collision.ply", collision)):
+            if not o3d.io.write_triangle_mesh(str(staged / name), mesh):
+                raise ContractError(f"{name}: не удалось записать PLY")
+        export_usd(staged / "scene.usd", visual, collision)
+        report["status"] = "generated"
+        (staged / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
+        validate_outputs(staged)
+        out.mkdir(parents=True, exist_ok=True)
+        # Отчёт публикуется последним и служит отметкой завершённого экспорта.
+        for name in ("visual.ply", "collision.ply", "scene.usd", "report.json"):
+            os.replace(staged / name, out / name)
+
+
+def write_failure_report(out, error, elapsed):
+    """Ошибка нового запуска заменяет прежнюю отметку успешного результата."""
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    report = {"status": "failed", "solution": "baseline", "total_s": round(elapsed, 3),
+              "error": {"type": type(error).__name__, "message": str(error)}}
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=out, delete=False) as stream:
+        tmp = Path(stream.name)
+        json.dump(report, stream, ensure_ascii=False, indent=2, allow_nan=False)
+    try:
+        os.replace(tmp, out / "report.json")
+    finally:
+        tmp.unlink(missing_ok=True)

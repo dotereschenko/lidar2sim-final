@@ -2,12 +2,22 @@
 name = "lidar2sim"
 version = "0.1.0"
 description = "Облако точек помещения → сцена Isaac Sim с коллизиями"
-requires-python = ">=3.10,<3.13"
-dependencies = ["open3d>=0.18", "numpy", "scipy", "usd-core", "pyyaml"]
+requires-python = ">=3.11,<3.13"
+dependencies = ["open3d==0.20.0", "numpy", "scipy", "usd-core==26.11", "pyyaml"]
+
+[project.scripts]
+lidar2sim = "lidar2sim.__main__:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
 
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools==84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["lidar2sim"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:dash"

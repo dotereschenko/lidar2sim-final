@@ -4,6 +4,7 @@ Collision mesh — та же сетка, упрощённая сильнее. Э
 конвейер проходит от облака до сцены Isaac Sim, но качество сцены не оптимизировано.
 """
 from .common import Timer, clean, decimate, poisson, preprocess
+from .validation import validate_params
 
 PARAMS = {
     "voxel": 0.03,
@@ -19,7 +20,7 @@ PARAMS = {
 
 
 def run(pcd, meta, traj, params=None):
-    p = {**PARAMS, **(params or {})}
+    p = validate_params({} if params is None else params, PARAMS)
     t = Timer()
     with t("preprocess"):
         pcd = preprocess(pcd, meta, traj, p)

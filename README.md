@@ -32,11 +32,12 @@
 
 ## Запуск
 
-Нужен Python 3.10–3.12: под 3.13 и новее нет пакетов Open3D.
+Рабочая версия Python — **3.12.13**, она записана в `.python-version`. Зависимости
+с хешами закреплены в `uv.lock`; Open3D — 0.20.0, usd-core — 26.11.
+Поддерживаемый диапазон Python — 3.11–3.12: закреплённый usd-core требует Python ≥3.11.
 
 ```bash
-uv venv --python 3.11 .venv
-uv pip install --python .venv/bin/python -e .
+uv sync --locked --no-dev
 .venv/bin/python tools/fetch_gt.py data/scene_a
 
 .venv/bin/python -m lidar2sim --input data/scene_a/A.ply \
@@ -45,7 +46,23 @@ uv pip install --python .venv/bin/python -e .
 .venv/bin/python tools/eval_scene.py data/scene_a out/baseline
 ```
 
-Без `uv` подойдёт обычный `python -m venv .venv && .venv/bin/pip install -e .`.
+`--locked` проверяет актуальность lock-файла и не меняет его при установке
+([документация uv](https://docs.astral.sh/uv/concepts/projects/sync/)).
+Установка через обычный `pip install -e .` подходит для разработки, но не фиксирует
+все транзитивные зависимости: для зачётного прогона используйте команды выше.
+
+На Mac с Apple Silicon для Open3D 0.20 нужна системная `libusb`:
+
+```bash
+brew install libusb
+uv sync --locked --no-dev
+```
+
+CPU-конвейер проверяется на Ubuntu `x86_64`. Для физики используется отдельное
+окружение Isaac Sim 6.2 на Spark, существующий образ `isaac-sim-xvfb:6.2`.
+Библиотеки Isaac не устанавливаются через этот lock-файл.
+Проверенные версии ОС, системных библиотек и ID существующего образа записаны
+в `configs/runtime.json`.
 
 `tools/eval_scene.py` принимает несколько папок с результатами и выводит их рядом — удобно сравнивать свои версии.
 
@@ -57,6 +74,30 @@ uv pip install --python .venv/bin/python -e .
 ```
 
 Как получить доступ к Isaac Sim на нашей машине, расскажем отдельно.
+
+### Проверка файлового контракта
+
+Конвейер отклоняет некорректные параметры, единицы/оси manifest, нечисловые
+координаты и повреждённую траекторию до запуска Poisson. Экспортированные PLY и USD
+повторно читаются и сверяются: коллайдер должен быть статическим и находиться на
+`/World/Collision`, а геометрия USD — совпадать с PLY.
+
+Проверить готовые файлы отдельно:
+
+```bash
+.venv/bin/python -m lidar2sim.validation out/baseline
+```
+
+Это проверка структуры и согласованности файлов. Качество геометрии и физику
+проверяют отдельные скрипты выше. При ошибке конвейер возвращает ненулевой код
+и записывает `report.json` со статусом `failed`, включая причину ошибки.
+
+Проверки разработчика:
+
+```bash
+uv sync --locked
+uv run --locked pytest
+```
 
 ## Контракт
 
