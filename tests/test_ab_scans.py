@@ -75,3 +75,33 @@ class ABScanTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'crosses'):
                 generate(data, root/'bad', points=100, trajectory_path=trajectory)
             self.assertFalse((root/'bad').exists())
+
+    def test_explicit_b_and_sectors_are_reproducible(self):
+        from tools.make_ab_scans import generate
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); data = self.source(root)
+            path = root/'independent.csv'
+            path.write_text('t,x,y,z\n0,3,3,1.6\n1,3,1,1.6\n2,1,3,1.6\n')
+            kwargs = dict(points=20000, batch_size=4096, trajectory_b_path=path,
+                          sectors_a=[[-15,15],[165,180],[-180,-165]])
+            a = generate(data, root/'one', **kwargs)
+            b = generate(data, root/'two', **kwargs)
+            self.assertEqual(a,b)
+            np.testing.assert_allclose(np.loadtxt(root/'one/trajectory_B.csv',delimiter=',',skiprows=1),
+                                       np.loadtxt(path,delimiter=',',skiprows=1))
+            self.assertEqual(a['trajectory_B_derivation'],'explicit independent trajectory')
+            stats=a['scans']['A']
+            self.assertGreater(stats['sector_dropped_returns'],0)
+            self.assertTrue(.04 < stats['random_dropout_fraction_measured'] < .06)
+            self.assertEqual(stats['sensor']['sector_dropout_deg'],kwargs['sectors_a'])
+            self.assertEqual(a['scans']['B']['sector_dropped_returns'],0)
+            for sectors in [[[20,10]], [[-190,0]], [[0,float('nan')]]]:
+                with self.assertRaises(ValueError):generate(data,root/'bad',sectors_a=sectors)
+                self.assertFalse((root/'bad').exists())
+
+    def test_sector_mask_uses_sensor_heading_and_boundaries(self):
+        from tools.make_ab_scans import sector_mask
+        angles=np.deg2rad([-180,-16,-15,0,15,16,179])
+        np.testing.assert_array_equal(sector_mask(angles,np.zeros(7),[[-15,15]]),
+                                      [False,False,True,True,True,False,False])
+        self.assertTrue(sector_mask(np.array([np.pi/2]),np.array([np.pi/2]),[[-10,10]])[0])

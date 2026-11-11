@@ -13,10 +13,33 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from tools.make_dense_scan import digest
 
 
-def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=65536, trajectory_path=None):
+def sector_mask(azimuth, heading, sectors):
+    relative = (azimuth-heading+np.pi) % (2*np.pi)-np.pi
+    masked = np.zeros(np.shape(relative), dtype=bool)
+    for start, end in sectors:
+        masked |= (relative >= np.deg2rad(start)-1e-12) & (relative <= np.deg2rad(end)+1e-12)
+    return masked
+
+
+def load_path(path):
+    path = Path(path)
+    if path.read_text().splitlines()[0].strip() != 't,x,y,z':
+        raise ValueError('Expected trajectory header t,x,y,z')
+    values = np.loadtxt(path, delimiter=',', skiprows=1, ndmin=2)
+    if values.shape[1] != 4 or len(values) < 2 or not np.isfinite(values).all() or (np.diff(values[:,0]) <= 0).any():
+        raise ValueError('Need at least two finite poses with strictly increasing times')
+    return values
+
+
+def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=65536,
+             trajectory_path=None, trajectory_b_path=None, sectors_a=None):
     if (type(points) is not int or points <= 0 or type(batch_size) is not int or batch_size <= 0
             or any(type(s) is not int or s < 0 for s in (seed_a, seed_b)) or seed_a == seed_b):
         raise ValueError('Positive integer counts and distinct nonnegative seeds required')
+    sectors_a = [] if sectors_a is None else sectors_a
+    if any(len(pair) != 2 or not all(type(v) in (float,int) and np.isfinite(v) for v in pair)
+           or not -180 <= pair[0] < pair[1] <= 180 for pair in sectors_a):
+        raise ValueError('Sector intervals must satisfy -180 <= start < end <= 180')
     data, out = Path(data), Path(out)
     if out.exists():
         raise FileExistsError(out)
@@ -24,13 +47,12 @@ def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=6553
     if source['units'] != 'm' or source['up_axis'] != 'Z':
         raise ValueError('Source must use meters and Z-up')
     path = Path(trajectory_path) if trajectory_path is not None else data/'trajectory_A.csv'
-    if path.read_text().splitlines()[0].strip() != 't,x,y,z':
-        raise ValueError('Expected trajectory header t,x,y,z')
-    ta = np.loadtxt(path, delimiter=',', skiprows=1, ndmin=2)
-    if ta.shape[1] != 4 or len(ta) < 2 or not np.isfinite(ta).all() or (np.diff(ta[:, 0]) <= 0).any():
-        raise ValueError('Need at least two finite poses with strictly increasing times')
-    tb = (ta[:-1] + ta[1:]) / 2
-    tb[:, 3] += .10
+    ta = load_path(path)
+    if trajectory_b_path is not None:
+        tb = load_path(trajectory_b_path)
+    else:
+        tb = (ta[:-1] + ta[1:]) / 2
+        tb[:, 3] += .10
     # Independent viewpoints on the same route, not a transformation of A returns.
     if cKDTree(ta[:, 1:]).query(tb[:, 1:])[0].min() < .05:
         raise ValueError('B viewpoints must be distinct from A')
@@ -68,7 +90,10 @@ def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=6553
         'schema_version': 1, 'purpose': 'candidate_independent_scans', 'units': 'm', 'up_axis': 'Z',
         'acceptance_status': 'pending_HACKATHON-3_A_count_decision',
         'B_usage': 'evaluation_only', 'batch_size': batch_size, 'raycast_threads': 1,
-        'trajectory_B_derivation': 'adjacent A pose midpoints; sensor height +0.10 m',
+        'trajectory_B_derivation': 'explicit independent trajectory' if trajectory_b_path is not None else 'adjacent A pose midpoints; sensor height +0.10 m',
+        'source_trajectory_B_sha256': digest(trajectory_b_path) if trajectory_b_path is not None else None,
+        'viewpoint_separation_m': {'minimum': float(cKDTree(ta[:,1:]).query(tb[:,1:])[0].min()),
+                                   'median': float(np.median(cKDTree(ta[:,1:]).query(tb[:,1:])[0]))},
         'source_gt_sha256': digest(data/'gt_mesh.ply'), 'source_trajectory_sha256': digest(path),
         'generator_sha256': digest(__file__), 'digest_helper_sha256': digest(Path(__file__).with_name('make_dense_scan.py')),
         'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'open3d': o3d.__version__},
@@ -80,7 +105,10 @@ def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=6553
         rng = np.random.default_rng(seed)
         clouds, noises = [], []
         counts = np.zeros(len(trajectory), dtype=np.int64)
-        written = attempted = valid_total = dropped_total = 0
+        written = attempted = valid_total = dropped_total = sector_total = available_total = 0
+        sectors = sectors_a if name == 'A' else []
+        tangent = np.gradient(trajectory[:,1:3], axis=0) if len(trajectory) > 1 else np.zeros((1,2))
+        headings = np.arctan2(tangent[:,1], tangent[:,0])
         while written < points:
             if attempted >= max(points*100, batch_size*10):
                 raise ValueError('Too few ray hits; check GT/trajectory alignment')
@@ -93,9 +121,13 @@ def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=6553
             rays = np.column_stack([origins, directions])
             distance = scene.cast_rays(o3d.core.Tensor(rays), nthreads=1)['t_hit'].numpy()
             ids = np.flatnonzero(np.isfinite(distance) & (distance > .05) & (distance <= 20))
+            valid_total += len(ids)
+            blocked = sector_mask(azimuth[ids], headings[pose_ids[ids]], sectors)
+            sector_total += int(blocked.sum())
+            ids = ids[~blocked]
+            available_total += len(ids)
             dropped = rng.random(len(ids)) < dropout
             attempted += batch_size
-            valid_total += len(ids)
             dropped_total += int(dropped.sum())
             ids = ids[~dropped][:points-written]
             noise = rng.normal(0, sigma, len(ids))
@@ -119,13 +151,18 @@ def generate(data, out, points=750000, seed_a=1301, seed_b=1302, batch_size=6553
             'point_count': len(cloud), 'seed': seed,
             'sensor': {'range_m': [.05, 20], 'azimuth_deg': [-180, 180], 'elevation_deg': [-45, 45],
                        'elevation_sampling': 'uniform_sine', 'range_noise_sigma_m': sigma,
-                       'random_dropout_fraction': dropout, 'sector_dropout_deg': [],
+                       'random_dropout_fraction': dropout, 'sector_dropout_deg': sectors,
+                       'sector_frame': 'azimuth relative to XY trajectory tangent',
+                       'heading_rad_per_pose': headings.tolist(),
                        'drift_m_per_s': [0, 0, 0], 'ghost_fraction': 0},
             'range_noise_mean_m': float(noise.mean()), 'range_noise_sigma_m': float(noise.std()),
             'cloud_to_gt_median_m': float(np.median(distances)), 'cloud_to_gt_p95_m': float(np.percentile(distances, 95)),
             'gt_area_sample_coverage_fraction': float(coverage.mean()),
             'rays_attempted': attempted, 'valid_returns_before_dropout': valid_total,
-            'random_dropped_returns': dropped_total, 'random_dropout_fraction_measured': dropped_total/valid_total,
+            'sector_dropped_returns': sector_total, 'sector_dropout_fraction_measured': sector_total/valid_total,
+            'valid_returns_after_sector_dropout': available_total,
+            'random_dropped_returns': dropped_total, 'random_dropout_fraction_measured': dropped_total/available_total if available_total else 0,
+            'random_dropout_denominator': 'valid_returns_after_sector_dropout',
             'accepted_points_per_pose': counts.tolist(),
             'bounds_min': cloud.min(0).tolist(), 'bounds_max': cloud.max(0).tolist(),
         }
@@ -141,8 +178,10 @@ if __name__ == '__main__':
     parser.add_argument('data')
     parser.add_argument('out')
     parser.add_argument('--trajectory-a', help='Explicit corrected candidate trajectory; original remains unchanged')
+    parser.add_argument('--trajectory-b', help='Independent B path; omit only for legacy midpoint acquisition')
+    parser.add_argument('--sector-a', nargs=2, type=float, action='append', default=[], metavar=('START_DEG','END_DEG'))
     parser.add_argument('--points', type=int, default=750000)
     parser.add_argument('--seed-a', type=int, default=1301)
     parser.add_argument('--seed-b', type=int, default=1302)
     args = parser.parse_args()
-    generate(args.data, args.out, args.points, args.seed_a, args.seed_b, trajectory_path=args.trajectory_a)
+    generate(args.data, args.out, args.points, args.seed_a, args.seed_b, trajectory_path=args.trajectory_a, trajectory_b_path=args.trajectory_b, sectors_a=args.sector_a)
