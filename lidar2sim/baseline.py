@@ -23,6 +23,8 @@ PARAMS = {
     "floor_max_slope_deg": 10.0,
     "floor_min_points": 100,
     "floor_clearance": 0.4,
+    "collision_floor_fraction": 0.0,
+    "collision_boundary_weight": 1.0,
 }
 
 
@@ -35,18 +37,24 @@ def run(pcd, meta, traj, params=None):
         mesh = poisson(pcd, p["poisson_depth"], p["density_quantile"])
         mesh = clean(mesh.crop(pcd.get_axis_aligned_bounding_box()))
     refinement = {}
+    floor_components = (None, None)
     if p["support_distance"] or p["floor_distance"]:
         from .refinement import recover_floor, trim_unsupported
         with t("refinement"):
             if p["support_distance"]:
                 mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
             if p["floor_distance"]:
-                mesh, refinement["floor"] = recover_floor(mesh, pcd, traj, p)
+                mesh, refinement["floor"], *floor_components = recover_floor(
+                    mesh, pcd, traj, p, return_components=True)
     with t("decimate"):
         visual = decimate(mesh, p["visual_triangles"])
-        collision = decimate(mesh, p["collision_triangles"])
+        from .collision import build_collision
+        collision, collision_info = build_collision(
+            mesh, *floor_components, p["collision_triangles"],
+            p["collision_floor_fraction"], p["collision_boundary_weight"])
     report = {"solution": "supported_poisson" if refinement else "baseline", "params": p,
               "points_after_voxel": len(pcd.points), "timings_s": t.steps}
     if refinement:
         report["refinement"] = refinement
+    report["collision_build"] = collision_info
     return visual, collision, report

@@ -7,3 +7,6 @@ floor_max_edge: 1.0
 floor_max_slope_deg: 10.0
 floor_min_points: 100
 floor_clearance: 0.4
+collision_triangles: 20000
+collision_floor_fraction: 0.25
+collision_boundary_weight: 1.0

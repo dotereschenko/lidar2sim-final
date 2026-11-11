@@ -1,0 +1,360 @@
+{
+ "floor": [
+  {
+   "xy": [
+    -19.75,
+    26.65
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 10,
+   "kind": "редкий пол",
+   "drop_m": 0.0064,
+   "ok": true
+  },
+  {
+   "xy": [
+    -21.75,
+    10.95
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 10,
+   "kind": "редкий пол",
+   "drop_m": -0.0179,
+   "ok": true
+  },
+  {
+   "xy": [
+    -22.05,
+    13.95
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 10,
+   "kind": "редкий пол",
+   "drop_m": -0.0122,
+   "ok": true
+  },
+  {
+   "xy": [
+    -14.25,
+    26.75
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 10,
+   "kind": "редкий пол",
+   "drop_m": -0.0018,
+   "ok": true
+  },
+  {
+   "xy": [
+    -18.65,
+    26.45
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 10,
+   "kind": "редкий пол",
+   "drop_m": 0.0043,
+   "ok": true
+  },
+  {
+   "xy": [
+    -14.35,
+    15.05
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 44,
+   "kind": "случайная",
+   "drop_m": -0.022,
+   "ok": true
+  },
+  {
+   "xy": [
+    -14.55,
+    9.95
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 45,
+   "kind": "случайная",
+   "drop_m": -0.0305,
+   "ok": true
+  },
+  {
+   "xy": [
+    -19.75,
+    8.55
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 92,
+   "kind": "случайная",
+   "drop_m": -0.0251,
+   "ok": true
+  },
+  {
+   "xy": [
+    -18.85,
+    13.85
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 41,
+   "kind": "случайная",
+   "drop_m": -0.0173,
+   "ok": true
+  },
+  {
+   "xy": [
+    -16.35,
+    18.05
+   ],
+   "floor_z": -0.0,
+   "a_points_15cm": 57,
+   "kind": "случайная",
+   "drop_m": -0.0137,
+   "ok": true
+  }
+ ],
+ "obstacles": [
+  {
+   "start": [
+    -19.65,
+    13.75
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    0.0,
+    1.0
+   ],
+   "free_m": 0.838,
+   "name": "подход 1",
+   "travel_m": 0.841,
+   "penetration_m": 0.0031,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -16.55,
+    18.05
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 1.138,
+   "name": "подход 2",
+   "travel_m": 1.092,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -16.85,
+    15.95
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 0.838,
+   "name": "подход 3",
+   "travel_m": 0.837,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -15.75,
+    23.65
+   ],
+   "floor_z": 0.0,
+   "dir": [
+    1.0,
+    0.0
+   ],
+   "free_m": 0.97,
+   "name": "подход 4",
+   "travel_m": 0.963,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -15.55,
+    9.75
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 1.138,
+   "name": "подход 5",
+   "travel_m": 1.075,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -16.65,
+    21.55
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 1.038,
+   "name": "подход 6",
+   "travel_m": 1.029,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -19.05,
+    9.55
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    0.0,
+    1.0
+   ],
+   "free_m": 0.538,
+   "name": "подход 7",
+   "travel_m": 0.566,
+   "penetration_m": 0.0281,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -15.95,
+    12.95
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 0.738,
+   "name": "подход 8",
+   "travel_m": 0.771,
+   "penetration_m": 0.0327,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -16.55,
+    19.35
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    -1.0,
+    0.0
+   ],
+   "free_m": 0.74,
+   "name": "подход 9",
+   "travel_m": 0.747,
+   "penetration_m": 0.0067,
+   "fell": false,
+   "ok": true
+  },
+  {
+   "start": [
+    -21.65,
+    9.15
+   ],
+   "floor_z": -0.0,
+   "dir": [
+    0.0,
+    1.0
+   ],
+   "free_m": 0.938,
+   "name": "подход 10",
+   "travel_m": 0.941,
+   "penetration_m": 0.0032,
+   "fell": false,
+   "ok": true
+  }
+ ],
+ "routes": [
+  {
+   "name": "коридор целиком",
+   "length_m": 15.6,
+   "status": "застрял",
+   "reached_point": 12,
+   "of": 32,
+   "at": [
+    -15.649999618530273,
+    14.890000343322754
+   ],
+   "time_s": 44.3,
+   "ok": false
+  },
+  {
+   "name": "поворот в верхний проход",
+   "length_m": 5.23,
+   "status": "ok",
+   "reached_point": 10,
+   "of": 10,
+   "at": [
+    -18.40999984741211,
+    25.790000915527344
+   ],
+   "time_s": 36.5,
+   "ok": true
+  },
+  {
+   "name": "из коридора к кабинету",
+   "length_m": 8.27,
+   "status": "ok",
+   "reached_point": 16,
+   "of": 16,
+   "at": [
+    -21.90999984741211,
+    9.09000015258789
+   ],
+   "time_s": 58.8,
+   "ok": true
+  },
+  {
+   "name": "через кабинет",
+   "length_m": 8.67,
+   "status": "ok",
+   "reached_point": 17,
+   "of": 17,
+   "at": [
+    -20.40999984741211,
+    14.390000343322754
+   ],
+   "time_s": 60.6,
+   "ok": true
+  },
+  {
+   "name": "кабинет обратно в коридор",
+   "length_m": 16.67,
+   "status": "ok",
+   "reached_point": 33,
+   "of": 33,
+   "at": [
+    -15.649999618530273,
+    15.899999618530273
+   ],
+   "time_s": 119.7,
+   "ok": true
+  }
+ ],
+ "summary": {
+  "floor": "10/10",
+  "obstacles": "10/10",
+  "routes": "4/5",
+  "passed": true
+ },
+ "passed": true
+}

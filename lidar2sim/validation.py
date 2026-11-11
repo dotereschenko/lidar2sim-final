@@ -42,13 +42,17 @@ def validate_params(params, defaults):
     result = {**defaults, **params}
     for key in ("voxel", "outlier_std", "normal_radius", "density_quantile",
                 "support_distance", "floor_distance", "floor_cell", "floor_max_edge",
-                "floor_max_slope_deg", "floor_clearance"):
+                "floor_max_slope_deg", "floor_clearance", "collision_floor_fraction",
+                "collision_boundary_weight"):
         value = result[key]
         if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
             raise ContractError(f"config.yaml: {key} должен быть конечным числом")
         if key == "density_quantile":
             if not 0 <= value < 1:
                 raise ContractError("config.yaml: density_quantile должен быть в [0, 1)")
+        elif key == "collision_floor_fraction":
+            if not 0 <= value < 1:
+                raise ContractError("config.yaml: collision_floor_fraction должен быть в [0, 1)")
         elif key in ("support_distance", "floor_distance"):
             if value < 0:
                 raise ContractError(f"config.yaml: {key} должен быть неотрицательным")
@@ -208,6 +212,16 @@ def validate_outputs(directory):
         for name, mesh in meshes.items():
             if report.get("outputs", {}).get(name + "_triangles") != len(mesh.triangles):
                 raise ValueError("число треугольников не совпадает с " + name)
+        build = report.get("collision_build")
+        if build is not None:
+            if build.get("triangles") != len(meshes["collision"].triangles):
+                raise ValueError("collision_build: число треугольников не совпадает с collision.ply")
+            if build.get("triangles") > build.get("target_triangles", 0):
+                raise ValueError("collision_build: превышен бюджет треугольников")
+            if build.get("mode") == "protected_floor" and (
+                    build.get("floor_triangles", 0) + build.get("other_triangles", 0)
+                    != build["triangles"]):
+                raise ValueError("collision_build: сумма компонент не совпадает с collision.ply")
     except (ValueError, AttributeError, TypeError) as exc:
         raise ContractError(f"report.json: {exc}") from exc
     return {"status": "passed", "files": ["visual.ply", "collision.ply", "scene.usd", "report.json"]}

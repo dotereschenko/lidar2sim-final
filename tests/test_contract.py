@@ -130,6 +130,18 @@ def test_report_with_wrong_triangle_count_is_rejected(outputs):
         validate_outputs(outputs)
 
 
+def test_report_with_wrong_collision_component_count_is_rejected(outputs):
+    path = outputs / "report.json"
+    report = json.loads(path.read_text())
+    report["collision_build"] = {"mode": "protected_floor", "target_triangles": 20,
+                                 "triangles": 12, "floor_fraction": .4, "boundary_weight": 1.,
+                                 "floor_triangles": 5, "other_triangles": 6,
+                                 "floor_faces_upward": True}
+    path.write_text(json.dumps(report))
+    with pytest.raises(ContractError, match="collision_build"):
+        validate_outputs(outputs)
+
+
 def test_failed_cli_replaces_previous_success_report(inputs, tmp_path):
     directory = tmp_path / "output"
     directory.mkdir()

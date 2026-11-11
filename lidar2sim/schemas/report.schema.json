@@ -15,6 +15,22 @@
       "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/hash"}, "points": {"type": "integer", "minimum": 4}}
     },
     "params": {"type": "object"},
+    "collision_build": {
+      "type": "object", "required": ["mode", "target_triangles", "triangles"],
+      "properties": {
+        "mode": {"enum": ["global", "protected_floor"]},
+        "target_triangles": {"type": "integer", "minimum": 1},
+        "triangles": {"type": "integer", "minimum": 1},
+        "floor_fraction": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
+        "boundary_weight": {"type": "number", "exclusiveMinimum": 0},
+        "floor_triangles": {"type": "integer", "minimum": 1},
+        "other_triangles": {"type": "integer", "minimum": 0},
+        "floor_faces_upward": {"const": true}
+      },
+      "allOf": [{"if": {"properties": {"mode": {"const": "protected_floor"}}},
+                 "then": {"required": ["floor_fraction", "boundary_weight", "floor_triangles",
+                                       "other_triangles", "floor_faces_upward"]}}]
+    },
     "sources": {
       "type": "object",
       "required": ["cloud", "manifest", "trajectory", "config"],

@@ -77,17 +77,22 @@ def _floor_plane(points, normals, traj, p):
     return best
 
 
-def recover_floor(mesh, pcd, traj, p):
+def recover_floor(mesh, pcd, traj, p, *, return_components=False):
+    def finish(output, stats, rest=None, floor=None):
+        if return_components:
+            return output, stats, rest, floor
+        return output, stats
+
     points = np.asarray(pcd.points)
     normals = np.asarray(pcd.normals)
     model = _floor_plane(points, normals, traj, p)
     if model is None:
-        return mesh, {"status": "skipped", "reason": "not_enough_horizontal_floor_support"}
+        return finish(mesh, {"status": "skipped", "reason": "not_enough_horizontal_floor_support"})
     residual = points[:, 2] - points[:, :2] @ model[:2] - model[2]
     inliers = (np.abs(residual) <= p["floor_distance"]) & (np.abs(normals[:, 2]) >= .8)
     observed = points[inliers, :2]
     if len(observed) < p["floor_min_points"]:
-        return mesh, {"status": "skipped", "reason": "not_enough_plane_inliers"}
+        return finish(mesh, {"status": "skipped", "reason": "not_enough_plane_inliers"})
 
     # Одна вершина на занятую ячейку, в среднем положении её наблюдений.
     # Индексы относительно облака: сдвиг системы координат не меняет сетку.
@@ -97,11 +102,11 @@ def recover_floor(mesh, pcd, traj, p):
     xy = np.column_stack([np.bincount(inverse, weights=observed[:, i]) / counts
                           for i in range(2)])
     if len(xy) < 3:
-        return mesh, {"status": "skipped", "reason": "degenerate_floor_footprint"}
+        return finish(mesh, {"status": "skipped", "reason": "degenerate_floor_footprint"})
     try:
         triangulation = Delaunay(xy)
     except QhullError:
-        return mesh, {"status": "skipped", "reason": "degenerate_floor_footprint"}
+        return finish(mesh, {"status": "skipped", "reason": "degenerate_floor_footprint"})
     faces = triangulation.simplices.copy()
     triangles = xy[faces]
     edge_lengths = np.linalg.norm(triangles - np.roll(triangles, 1, axis=1), axis=2)
@@ -119,7 +124,7 @@ def recover_floor(mesh, pcd, traj, p):
         keep &= ~contradicted
     faces = faces[keep]
     if not len(faces):
-        return mesh, {"status": "skipped", "reason": "no_local_floor_triangles"}
+        return finish(mesh, {"status": "skipped", "reason": "no_local_floor_triangles"})
     floor_vertices = np.column_stack([xy, xy @ model[:2] + model[2]])
 
     # Delaunay даёт CCW в XY: односторонний коллайдер смотрит вверх.
@@ -140,10 +145,11 @@ def recover_floor(mesh, pcd, traj, p):
     replace = horizontal & near_plane & covered
     rest = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(vertices.copy()),
                                     o3d.utility.Vector3iVector(old_faces[~replace]))
-    result = clean(rest + floor)
+    output = clean(rest + floor)
     ft = np.asarray(floor.vertices)[np.asarray(floor.triangles)]
     area = np.linalg.norm(np.cross(ft[:, 1] - ft[:, 0], ft[:, 2] - ft[:, 0]), axis=1).sum() / 2
-    return result, {"status": "applied", "plane_z_ax_by_c": model.tolist(),
-                    "observed_points": int(inliers.sum()), "floor_triangles": len(floor.triangles),
-                    "floor_area_m2": round(float(area), 4), "replaced_triangles": int(replace.sum()),
-                    "triangles_rejected_by_lower_observations": blocked}
+    stats = {"status": "applied", "plane_z_ax_by_c": model.tolist(),
+             "observed_points": int(inliers.sum()), "floor_triangles": len(floor.triangles),
+             "floor_area_m2": round(float(area), 4), "replaced_triangles": int(replace.sum()),
+             "triangles_rejected_by_lower_observations": blocked}
+    return finish(output, stats, clean(rest), floor)
