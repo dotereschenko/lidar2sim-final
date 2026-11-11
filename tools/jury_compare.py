@@ -23,6 +23,9 @@ def row(run, manifest):
         for file in ['visual.ply','collision.ply','scene.usd']:
             if report['artifacts'][file]['sha256']!=sha(folder/file):raise ValueError('Changed output '+file)
         checks=report['checks'];geometry=checks['geometry']['details'];physics=checks['physics']['details']
+        if (geometry.get('dimension_measurer_sha256')!=manifest['dimension_measurer_sha256']
+                or geometry.get('evaluator_sha256')!=manifest['evaluator_sha256']):
+            raise ValueError('Evaluator version mismatch')
         refs=geometry['reference_provenance']['inputs_sha256'];dataset=manifest['datasets'][run['scene']]
         if any(refs[n]!=dataset[key] for n,key in [('A.ply','A_sha256'),('B.ply','B_sha256'),('gt_mesh.ply','GT_sha256')]):raise ValueError('Evaluation dataset mismatch')
         if physics['inputs']['scene_sha256']!=sha(folder/'scene.usd'):raise ValueError('Stale physics')
@@ -79,6 +82,8 @@ def compare(manifest):
         groups.append(group)
     for rank,group in enumerate(sorted((g for g in groups if g['eligible'] and g['variant']=='final'),key=lambda g:(g['score'],g['team'],g['variant'])),1):group['rank']=rank
     return {'schema_version':1,'profile_sha256':manifest['profile_sha256'],'required_repeats':repeats,
+            'dimension_measurer_sha256':manifest.get('dimension_measurer_sha256'),
+            'evaluator_sha256':manifest.get('evaluator_sha256'),
             'ranking':'Eligible only if every scene/repeat and 10M pass; ascending worst p95, worst dimension error, worst reconstruction time; lexical IDs break exact ties',
             'rows':rows,'groups':groups}
 

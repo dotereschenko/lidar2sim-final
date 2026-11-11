@@ -193,6 +193,11 @@ def merge_evaluations(directory, geometry=None, physics=None, profile=None, phys
                 if dims is None:
                     dimensions_measured = False
                 else:
+                    if rules['geometry']['precision_reference'] == 'b_cloud':
+                        from .dimensions import METHOD
+                        if (raw.get('dimension_measurer_sha256') != file_record(Path(__file__).with_name('dimensions.py'))['sha256']
+                                or dims.get('method') != METHOD):
+                            raise ContractError('dimension evaluator version mismatch; rerun qualified evaluator')
                     items = dims.get("items", [])
                     required = rules["dimensions"]["required_count"]
                     if (len(items) != required or len({x.get("id") for x in items}) != required

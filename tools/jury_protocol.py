@@ -39,6 +39,8 @@ def protocol(jury, batches, performance, repeats, out):
                            'acquisition_seeds': {n: json.loads((path/'scans/manifest.json').read_text())['scans'][n]['seed'] for n in ['A','B']}}
     manifest = {'required_repeats': repeats, 'datasets': datasets,
                 'profile_sha256': sha(ROOT/'configs/acceptance/lidar2sim-rules-v2.yaml'),
+                'dimension_measurer_sha256': sha(ROOT/'lidar2sim/dimensions.py'),
+                'evaluator_sha256': sha(ROOT/'tools/eval_scene.py'),
                 'config_sha256': {'reference/'+v: sha(ROOT/'configs'/c) for v,c in
                                   [('baseline','baseline.yaml'),('final','poc-high-detail.yaml')]},
                 'scoring_environment': environments[0],

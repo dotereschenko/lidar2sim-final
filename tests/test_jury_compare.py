@@ -27,7 +27,7 @@ def test_only_complete_fresh_runs_in_same_environment_rank(tmp_path):
                'dimensions':{'passed_count':10,'items':[{'absolute_error_m':.01}]*10}}
             for n in ['visual','collision']}
     checks={k:{'status':'passed'} for k in ['contract','geometry','dimensions','physics']}
-    checks['geometry']['details']={'meshes':meshes,'reference_provenance':{'inputs_sha256':{'A.ply':'a','B.ply':'b','gt_mesh.ply':'gt'}}}
+    checks['geometry']['details']={'dimension_measurer_sha256':'method','evaluator_sha256':'evaluator','meshes':meshes,'reference_provenance':{'inputs_sha256':{'A.ply':'a','B.ply':'b','gt_mesh.ply':'gt'}}}
     checks['physics']['details']={'inputs':{'scene_sha256':hashes['scene.usd']},'floor':[{'ok':True}]*10,'obstacles':[{'ok':True}]*10,'routes':[{'ok':True}]*5}
     report={'sources':{'config':{'sha256':config},'cloud':{'sha256':'a'}},'threshold_profile':{'source':{'sha256':profile}},
             'artifacts':{n:{'sha256':h} for n,h in hashes.items()},'checks':checks,'total_s':10,'code':{'source_sha256':'code'}}
@@ -35,7 +35,7 @@ def test_only_complete_fresh_runs_in_same_environment_rank(tmp_path):
     perf={'exit_code':0,'timed_out':False,'point_count':10000000,'input_sha256':'dense','wall_s':50,
           'peak_rss_bytes':1000,'config_sha256':config,'execution':{'image_id':'linux','cpus':4,'memory_gib':16}}
     performance=tmp_path/'performance.json';performance.write_text(json.dumps(perf))
-    manifest={'required_repeats':1,'profile_sha256':profile,'config_sha256':{'team/final':config},
+    manifest={'dimension_measurer_sha256':'method','evaluator_sha256':'evaluator','required_repeats':1,'profile_sha256':profile,'config_sha256':{'team/final':config},
               'datasets':{'A':{'A_sha256':'a','B_sha256':'b','GT_sha256':'gt'}},
               'performance':{'team/final':str(performance)},'performance_input_sha256':'dense',
               'scoring_environment':{'image_id':'linux','cpus':4,'memory_gib':16},
@@ -43,6 +43,9 @@ def test_only_complete_fresh_runs_in_same_environment_rank(tmp_path):
     result=compare(manifest)
     assert result['groups'][0]['rank']==1
     assert result['rows'][0]['wall_s']==12  # Ignore submitted total_s=10.
+    manifest['dimension_measurer_sha256']='changed-method'
+    assert not compare(manifest)['rows'][0]['valid']
+    manifest['dimension_measurer_sha256']='method'
     perf['execution']={'image_id':'other-machine'};performance.write_text(json.dumps(perf))
     assert compare(manifest)['groups'][0]['rank'] is None
     (folder/'collision.ply').write_text('tampered')

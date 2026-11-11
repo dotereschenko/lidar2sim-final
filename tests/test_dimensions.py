@@ -56,3 +56,29 @@ class DimensionTests(unittest.TestCase):
         result=measure_dimension(scene(mesh),self.definition(),.05)
         self.assertEqual(result['status'],'passed')
         self.assertAlmostEqual(result['measured_m'],4,places=5)
+
+
+def test_endpoint_boxes_measure_room_width_despite_unrelated_foreground_surface():
+    from lidar2sim.dimensions import measure_dimension
+    room=o3d.geometry.TriangleMesh.create_box(4,4,3)
+    definition=dimension(scene(room),{'id':'D01','origin_m':[2,2,1.5],'axis':[1,0,0]})
+    furniture=o3d.geometry.TriangleMesh.create_box(.1,1,2).translate([2.8,1.5,.2])
+    result=measure_dimension(scene(room+furniture),definition,.05)
+    assert result['passed']
+    assert abs(result['measured_m']-4)<1e-5
+    # Foreground geometry must not substitute for an absent endpoint surface.
+    vertices=np.asarray(room.vertices);faces=np.asarray(room.triangles)
+    room.remove_triangles_by_mask((vertices[faces][:,:,0] == 4).all(axis=1))
+    missing=measure_dimension(scene(room+furniture),definition,.05)
+    assert missing['status']=='error' and missing['measured_m'] is None
+
+
+def test_local_boxes_support_rotated_measurement_axis():
+    from lidar2sim.dimensions import measure_dimension
+    c,s=np.cos(.6),np.sin(.6)
+    rotation=np.array([[c,-s,0],[s,c,0],[0,0,1.]])
+    room=o3d.geometry.TriangleMesh.create_box(4,4,3).rotate(rotation,center=[2,2,1.5])
+    definition=dimension(scene(room),{'id':'D01','origin_m':[2,2,1.5],'axis':[c,s,0]})
+    furniture=o3d.geometry.TriangleMesh.create_box(.1,1,2).translate([2.8,1.5,.2]).rotate(rotation,center=[2,2,1.5])
+    result=measure_dimension(scene(room+furniture),definition,.05)
+    assert result['passed'] and abs(result['measured_m']-4)<1e-5

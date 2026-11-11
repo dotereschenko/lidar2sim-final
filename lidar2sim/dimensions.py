@@ -3,7 +3,7 @@ import numpy as np
 import open3d as o3d
 from .annotations import cloud_array, unit_vector
 
-METHOD = {'id':'local-ray-bundle-v2','probe_offset_m':.005,'probes_per_side':5,
+METHOD = {'id':'local-box-ray-bundle-v3','probe_offset_m':.005,'probes_per_side':5,
           'minimum_valid_probes':4,'maximum_surface_spread_m':.02}
 
 
@@ -21,6 +21,27 @@ def validate_dimensions(items, required_count):
             if (low>=high).any():raise ValueError('Invalid dimension search box bounds')
 
 
+def box_entry_rays(starts, direction, box):
+    """Move each probe to its box entry; intervening scene geometry is irrelevant."""
+    low, high = np.asarray(box['min_m']), np.asarray(box['max_m'])
+    near = np.full(starts.shape, -np.inf)
+    far = np.full(starts.shape, np.inf)
+    intersects = np.ones(len(starts), dtype=bool)
+    for i, component in enumerate(direction):
+        if abs(component) < 1e-12:
+            intersects &= (starts[:, i] >= low[i]) & (starts[:, i] <= high[i])
+        else:
+            a = (low[i]-starts[:, i])/component
+            b = (high[i]-starts[:, i])/component
+            near[:, i], far[:, i] = np.minimum(a, b), np.maximum(a, b)
+    entry = np.maximum(near.max(axis=1), 0.)
+    intersects &= far.min(axis=1) >= entry
+    # Start just outside the box so a surface exactly on its boundary is visible.
+    shift = np.maximum(entry-1e-4, 0.)
+    shifted = starts + shift[:, None]*direction
+    return shifted, shift, intersects
+
+
 def measure_dimension(scene, item, tolerance):
     validate_dimensions([item],1)
     if not np.isfinite(tolerance) or tolerance<=0:raise ValueError('Invalid dimension tolerance')
@@ -33,9 +54,10 @@ def measure_dimension(scene, item, tolerance):
             'status':'error','passed':False,'surface_points_m':[],'sides':[]}
     for sign,box in zip([-1,1],item['search_boxes']):
         starts=origin+offsets;direction=sign*axis
-        hits=scene.cast_rays(o3d.core.Tensor(np.column_stack([starts,np.tile(direction,(5,1))]).astype(np.float32)),nthreads=1)
-        distances=hits['t_hit'].numpy().astype(float)
-        finite=np.isfinite(distances)&(distances>.01)
+        local_starts, shift, intersects = box_entry_rays(starts, direction, box)
+        hits=scene.cast_rays(o3d.core.Tensor(np.column_stack([local_starts,np.tile(direction,(5,1))]).astype(np.float32)),nthreads=1)
+        distances=hits['t_hit'].numpy().astype(float)+shift
+        finite=np.isfinite(distances)&(distances>.01)&intersects
         # Missing rays remain invalid without inf*0 or NaN entering the report.
         points=starts+np.where(finite,distances,0)[:,None]*direction
         valid=finite & (points>=np.array(box['min_m'])-1e-6).all(1) & (points<=np.array(box['max_m'])+1e-6).all(1)

@@ -142,3 +142,26 @@ def test_unbound_physics_result_cannot_be_reused(report_output):
     path=report_output/'physics.json';path.write_text('{"passed":true,"summary":{"passed":true}}')
     with pytest.raises(ContractError,match='provenance'):
         merge_evaluations(report_output,physics=path)
+
+
+def test_release_dimensions_cannot_reuse_a_different_measurer(report_output):
+    from lidar2sim.acceptance import load_profile
+    from lidar2sim.dimensions import METHOD
+    root=Path(__file__).resolve().parents[1]
+    profile=root/'configs/acceptance/lidar2sim-rules-v2.yaml'
+    _,provenance=load_profile(profile)
+    raw={'evaluation_mode':'independent_b_common_region','acceptance_profile':provenance,
+         'dimension_measurer_sha256':'old-method','geometry_status':'passed','meshes':{}}
+    for name in ['visual','collision']:
+        raw['meshes'][name]={'sha256':hashlib.sha256((report_output/f'{name}.ply').read_bytes()).hexdigest(),
+            'precision_reference':'B_returns','precision_direction':'mesh_surface_to_B','completeness_reference':'B_returns',
+            'passed':{'precision':True,'median':True,'p95':True},
+            'dimensions':{'method':METHOD,'status':'passed','required_count':10,'passed_count':10,
+                          'items':[{'id':f'D{i}','passed':True,'status':'passed'} for i in range(10)]}}
+    path=report_output/'eval_scene.json';path.write_text(json.dumps(raw))
+    with pytest.raises(ContractError,match='dimension evaluator version'):
+        merge_evaluations(report_output,geometry=path,profile=profile)
+    raw['dimension_measurer_sha256']=hashlib.sha256((root/'lidar2sim/dimensions.py').read_bytes()).hexdigest()
+    path.write_text(json.dumps(raw))
+    report=merge_evaluations(report_output,geometry=path,profile=profile)
+    assert report['checks']['dimensions']['status']=='passed'
