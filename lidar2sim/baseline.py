@@ -56,11 +56,13 @@ def run(pcd, meta, traj, params=None):
             if p["support_distance"]:
                 mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
             if p["plane_distance"]:
-                from .planes import observed_vertical_planes, uncovered_patches
+                from .planes import observed_vertical_planes, uncovered_patches, orient_existing_faces
                 patches, refinement["planes"] = observed_vertical_planes(
                     pcd, p["plane_distance"], p["plane_max_edge"], trajectory=traj, voxel=p["voxel"])
                 if p["support_distance"]:
                     patches, refinement["planes"]["support_filter"] = trim_unsupported(patches, pcd, p["support_distance"])
+                if traj is not None and len(traj):
+                    mesh, refinement["planes"]["existing_orientation"] = orient_existing_faces(mesh, patches, p["plane_distance"])
                 patches, refinement["planes"]["existing_surface_filter"] = uncovered_patches(patches, mesh, 3 * p["plane_distance"])
                 mesh = clean(mesh + patches)
             if p["floor_distance"]:

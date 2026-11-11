@@ -71,3 +71,13 @@ nearest-pose orientation followed by the existing full-ray occlusion check again
 all A returns. This leaves Poisson normals unchanged. A generic two-sided wall
 test starts with both signs wrong on one side and requires opposite outward
 orientations. No test positions or ground truth enter this correction.
+
+Ray inspection of 764e928 shows that the surviving near face is part of the
+original Poisson surface and is still reversed; the correctly oriented patch is
+removed as overlapping. Align existing triangle winding to nearby observed
+patches before removing overlap. Require all three vertices and centre to lie
+within the fitting distance, and all patch normals to oppose the original normal
+by cosine >0.9. Only use this with a trajectory. Positions/topology and thresholds
+are unchanged. Unit test verifies exact unchanged vertices and triangle sets,
+corrected winding, and no change to a distinct farther surface. This remains an
+experimental physical correction until fresh Isaac results are available.

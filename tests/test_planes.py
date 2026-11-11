@@ -108,3 +108,20 @@ def test_patch_orientation_uses_visible_poses_across_thin_wall():
     front, back = np.argsort(centers)
     assert stats['planes'][front]['normal'][0] < -.99
     assert stats['planes'][back]['normal'][0] > .99
+
+
+def test_existing_backface_is_reoriented_without_moving_geometry():
+    from lidar2sim.planes import orient_existing_faces
+    patch, _ = observed_vertical_planes(cloud(wall()), .012, .3)
+    points = np.asarray(patch.vertices).copy()
+    faces = np.asarray(patch.triangles).copy()
+    wrong = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(points),
+                                     o3d.utility.Vector3iVector(faces[:, [0, 2, 1]]))
+    fixed, stats = orient_existing_faces(wrong, patch, .02)
+    assert stats['triangles_flipped'] == len(faces)
+    np.testing.assert_array_equal(fixed.vertices, points)
+    np.testing.assert_array_equal(fixed.triangles, faces)
+    distant = o3d.geometry.TriangleMesh(wrong).translate([.1, 0, 0])
+    unchanged, stats = orient_existing_faces(distant, patch, .02)
+    assert stats['triangles_flipped'] == 0
+    np.testing.assert_array_equal(unchanged.triangles, distant.triangles)

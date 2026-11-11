@@ -142,3 +142,24 @@ def uncovered_patches(patches, existing, clearance):
     result = clean(o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(vertices.copy()),
                                             o3d.utility.Vector3iVector(faces[keep])))
     return result, {"triangles_removed": int((~keep).sum()), "clearance_m": clearance}
+
+
+def orient_existing_faces(mesh, observed, distance):
+    """Align winding only where every probe agrees with a nearby observed patch."""
+    if not len(mesh.triangles) or not len(observed.triangles):
+        return mesh, {"triangles_flipped": 0}
+    vertices, faces = np.asarray(mesh.vertices), np.asarray(mesh.triangles).copy()
+    triangles = vertices[faces]
+    normal = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+    normal /= np.maximum(np.linalg.norm(normal, axis=1, keepdims=True), 1e-12)
+    probes = np.concatenate([triangles, triangles.mean(axis=1, keepdims=True)], axis=1)
+    scene = o3d.t.geometry.RaycastingScene()
+    scene.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(observed))
+    nearest = scene.compute_closest_points(o3d.core.Tensor(probes.astype(np.float32)), nthreads=1)
+    nearby = np.linalg.norm(probes - nearest['points'].numpy(), axis=2) <= distance
+    opposed = np.einsum('ijk,ik->ij', nearest['primitive_normals'].numpy(), normal) < -.9
+    flip = (nearby & opposed).all(axis=1)
+    faces[flip] = faces[flip][:, [0, 2, 1]]
+    result = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(vertices.copy()),
+                                      o3d.utility.Vector3iVector(faces))
+    return result, {"triangles_flipped": int(flip.sum()), "distance_m": distance}
