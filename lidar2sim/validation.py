@@ -40,8 +40,9 @@ def validate_params(params, defaults):
     if unknown:
         raise ContractError("config.yaml: неизвестные параметры: " + ", ".join(map(repr, unknown)))
     result = {**defaults, **params}
-    if type(result["repair_floor"]) is not bool:
-        raise ContractError("config.yaml: repair_floor must be boolean")
+    for key in ("repair_floor", "visibility_normals"):
+        if type(result[key]) is not bool:
+            raise ContractError(f"config.yaml: {key} must be boolean")
     for key in ("support_radius", "floor_support_radius"):
         value = result[key]
         if key == "support_radius" and value is None:

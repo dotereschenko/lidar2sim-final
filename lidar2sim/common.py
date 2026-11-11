@@ -55,7 +55,7 @@ def load_inputs(ply, manifest=None, trajectory=None):
     return pcd, meta, traj
 
 
-def preprocess(pcd, meta, traj, p):
+def preprocess(pcd, meta, traj, p, normal_diagnostics=None):
     """Обрезка, выбросы, воксель, нормали к ближайшей точке траектории."""
     if "bounds_min" in meta and "bounds_max" in meta:
         box = o3d.geometry.AxisAlignedBoundingBox(meta["bounds_min"], meta["bounds_max"])
@@ -68,6 +68,11 @@ def preprocess(pcd, meta, traj, p):
     pcd.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=p["normal_radius"],
                                                               max_nn=p["normal_max_nn"]))
     orient_normals(pcd, traj)
+    if p["visibility_normals"]:
+        from .normals import correct_occluded_normals
+        info = correct_occluded_normals(pcd, traj, p["voxel"])
+        if normal_diagnostics is not None:
+            normal_diagnostics.update(info)
     return pcd
 
 

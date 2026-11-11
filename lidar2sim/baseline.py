@@ -12,6 +12,7 @@ PARAMS = {
     "outlier_std": 2.0,
     "normal_radius": 0.10,
     "normal_max_nn": 30,
+    "visibility_normals": False,
     "poisson_depth": 9,
     "density_quantile": 0.03,
     "visual_triangles": 200_000,
@@ -34,8 +35,9 @@ PARAMS = {
 def run(pcd, meta, traj, params=None):
     p = validate_params({} if params is None else params, PARAMS)
     t = Timer()
+    normal_diagnostics = {}
     with t("preprocess"):
-        pcd = preprocess(pcd, meta, traj, p)
+        pcd = preprocess(pcd, meta, traj, p, normal_diagnostics)
     with t("poisson"):
         mesh = poisson(pcd, p["poisson_depth"], p["density_quantile"])
         mesh = clean(mesh.crop(pcd.get_axis_aligned_bounding_box()))
@@ -62,6 +64,8 @@ def run(pcd, meta, traj, params=None):
             p["collision_floor_fraction"], p["collision_boundary_weight"])
     report = {"solution": "supported_poisson" if refinement else "baseline", "params": p,
               "points_after_voxel": len(pcd.points), "timings_s": t.steps}
+    if normal_diagnostics:
+        report["normal_orientation"] = normal_diagnostics
     if refinement:
         report["refinement"] = refinement
     if filter_report is not None:
