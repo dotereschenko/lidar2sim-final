@@ -69,3 +69,14 @@ def test_grazing_nearest_alternative_does_not_hide_visible_pose():
     points, normals = np.asarray(pcd.points), np.asarray(pcd.normals)
     center = (points[:, 0] == 0) & (np.abs(points[:, 1:]) < .02).all(axis=1)
     assert (normals[center, 0] < -.99).all()
+
+
+def test_distant_occluder_prevents_unsupported_flip():
+    pcd = cloud([0., .1, -.7])
+    trajectory = np.array([[.4, 0, 0], [-1., 0, 0]])
+    orient_normals(pcd, trajectory)
+    before = np.asarray(pcd.normals).copy()
+    correct_occluded_normals(pcd, trajectory, .03)
+    points = np.asarray(pcd.points)
+    center = (points[:, 0] == 0) & (np.abs(points[:, 1:]) < .02).all(axis=1)
+    np.testing.assert_array_equal(np.asarray(pcd.normals)[center], before[center])
