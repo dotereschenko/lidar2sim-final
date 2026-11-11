@@ -66,6 +66,22 @@ CPU-конвейер проверяется на Ubuntu `x86_64`. Для физ�
 
 `tools/eval_scene.py` принимает несколько папок с результатами и выводит их рядом — удобно сравнивать свои версии.
 
+Для первой проверки Isaac без офисных данных используйте маленький
+[example_scene.usd](examples/example_scene.usd) (пол и ящик, без внешних ассетов):
+
+```bash
+<isaac-sim>/python.sh tools/isaac_scene_test.py \
+    --scene examples/example_scene.usd --config examples/test_config.json \
+    --out out/example-physics.json --cpu-threads 4
+```
+
+Сцену можно открыть в Isaac Sim через **File → Open**; единицы — метры, ось Z
+направлена вверх, `/World/Collision` является статическим коллайдером.
+Воспроизвести файл можно командой `.venv/bin/python tools/make_example_scene.py`.
+В Isaac Sim 6.2 на Spark контрольный прогон прошёл пол 2/2, препятствие 1/1 и
+свободный маршрут 1/1; результат сохранён в
+[benchmarks/example/validation.json](benchmarks/example/validation.json).
+
 Для версии с отсечением неподдержанной геометрии и локальным восстановлением пола
 используйте `configs/poc.yaml`:
 
