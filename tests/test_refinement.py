@@ -71,11 +71,12 @@ def test_floor_does_not_span_large_unobserved_gap_or_extend_beyond_observations(
     assert np.isneginf(heights[1:]).all()
 
 
-def test_observed_lower_level_is_not_covered_by_completed_floor():
+@pytest.mark.parametrize("max_edge", [.8, 2.0])
+def test_observed_lower_level_is_not_covered_by_completed_floor(max_edge):
     points = floor_points()
     hole = (points[:, 0] >= 1.2) & (points[:, 0] <= 1.8) & (points[:, 1] >= .7) & (points[:, 1] <= 1.3)
     points[hole, 2] = -.4
-    floor, stats = recover_floor(o3d.geometry.TriangleMesh(), cloud(points), None, floor_params())
+    floor, stats = recover_floor(o3d.geometry.TriangleMesh(), cloud(points), None, floor_params(floor_max_edge=max_edge))
     assert stats["triangles_rejected_by_lower_observations"] > 0
     assert np.isneginf(height_at(floor, [[1.5, 1.]])[0])
 

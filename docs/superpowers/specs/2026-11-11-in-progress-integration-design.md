@@ -26,3 +26,7 @@ Run the union of unittest and pytest suites, not just one test style. Test quali
 The v1 0.8 normal-alignment gate rejects an analytically correct 4 m span between oblique parallel surfaces. Replace that gate with existing spatial search-box and probe-stability correspondence; retain 5 mm transverse probes, >=4/5 valid probes including center, <=2 cm spread and <=5 cm length error. Version the method as local-ray-bundle-v2. Requalify GT, 10 cm distortion, missing and stepped surfaces, and the full H22 controls. Do not redefine reference lengths or widen boxes.
 
 PR PoC uses 20000 collision triangles (5000 floor). Trial config uses 60000 with the same 5000 floor allocation; only non-floor detail increases. Record actual dimensions, geometry and physics before choosing it.
+
+## Physical verification of the first candidate
+
+Clean f891596 candidate passes geometry/dimensions but Isaac reports floor 9/10, obstacles 10/10, routes 3/5. Ray probes confirm absent floor in both meshes near the failing office routes. Trial increases the global observed-floor Delaunay edge limit from 1 m to 2 m; no GT or test positions enter reconstruction. Both meshes still pass geometry and 10/10 dimensions; rerun physics before accepting it. Lower-surface contradiction regression covers the increased limit. The boundary floor failure is retained as evidence, not hidden by changing tests.

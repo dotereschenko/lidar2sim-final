@@ -3,7 +3,7 @@
 support_distance: 0.06
 floor_distance: 0.04
 floor_cell: 0.08
-floor_max_edge: 1.0
+floor_max_edge: 2.0
 floor_max_slope_deg: 10.0
 floor_min_points: 100
 floor_clearance: 0.4
