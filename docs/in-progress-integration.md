@@ -10,7 +10,7 @@
 .venv/bin/python tools/run_poc.py \
   --data data/scene_ab_candidate --reference-data data/scene_a \
   --scans data/scene_ab_candidate --annotations out/annotations-v1-observed \
-  --evaluation-mode b --config configs/poc.yaml --out out/poc-integrated
+  --evaluation-mode b --config configs/poc-detailed.yaml --out out/poc-integrated
 ```
 
 Для повторения только оценки добавить `--reuse`. Вход реконструкции A должен
@@ -34,7 +34,7 @@
 .venv/bin/python tools/run_poc.py \
   --data data/scene_ab_candidate --reference-data data/scene_a \
   --scans data/scene_ab_candidate --annotations out/annotations-v1-observed \
-  --evaluation-mode b --config configs/poc.yaml --out out/poc-integrated --reuse \
+  --evaluation-mode b --config configs/poc-detailed.yaml --out out/poc-integrated --reuse \
   --physics-runner tools/spark_physics_runner.py \
   --runner-arg=--settings --runner-arg=/path/to/operator-spark.json
 ```
