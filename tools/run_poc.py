@@ -47,6 +47,8 @@ def run_command(stage, command, timeout, log):
 def record_failure(out, stage, message):
     path = out / "report.json"
     if not path.is_file():
+        from lidar2sim.common import write_failure_report
+        write_failure_report(out, StageError(stage, message), 0)
         return
     report = json.loads(path.read_text())
     if report.get("status") != "generated":
@@ -84,6 +86,10 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=ROOT / "configs/poc.yaml")
     parser.add_argument("--reuse", action="store_true", help="evaluate existing PLY/USD without reconstruction")
+    parser.add_argument("--reference-data", type=Path, help="GT and physical test configuration, evaluator only")
+    parser.add_argument("--scans", type=Path, help="Pinned A/B scans, evaluator only")
+    parser.add_argument("--annotations", type=Path, help="Qualified H18 annotation package")
+    parser.add_argument("--evaluation-mode", choices=["diagnostic", "b", "gt"], default="diagnostic")
     parser.add_argument("--profile", type=Path, help="final threshold profile, when available")
     physics = parser.add_mutually_exclusive_group()
     physics.add_argument("--isaac-python", type=Path, help="Isaac python.sh in the current environment")
@@ -106,7 +112,10 @@ def main(argv=None):
     cloud = args.data / "A.ply"
     manifest = args.data / "manifest.json"
     trajectory = args.data / "trajectory_A.csv"
-    test_config = args.data / "test_config.json"
+    reference_data = args.reference_data or args.data
+    test_config = reference_data / "test_config.json"
+    from lidar2sim.acceptance import DEFAULT_PROFILE
+    selected_profile = args.profile or DEFAULT_PROFILE
     try:
         if not args.reuse:
             run_command("reconstruction", [sys.executable, "-m", "lidar2sim",
@@ -118,10 +127,21 @@ def main(argv=None):
         except (ContractError, OSError) as exc:
             raise StageError("contract", str(exc)) from exc
 
-        run_command("geometry", [sys.executable, str(ROOT / "tools/eval_scene.py"),
-                    str(args.data), str(out)], args.geometry_timeout, log)
+        geometry_command = [sys.executable, str(ROOT / "tools/eval_scene.py"),
+                            str(reference_data), str(out), "--profile", str(selected_profile)]
+        if args.evaluation_mode != "diagnostic":
+            if args.annotations is None or args.scans is None:
+                raise StageError("geometry", "Qualified evaluation requires --annotations and --scans")
+            from lidar2sim.reporting import file_record
+            expected_input = file_record(args.scans/"A.ply")["sha256"]
+            source_report = json.loads((out/"report.json").read_text())
+            if source_report["input"]["sha256"] != expected_input:
+                raise StageError("geometry", "Reconstructed input A differs from pinned evaluation A")
+            geometry_command += ["--mode", args.evaluation_mode, "--scans", str(args.scans),
+                                 "--annotations", str(args.annotations), "--dimensions"]
+        run_command("geometry", geometry_command, args.geometry_timeout, log)
         try:
-            merge_evaluations(out, out / "eval_scene.json", profile=args.profile)
+            merge_evaluations(out, out / "eval_scene.json", profile=selected_profile)
         except (ContractError, OSError) as exc:
             raise StageError("geometry", str(exc)) from exc
 
@@ -136,7 +156,7 @@ def main(argv=None):
             command = ([str(args.isaac_python), str(ROOT / "tools/isaac_scene_test.py")]
                        if args.isaac_python else [str(args.physics_runner), *args.runner_arg])
             command += ["--scene", str(out / "scene.usd"), "--config", str(test_config),
-                        "--out", str(physics_path), "--cpu-threads", str(args.cpu_threads)]
+                        "--out", str(physics_path), "--cpu-threads", str(args.cpu_threads), "--profile", str(selected_profile)]
             run_command("physics", command, args.physics_timeout, log)
         else:
             status = mark_physics_unavailable(out)
@@ -144,7 +164,7 @@ def main(argv=None):
             return 1
 
         try:
-            report = merge_evaluations(out, physics=physics_path)
+            report = merge_evaluations(out, physics=physics_path, profile=selected_profile, physics_config=test_config)
         except (ContractError, OSError) as exc:
             raise StageError("physics", str(exc)) from exc
         status = report["acceptance"]["status"]

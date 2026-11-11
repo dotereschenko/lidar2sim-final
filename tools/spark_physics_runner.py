@@ -14,6 +14,17 @@ import shlex
 import subprocess
 import sys
 import uuid
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def source_files(scene, config, profile):
+    return [(Path(scene), "scene.usd"), (Path(config), "test_config.json"),
+            (ROOT/"tools/isaac_scene_test.py", "tools/isaac_scene_test.py"),
+            (ROOT/"lidar2sim/acceptance.py", "lidar2sim/acceptance.py"),
+            (ROOT/"lidar2sim/__init__.py", "lidar2sim/__init__.py"),
+            (Path(profile), "profile.yaml"), (ROOT/"tools/isaac_slot.py", "isaac_slot.py")]
 
 
 def run(command, timeout):
@@ -32,6 +43,7 @@ def main():
     parser.add_argument("--scene", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--profile", type=Path, default=ROOT/"configs/acceptance/lidar2sim-rules-v1.yaml")
     parser.add_argument("--cpu-threads", type=int, default=4)
     args = parser.parse_args()
     settings = json.loads(args.settings.read_text())
@@ -50,14 +62,13 @@ def main():
     ssh = ["ssh", *ssh_options, "-p", str(port), settings["ssh_target"]]
     scp = ["scp", *ssh_options, "-P", str(port)]
     stage = f"{root}/{uuid.uuid4().hex}"
-    script = Path(__file__).with_name("isaac_scene_test.py")
-    sources = ((args.scene, "scene.usd"), (args.config, "test_config.json"),
-               (script, "isaac_scene_test.py"))
+    sources = source_files(args.scene,args.config,args.profile)
     for source, _ in sources:
         if not source.is_file():
             parser.error(f"missing file: {source}")
     timeout = int(settings.get("transfer_timeout_s", 180))
-    run([*ssh, "mkdir -p " + shlex.quote(stage)], timeout)
+    run([*ssh, "mkdir -p " + " ".join(shlex.quote(stage+suffix) for suffix in ("", "/tools", "/lidar2sim"))], timeout)
+    run([*ssh, "chmod 700 " + shlex.quote(stage)], timeout)
     print("Spark stage:", stage, flush=True)
     for source, name in sources:
         run([*scp, str(source), f"{settings['ssh_target']}:{stage}/{name}"], timeout)
@@ -72,16 +83,24 @@ def main():
     runtime = settings.get("docker_runtime", "nvidia")
     inner = ("set -euo pipefail; Xvfb :99 -screen 0 1280x720x24 -nolisten tcp "
              "> /work/xvfb.log 2>&1 & export DISPLAY=:99; "
-             f"/isaac-sim/python.sh /work/isaac_scene_test.py --scene /work/scene.usd "
+             f"/isaac-sim/python.sh /work/tools/isaac_scene_test.py --scene /work/scene.usd "
              f"--config /work/test_config.json --out /work/physics.json "
-             f"--cpu-threads {args.cpu_threads} > /work/physics.log 2>&1; "
+             f"--cpu-threads {args.cpu_threads} --profile /work/profile.yaml > /work/physics.log 2>&1; "
              "cat /work/physics.log")
-    docker = ["docker", "run", "--rm", "--runtime", runtime, "--network", "none",
+    container = "lidar2sim-"+stage.rsplit("/",1)[-1]
+    docker = ["docker", "run", "--name", container, "--rm", "--runtime", runtime, "--network", "none",
               "--cpus", str(cpus), "--memory", f"{memory_gib}g",
               "-e", "ACCEPT_EULA=Y", "-e", "OMNI_KIT_ALLOW_ROOT=1",
               "--entrypoint", "/bin/bash", "-v", f"{stage}:/work",
               image, "-lc", inner]
-    run([*ssh, shlex.join(docker)], int(settings.get("physics_timeout_s", 1800)))
+    job={"command":docker,"container_name":container,
+         "timeout_s":int(settings.get("physics_timeout_s",1800)),
+         "pause_known_sessions":settings.get("pause_known_sessions",[]),
+         "lock_path":settings.get("lock_path","/tmp/lidar2sim-isaac-slot.lock")}
+    with tempfile.TemporaryDirectory() as temp:
+        path=Path(temp)/"job.json";path.write_text(json.dumps(job))
+        run([*scp,str(path),f"{settings['ssh_target']}:{stage}/job.json"],timeout)
+    run([*ssh, "python3 "+shlex.quote(stage+"/isaac_slot.py")+" "+shlex.quote(stage+"/job.json")],job['timeout_s']+240)
     run([*scp, f"{settings['ssh_target']}:{stage}/physics.json", str(args.out)], timeout)
     result = json.loads(args.out.read_text())
     if type(result.get("passed")) is not bool:

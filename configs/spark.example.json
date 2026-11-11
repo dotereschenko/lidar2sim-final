@@ -7,5 +7,7 @@
   "cpus": 4,
   "memory_gib": 16,
   "transfer_timeout_s": 180,
-  "physics_timeout_s": 1800
+  "physics_timeout_s": 1800,
+  "lock_path": "/tmp/lidar2sim-isaac-slot.lock",
+  "pause_known_sessions": []
 }
