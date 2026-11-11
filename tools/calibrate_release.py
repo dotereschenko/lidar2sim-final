@@ -28,21 +28,24 @@ def docker_cpu(image, mounts, arguments, log, timeout=600):
     finally:subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=30)
 
 
-def run(jury,out,image,repeats=5,start_repeat=1):
+def run(jury,out,image,repeats=5,start_repeat=1,final_config=None):
     jury,out=Path(jury).resolve(),Path(out).resolve()
+    final_config=Path(final_config).resolve() if final_config else ROOT/'configs/poc-high-detail.yaml'
+    if not final_config.is_file():raise FileNotFoundError(final_config)
     if out.exists():raise FileExistsError(out)
     out.mkdir(parents=True,mode=0o700)
     pinned=subprocess.check_output(['docker','image','inspect',image,'--format','{{.Id}}'],text=True).strip()
     cases=[{'scene':scene,'variant':variant,'repeat':i,'folder':f'{scene}/{variant}/r{i}'}
            for i in range(start_repeat,start_repeat+repeats) for scene in ['scene_a','scene_c'] for variant in ['baseline','final']]
     (out/'cases.json').write_text(json.dumps(cases,indent=2))
-    (out/'environment.json').write_text(json.dumps({'image_id':pinned,'cpus':4,'memory_gib':16,'network':'none'},indent=2))
+    (out/'environment.json').write_text(json.dumps({'image_id':pinned,'cpus':4,'memory_gib':16,
+                                                    'network':'none','final_config':str(final_config)},indent=2))
     failures=[]
     def produce():
         try:
             for case in cases:
                 if (out/'.abort').exists():raise RuntimeError('Calibration aborted')
-                folder=out/case['folder'];config=ROOT/'configs'/('baseline.yaml' if case['variant']=='baseline' else 'poc-high-detail.yaml')
+                folder=out/case['folder'];config=ROOT/'configs/baseline.yaml' if case['variant']=='baseline' else final_config
                 record=reconstruct(jury/case['scene']/'scans',config,folder,pinned)
                 if record['exit_code'] or not record['required_outputs_present']:raise RuntimeError('CPU reconstruction failed: '+case['folder'])
                 mounts=[f'{jury}:/jury:ro',f'{folder}:/output:rw']
@@ -110,6 +113,6 @@ for case in cases:
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--jury',required=True);p.add_argument('--out',required=True);p.add_argument('--image',required=True);p.add_argument('--repeats',type=int,default=5);p.add_argument('--start-repeat',type=int,default=1);a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--jury',required=True);p.add_argument('--out',required=True);p.add_argument('--image',required=True);p.add_argument('--repeats',type=int,default=5);p.add_argument('--start-repeat',type=int,default=1);p.add_argument('--final-config');a=p.parse_args()
     if min(a.repeats,a.start_repeat)<1:p.error('positive repetitions required')
-    run(a.jury,a.out,a.image,a.repeats,a.start_repeat)
+    run(a.jury,a.out,a.image,a.repeats,a.start_repeat,a.final_config)

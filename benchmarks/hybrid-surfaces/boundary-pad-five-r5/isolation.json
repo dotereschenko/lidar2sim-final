@@ -1,0 +1,17 @@
+{
+  "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+  "input_inventory": [
+    "config.yaml",
+    "manifest.json",
+    "scene.ply",
+    "trajectory_A.csv"
+  ],
+  "image": "sha256:69df0342b54ccdbff0042e10331e46f5dd78ca7c08dd0e71f95d4b845a355eb4",
+  "cpu_limit": 4,
+  "memory_limit_gib": 16,
+  "timeout_s": 1800,
+  "timed_out": false,
+  "exit_code": 0,
+  "wall_s": 63.11,
+  "required_outputs_present": true
+}
