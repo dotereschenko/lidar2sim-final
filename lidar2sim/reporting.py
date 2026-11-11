@@ -144,15 +144,17 @@ def merge_evaluations(directory, geometry=None, physics=None, profile=None, phys
         if file_record(directory / name)["sha256"] != record["sha256"]:
             raise ContractError(f"{name}: артефакт изменился после генерации")
     started = time.perf_counter()
-    from .acceptance import load_profile, DEFAULT_PROFILE, validate_physics_config
+    from .acceptance import load_profile, DEFAULT_PROFILE, validate_physics_config, release_decision
     selected_profile = Path(profile) if profile is not None else Path(
         (report.get("threshold_profile", {}).get("source") or {}).get("path", DEFAULT_PROFILE))
     try:
         rules, provenance = load_profile(selected_profile)
     except ValueError as exc:
         raise ContractError(f"profile: {exc}") from exc
+    decision = release_decision(provenance)
     report["threshold_profile"] = {"status": "provided", "source": file_record(selected_profile),
-                                   "details": rules, "approval": "pending_H3"}
+                                   "details": rules, "approval": "approved" if decision else "pending_H3",
+                                   "decision": decision}
     for name in ("dimensions", "performance"):
         report["checks"].setdefault(name, {"status": "not_run", "reason": "Evidence not provided"})
     for kind in ("geometry", "physics"):
@@ -175,6 +177,12 @@ def merge_evaluations(directory, geometry=None, physics=None, profile=None, phys
             failures, dimension_failures = [], []
             dimensions_measured = True
             for name, mesh in raw["meshes"].items():
+                if rules['geometry']['precision_reference'] == 'b_cloud' and (
+                        raw.get('evaluation_mode') != 'independent_b_common_region'
+                        or mesh.get('precision_reference') != 'B_returns'
+                        or mesh.get('precision_direction') != 'mesh_surface_to_B'
+                        or mesh.get('completeness_reference') != 'B_returns'):
+                    raise ContractError('Release v2 requires independent B precision and completeness')
                 if mesh.get("sha256") != file_record(directory / f"{name}.ply")["sha256"]:
                     raise ContractError(f"geometry {name} mesh hash mismatch")
                 passed = mesh.get("passed", {})

@@ -1,11 +1,24 @@
 """Shared acceptance contract; thresholds live only in the YAML profile."""
 import hashlib
+import json
 import math
 from pathlib import Path
 
 import yaml
 
 DEFAULT_PROFILE = Path(__file__).resolve().parents[1] / 'configs/acceptance/lidar2sim-rules-v1.yaml'
+
+
+def release_decision(provenance):
+    """Approval is tied to exact adopted profile bytes, never just its name."""
+    path = DEFAULT_PROFILE.with_name('release-decision-v2.json')
+    if not path.is_file():
+        return None
+    decision = json.loads(path.read_text())
+    if (decision.get('status') == 'adopted' and decision.get('profile_sha256') == provenance['sha256']
+            and decision.get('profile_id') == provenance['profile_id']):
+        return decision
+    return None
 
 
 def _finite(value):
@@ -41,15 +54,15 @@ def load_profile(path=None):
     except (OSError, ValueError, yaml.YAMLError) as exc:
         raise ValueError(f'acceptance profile {path}: {exc}') from exc
     _fields(profile, {
-        'schema_version': lambda x: type(x) is int and x == 1,
-        'profile_id': lambda x: x == 'lidar2sim-rules-v1',
+        'schema_version': lambda x: type(x) is int and x in (1, 2),
+        'profile_id': lambda x: x in ('lidar2sim-rules-v1', 'lidar2sim-rules-v2'),
         'units': lambda x: x == 'm', 'up_axis': lambda x: x == 'Z',
         **{name: lambda x: isinstance(x, dict)
            for name in ('geometry', 'dimensions', 'physics', 'performance')},
     }, 'profile')
     _fields(profile['geometry'], {
         'meshes': lambda x: x == ['visual', 'collision'],
-        'precision_reference': lambda x: x == 'gt_mesh',
+        'precision_reference': lambda x: x == ('b_cloud' if profile['schema_version'] == 2 else 'gt_mesh'),
         'precision_distance_m': _positive,
         'precision_min_fraction': lambda x: _finite(x) and 0 <= x <= 1,
         'precision_comparison': lambda x: x == 'le',
@@ -70,6 +83,8 @@ def load_profile(path=None):
         'input_points': _count, 'reconstruction_wall_max_s': _positive,
     }, 'profile.performance')
     g, p = profile['geometry'], profile['physics']
+    if profile['profile_id'] != f"lidar2sim-rules-v{profile['schema_version']}":
+        raise ValueError('Profile identifier and schema version disagree')
     if g['completeness_median_max_m'] > g['completeness_p95_max_m']:
         raise ValueError('profile.geometry: median must not exceed p95')
     for group in ('floor', 'obstacles', 'routes'):

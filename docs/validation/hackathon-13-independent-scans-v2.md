@@ -1,5 +1,7 @@
 # H13: independent acquisition v2
 
+Update: adopted by the frozen release v2 in `configs/releases/scene-a-v2.json`; see [H3/H13 closure](release-contract-v2.md). Pending statements below describe the original acquisition checkpoint.
+
 The candidate replaces the derived B path with independently authored room/corridor waypoints, interpolated at at most 0.35 m, at height 1.65 m. Each scan casts its own rays with separate seeds. B is not a transformed A cloud. This is an independently planned acquisition, not a claim of statistical independence from the shared GT. Both paths pass surface clearance and segment intersection checks.
 
 Reproduce from the repository root in the locked environment (output directories must not exist):

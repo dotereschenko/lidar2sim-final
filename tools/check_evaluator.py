@@ -15,7 +15,7 @@ from tools.eval_scene import evaluate_common, load_common_reference, raycasting
 from tools.make_dense_scan import digest
 
 
-def run_regression(out):
+def run_regression(out, profile_path=None):
     out=Path(out)
     if out.exists():raise FileExistsError(out)
     out.mkdir(parents=True)
@@ -33,7 +33,7 @@ def run_regression(out):
     a=np.array(cloud);b=a+np.random.default_rng(22).normal(0,.001,a.shape)
     for name,points in [('A',a),('B',b)]:
         o3d.io.write_point_cloud(str(scans/f'{name}.ply'),o3d.geometry.PointCloud(o3d.utility.Vector3dVector(points)))
-    profile,_=load_profile();profile['geometry']['samples']=12000
+    profile,_=load_profile(profile_path);profile['geometry']['samples']=12000
     rules_path=out/'regression-profile.yaml';rules_path.write_text(yaml.safe_dump(profile))
     profile,provenance=load_profile(rules_path)
     o3d.utility.random.seed(22)
@@ -61,7 +61,7 @@ def run_regression(out):
         folder=out/name;folder.mkdir()
         for part in ('visual','collision'):o3d.io.write_triangle_mesh(str(folder/f'{part}.ply'),mesh)
     checks={};reports={}
-    for mode in ('gt','b'):
+    for mode in (('b',) if profile['geometry']['precision_reference']=='b_cloud' else ('gt','b')):
         ctx=load_common_reference(data,scans,package,mode,profile)
         def evaluate(name):return evaluate_common(out/name,gt_scene,ctx,profile,provenance,definitions)
         forward={name:evaluate(name) for name in cases}
@@ -94,5 +94,5 @@ def run_regression(out):
 
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('out');args=parser.parse_args()
-    sys.exit(0 if run_regression(args.out)['passed'] else 1)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('out');parser.add_argument('--profile');args=parser.parse_args()
+    sys.exit(0 if run_regression(args.out,args.profile)['passed'] else 1)

@@ -91,6 +91,7 @@ def main(argv=None):
     parser.add_argument("--annotations", type=Path, help="Qualified H18 annotation package")
     parser.add_argument("--evaluation-mode", choices=["diagnostic", "b", "gt"], default="diagnostic")
     parser.add_argument("--profile", type=Path, help="final threshold profile, when available")
+    parser.add_argument("--physics-config", type=Path, help="Scene tests for the selected release profile")
     physics = parser.add_mutually_exclusive_group()
     physics.add_argument("--isaac-python", type=Path, help="Isaac python.sh in the current environment")
     physics.add_argument("--physics-runner", type=Path, help="runner accepting --scene, --config, --out and --cpu-threads")
@@ -113,7 +114,7 @@ def main(argv=None):
     manifest = args.data / "manifest.json"
     trajectory = args.data / "trajectory_A.csv"
     reference_data = args.reference_data or args.data
-    test_config = reference_data / "test_config.json"
+    test_config = args.physics_config or reference_data / "test_config.json"
     from lidar2sim.acceptance import DEFAULT_PROFILE
     selected_profile = args.profile or DEFAULT_PROFILE
     try:

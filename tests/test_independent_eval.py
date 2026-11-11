@@ -126,3 +126,31 @@ class IndependentEvaluationTests(unittest.TestCase):
                 self.assertEqual(mesh['dimensions']['passed_count'],0)
                 self.assertEqual(len(mesh['dimensions']['items']),10)
                 self.assertTrue(all(x['status']=='error' for x in mesh['dimensions']['items']))
+
+    def test_v2_precision_uses_b_and_refuses_gt_substitution(self):
+        from tools.eval_scene import load_common_reference, evaluate_common, raycasting, read_mesh, main
+        with tempfile.TemporaryDirectory() as tmp:
+            data, scans, package, out = self.fixture(Path(tmp))
+            path = Path(__file__).resolve().parents[1]/'configs/acceptance/lidar2sim-rules-v2.yaml'
+            profile, provenance = load_profile(path)
+            profile['geometry']['samples'] = 2000
+            # Displace B while keeping it inside the common observation radius.
+            # A mesh at z=.15 is farther than .10 from GT but within .10 of B=.07.
+            b = o3d.io.read_point_cloud(str(scans/'B.ply')); b.translate([0,0,.06])
+            o3d.io.write_point_cloud(str(scans/'B.ply'), b)
+            meta = json.loads((package/'annotations.json').read_text())
+            meta['inputs_sha256']['B.ply'] = digest(scans/'B.ply')
+            (package/'annotations.json').write_text(json.dumps(meta))
+            mesh = read_mesh(data/'gt_mesh.ply').translate([0,0,.15])
+            for name in ['visual','collision']:o3d.io.write_triangle_mesh(str(out/f'{name}.ply'),mesh)
+            ctx = load_common_reference(data,scans,package,'b',profile)
+            report = evaluate_common(out,raycasting(read_mesh(data/'gt_mesh.ply')),ctx,profile,provenance)
+            self.assertEqual(ctx['provenance']['reference_weighting'],'uniform_B_returns')
+            for result in report['meshes'].values():
+                self.assertEqual(result['precision_reference'],'B_returns')
+                self.assertTrue(result['passed']['precision'])
+                self.assertFalse(result['passed']['median'])
+            with self.assertRaisesRegex(ValueError,'requires'):
+                load_common_reference(data,scans,package,'gt',profile)
+            with self.assertRaisesRegex(ValueError,'requires'):
+                main(data,out,profile=path)

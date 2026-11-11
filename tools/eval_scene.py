@@ -94,6 +94,9 @@ def load_common_reference(data, scans, annotations, mode, profile):
     data, scans, annotations = map(Path, (data, scans, annotations))
     if mode not in ('b', 'gt'):
         raise ValueError('Common evaluation mode must be b or gt')
+    use_b = profile['geometry']['precision_reference'] == 'b_cloud'
+    if use_b and mode != 'b':
+        raise ValueError('Release v2 requires independent B, not GT mode')
     metadata = json.loads((annotations/'annotations.json').read_text())
     if metadata.get('schema_version') != 1 or metadata.get('units') != 'm' or metadata.get('up_axis') != 'Z':
         raise ValueError('Invalid annotation schema or coordinates')
@@ -127,7 +130,18 @@ def load_common_reference(data, scans, annotations, mode, profile):
     indices = np.random.default_rng(profile['geometry']['seed']).choice(eligible,count,replace=False)
     reference = reference[indices].astype(np.float32)
     mapping = None
-    if mode == 'b':
+    if use_b:
+        from lidar2sim.annotations import observed_by_both
+        gt = raycasting(read_mesh(data/'gt_mesh.ply'))
+        projected = gt.compute_closest_points(o3d.core.Tensor(b.astype(np.float32)))['points'].numpy()
+        seen, _, _ = observed_by_both(projected, a, b, region['radius_m'], region['min_neighbors'])
+        eligible = int(seen.sum())
+        count = min(eligible, profile['geometry']['samples'])
+        if count < minimum:
+            raise ValueError('Insufficient independent B returns in common region')
+        indices = np.random.default_rng(profile['geometry']['seed']).choice(eligible, count, replace=False)
+        reference = b[seen][indices].astype(np.float32)
+    elif mode == 'b':
         distance, nearest = cKDTree(b).query(reference,workers=1)
         if not np.isfinite(distance).all() or (distance > region['radius_m']).any():
             raise ValueError('Saved common region lacks nearby B support')
@@ -142,7 +156,7 @@ def load_common_reference(data, scans, annotations, mode, profile):
                           'inputs_sha256':metadata['inputs_sha256'],
                           'annotation_status':metadata.get('status','unknown'),
                           'reference_type':'B_returns' if mode=='b' else 'GT_surface',
-                          'reference_weighting':'uniform_GT_area_anchors_nearest_B_return' if mode=='b' else 'uniform_surface_area',
+                          'reference_weighting':'uniform_B_returns' if use_b else 'uniform_GT_area_anchors_nearest_B_return' if mode=='b' else 'uniform_surface_area',
                           'B_anchor_mapping':mapping,
                           'eligible_reference_samples':eligible,'reference_samples':count,
                           'region_rule':region}}
@@ -153,6 +167,10 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
     from tools.make_dense_scan import digest
     out = Path(out)
     g, region = profile['geometry'], context['region']
+    use_b = g['precision_reference'] == 'b_cloud'
+    if use_b and context['mode'] != 'b':
+        raise ValueError('Release v2 requires independent B')
+    b_tree = cKDTree(context['b']) if use_b else None
     meshes = {}
     for name in g['meshes']:
         path = out/f'{name}.ply'
@@ -164,7 +182,8 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
         observed,_,_ = observed_by_both(projected,context['a'],context['b'],region['radius_m'],region['min_neighbors'])
         if int(observed.sum()) < context['minimum']:
             raise ValueError(f'{name}: insufficient common-region mesh samples')
-        precision = gt_scene.compute_distance(o3d.core.Tensor(points[observed].astype(np.float32))).numpy()
+        precision = (b_tree.query(points[observed], workers=1)[0] if use_b else
+                     gt_scene.compute_distance(o3d.core.Tensor(points[observed].astype(np.float32))).numpy())
         mesh_scene = raycasting(mesh)
         completeness = mesh_scene.compute_distance(o3d.core.Tensor(context['reference'])).numpy()
         if not np.isfinite(precision).all() or not np.isfinite(completeness).all():
@@ -176,7 +195,8 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
                   'median':raw['median_m']<=g['completeness_median_max_m'],
                   'p95':raw['p95_m']<=g['completeness_p95_max_m']}
         meshes[name] = {'raw_metrics':raw,'passed':checks,'sha256':digest(path),
-                        'precision_reference':'GT_triangles','precision_direction':'mesh_surface_to_GT',
+                        'precision_reference':'B_returns' if use_b else 'GT_triangles',
+                        'precision_direction':'mesh_surface_to_B' if use_b else 'mesh_surface_to_GT',
                         'precision_region_membership':'nearest_GT_surface_observed_by_both_A_B',
                         'completeness_reference':context['provenance']['reference_type'],
                         'completeness_direction':'reference_to_mesh_triangles',
@@ -198,6 +218,8 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
 
 def main(data, *outs, profile=None, mode="diagnostic", annotations=None, scans=None, dimensions=False):
     rules, provenance = load_profile(profile)
+    if rules['geometry']['precision_reference'] == 'b_cloud' and mode != 'b':
+        raise ValueError('Release v2 requires --mode b with pinned independent scans')
     if mode == 'diagnostic':
         if annotations is not None or scans is not None or dimensions:
             raise ValueError('--annotations/--scans/--dimensions require explicit --mode b or gt')
