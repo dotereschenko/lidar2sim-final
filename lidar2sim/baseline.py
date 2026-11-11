@@ -57,7 +57,8 @@ def run(pcd, meta, traj, params=None):
                 mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
             if p["plane_distance"]:
                 from .planes import observed_vertical_planes, uncovered_patches
-                patches, refinement["planes"] = observed_vertical_planes(pcd, p["plane_distance"], p["plane_max_edge"])
+                patches, refinement["planes"] = observed_vertical_planes(
+                    pcd, p["plane_distance"], p["plane_max_edge"], trajectory=traj, voxel=p["voxel"])
                 if p["support_distance"]:
                     patches, refinement["planes"]["support_filter"] = trim_unsupported(patches, pcd, p["support_distance"])
                 patches, refinement["planes"]["existing_surface_filter"] = uncovered_patches(patches, mesh, 3 * p["plane_distance"])

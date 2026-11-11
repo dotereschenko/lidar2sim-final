@@ -62,3 +62,12 @@ distances from the already supported mesh. Both existing mesh and patches retain
 the original A-support filter; floor recovery remains unchanged. A generic test
 keeps the missing opposite side and removes the duplicate existing side. Fresh
 physics is mandatory; successful geometry alone must not promote the candidate.
+
+Fresh C physics of 349a43f is24/25: the remaining approach hits a reconstructed
+near face whose winding points away from the approaching body. Ray diagnostics
+confirm the surface is present, unlike the old missing-surface defect. Orient
+only the fitted patches by voting over up to512 deterministic support samples:
+nearest-pose orientation followed by the existing full-ray occlusion check against
+all A returns. This leaves Poisson normals unchanged. A generic two-sided wall
+test starts with both signs wrong on one side and requires opposite outward
+orientations. No test positions or ground truth enter this correction.

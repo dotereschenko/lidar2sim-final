@@ -4,14 +4,15 @@ import open3d as o3d
 from scipy.spatial import cKDTree
 
 
-def correct_occluded_normals(pcd, trajectory, voxel):
+def correct_occluded_normals(pcd, trajectory, voxel, occluder_points=None):
     points = np.asarray(pcd.points)
     normals = np.asarray(pcd.normals).copy()
     info = {"method": "full-visibility-v4", "ambiguous": 0, "flipped": 0}
     if trajectory is None or len(trajectory) < 2:
         return info
     poses = np.asarray(trajectory)
-    pose_tree, surface_tree = cKDTree(poses), cKDTree(points)
+    pose_tree = cKDTree(poses)
+    surface_tree = cKDTree(points if occluder_points is None else occluder_points)
 
     def blocked(origins, views, ns):
         length = np.linalg.norm(views, axis=1)

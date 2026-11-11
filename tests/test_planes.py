@@ -93,3 +93,18 @@ def test_patch_fills_missing_side_without_overlaying_existing_surface():
     assert abs(hit(result, [[-1, 1.5, 1]], [1, 0, 0])[0] - 1.1) < 1e-5
     empty, _ = uncovered_patches(a, a, .036)
     assert len(empty.triangles) == 0
+
+
+def test_patch_orientation_uses_visible_poses_across_thin_wall():
+    y, z = np.meshgrid(np.arange(-.3, .301, .02), np.arange(-.3, .301, .02))
+    a = np.column_stack([np.zeros(y.size), y.ravel(), z.ravel()])
+    b = a + [0.1, 0, 0]
+    points = np.vstack([a, b])
+    # Both PCA normal signs initially face the closer pose across the first side.
+    mesh, stats = observed_vertical_planes(cloud(points), .012, .3,
+                                           trajectory=np.array([[.4, 0, 0], [-.6, 0, 0]]))
+    assert len(stats['planes']) == 2
+    centers = [-p['offset_m'] / p['normal'][0] for p in stats['planes']]
+    front, back = np.argsort(centers)
+    assert stats['planes'][front]['normal'][0] < -.99
+    assert stats['planes'][back]['normal'][0] > .99

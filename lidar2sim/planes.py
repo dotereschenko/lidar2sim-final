@@ -6,7 +6,8 @@ from scipy.spatial import Delaunay, QhullError
 from .common import clean
 
 
-def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes=24):
+def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes=24,
+                             trajectory=None, voxel=.03):
     points = np.asarray(pcd.points)
     normals = np.asarray(pcd.normals)
     patches = o3d.geometry.TriangleMesh()
@@ -63,6 +64,18 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         support = points[supported]
         if len(support) < min_points:
             continue
+        orientation = None
+        if trajectory is not None and len(trajectory):
+            from .common import orient_normals
+            from .normals import correct_occluded_normals
+            order = np.lexsort(support.T[::-1])
+            chosen = order[np.linspace(0, len(order)-1, min(512, len(order))).astype(int)]
+            probes = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(support[chosen]))
+            probes.normals = o3d.utility.Vector3dVector(np.tile(normal, (len(chosen), 1)))
+            orient_normals(probes, trajectory)
+            orientation = correct_occluded_normals(probes, trajectory, voxel, occluder_points=points)
+            if np.median(np.asarray(probes.normals) @ normal) < 0:
+                normal, offset = -normal, -offset
         u = np.array([-normal[1], normal[0], 0.])
         origin = support.mean(axis=0)
         origin -= (origin @ normal + offset) * normal
@@ -106,7 +119,8 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         patch = clean(patch.simplify_quadric_decimation(max(100, len(patch.triangles)//20), boundary_weight=100))
         patches += patch
         stats.append({"normal": normal.tolist(), "offset_m": float(offset),
-                      "support_points": len(support), "triangles": len(patch.triangles)})
+                      "support_points": len(support), "triangles": len(patch.triangles),
+                      "orientation": orientation})
     patches = clean(patches)
     return patches, {"planes": stats, "triangles": len(patches.triangles),
                      "distance_m": distance, "max_edge_m": max_edge,
