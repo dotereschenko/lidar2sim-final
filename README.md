@@ -122,6 +122,21 @@ CPU-конвейер проверяется на Ubuntu `x86_64`. Для физ�
 [рекомендаций NVIDIA по производительности](https://docs.isaacsim.omniverse.nvidia.com/6.2.0/reference_material/sim_performance_optimization_handbook.html#cpu-thread-count-optimizations).
 Скрипт выводит ход проверки по позициям пола, препятствиям и маршрутам.
 
+Для переданного HACKATHON-14 набора `scene_10M.ply` время полного процесса
+и пик RSS замеряются отдельно для каждой конфигурации. Скрипт сверяет SHA256
+облака с manifest, запускает обычный CLI и включает чтение, реконструкцию,
+экспорт PLY/USD и закрытие файлов в wall-clock:
+
+```bash
+.venv/bin/python tools/benchmark_10m.py --data path/to/scene_10m \
+    --config configs/baseline.yaml --out out/benchmark-baseline
+.venv/bin/python tools/benchmark_10m.py --data path/to/scene_10m \
+    --config configs/poc.yaml --out out/benchmark-poc
+```
+
+Каждая команда пишет `benchmark.json` и `reconstruction.log`. Замер
+геометрии и физики идёт отдельно от лимита 1800 секунд реконструкции.
+
 Как получить доступ к Isaac Sim на нашей машине, расскажем отдельно.
 
 ### Проверка файлового контракта
