@@ -1,0 +1,47 @@
+{
+  "kind": "full_reconstruction_10m",
+  "input_sha256": "eb41ac637917ccdbf0bbe8c26e0b0cc32a8fbaff4a9bb08ad36b565e4d8fb4ad",
+  "point_count": 10000000,
+  "config_sha256": "140faa0b48f991f4730d314ee8cee2b4634c27f0190d07e40205c58484e48624",
+  "command": [
+    "/Users/denisteresenko/Programming/parph-maniac/frontend/lidar2sim/.venv/bin/python",
+    "-m",
+    "lidar2sim",
+    "--input",
+    "data/scene_10m/scene_10M.ply",
+    "--manifest",
+    "data/scene_10m/manifest.json",
+    "--trajectory",
+    "data/scene_10m/trajectory.csv",
+    "--config",
+    "configs/poc-high-detail.yaml",
+    "--out",
+    "out/benchmark-high-detail-10m"
+  ],
+  "timeout_s": 1800,
+  "timed_out": false,
+  "exit_code": 0,
+  "wall_s": 109.46,
+  "peak_rss_bytes": 1897103360,
+  "under_1800_s": true,
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M1 Pro",
+    "cpu_count": 10,
+    "ram_bytes": 34359738368
+  },
+  "runtime": {
+    "python": "3.11.13",
+    "open3d": "0.20.0",
+    "numpy": "2.4.6"
+  },
+  "report_status": "generated",
+  "report_commit": "cd5c16732f137b26793df46a1ba7191ef571149f",
+  "report_dirty": true,
+  "output_hashes": {
+    "visual.ply": "2a463ad610a4d5f87a501b5b74607eca3a841eba3b6432461195388fd4fefad9",
+    "collision.ply": "31747b90b57d47a90a64d27784a59048d152927614929174536003bc8bc32d1a",
+    "scene.usd": "d4a61a449fd2bf7da97b44574d7b07ee96286547ed28385f6ba3466791c994bc"
+  }
+}
