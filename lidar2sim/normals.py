@@ -7,7 +7,7 @@ from scipy.spatial import cKDTree
 def correct_occluded_normals(pcd, trajectory, voxel):
     points = np.asarray(pcd.points)
     normals = np.asarray(pcd.normals).copy()
-    info = {"method": "local-visibility-v1", "ambiguous": 0, "flipped": 0}
+    info = {"method": "local-visibility-v2", "ambiguous": 0, "flipped": 0}
     if trajectory is None or len(trajectory) < 2:
         return info
     poses = np.asarray(trajectory)
@@ -34,9 +34,13 @@ def correct_occluded_normals(pcd, trajectory, voxel):
         distance, indices = pose_tree.query(ps, k=min(64, len(poses)))
         views = poses[indices] - ps[:, None, :]
         side = np.einsum("nkj,nj->nk", views, ns)
-        front = np.where(side > 0, distance, np.inf).argmin(axis=1)
-        back = np.where(side < 0, distance, np.inf).argmin(axis=1)
-        rows = np.flatnonzero(np.any(side > 0, axis=1) & np.any(side < 0, axis=1))
+        cosine = np.abs(side) / np.maximum(distance, 1e-12)
+        start = 3 * voxel / np.maximum(cosine, 1e-12)
+        usable = np.minimum(.5, distance - 3 * voxel) > start + 2 * voxel
+        front_side, back_side = (side > 0) & usable, (side < 0) & usable
+        front = np.where(front_side, distance, np.inf).argmin(axis=1)
+        back = np.where(back_side, distance, np.inf).argmin(axis=1)
+        rows = np.flatnonzero(np.any(front_side, axis=1) & np.any(back_side, axis=1))
         info["ambiguous"] += len(rows)
         if not len(rows):
             continue

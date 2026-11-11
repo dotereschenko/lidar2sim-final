@@ -59,3 +59,13 @@ def test_flag_defaults_off_and_rejects_non_boolean():
     assert validate_params({}, PARAMS)['visibility_normals'] is False
     with pytest.raises(ContractError, match='visibility_normals'):
         validate_params({'visibility_normals': 'true'}, PARAMS)
+
+
+def test_grazing_nearest_alternative_does_not_hide_visible_pose():
+    pcd = cloud([0., .1])
+    trajectory = np.array([[.4, 0, 0], [-.01, .5, 0], [-.7, 0, 0]])
+    orient_normals(pcd, trajectory)
+    correct_occluded_normals(pcd, trajectory, .03)
+    points, normals = np.asarray(pcd.points), np.asarray(pcd.normals)
+    center = (points[:, 0] == 0) & (np.abs(points[:, 1:]) < .02).all(axis=1)
+    assert (normals[center, 0] < -.99).all()
