@@ -56,7 +56,7 @@ def validate_params(params, defaults):
     for key in ("voxel", "outlier_std", "normal_radius", "density_quantile",
                 "support_distance", "floor_distance", "floor_cell", "floor_max_edge",
                 "floor_max_slope_deg", "floor_clearance", "collision_floor_fraction",
-                "collision_boundary_weight"):
+                "collision_boundary_weight", "plane_distance", "plane_max_edge"):
         value = result[key]
         if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value):
             raise ContractError(f"config.yaml: {key} должен быть конечным числом")
@@ -66,7 +66,7 @@ def validate_params(params, defaults):
         elif key == "collision_floor_fraction":
             if not 0 <= value < 1:
                 raise ContractError("config.yaml: collision_floor_fraction должен быть в [0, 1)")
-        elif key in ("support_distance", "floor_distance"):
+        elif key in ("support_distance", "floor_distance", "plane_distance"):
             if value < 0:
                 raise ContractError(f"config.yaml: {key} должен быть неотрицательным")
         elif key == "floor_max_slope_deg":

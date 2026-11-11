@@ -29,6 +29,8 @@ PARAMS = {
     "floor_clearance": 0.4,
     "collision_floor_fraction": 0.0,
     "collision_boundary_weight": 1.0,
+    "plane_distance": 0.0,
+    "plane_max_edge": 0.3,
 }
 
 
@@ -48,9 +50,13 @@ def run(pcd, meta, traj, params=None):
             mesh, filter_report = filter_supported(mesh, pcd, p["support_radius"])
     refinement = {}
     floor_components = (None, None)
-    if p["support_distance"] or p["floor_distance"]:
+    if p["support_distance"] or p["floor_distance"] or p["plane_distance"]:
         from .refinement import recover_floor, trim_unsupported
         with t("refinement"):
+            if p["plane_distance"]:
+                from .planes import observed_vertical_planes
+                patches, refinement["planes"] = observed_vertical_planes(pcd, p["plane_distance"], p["plane_max_edge"])
+                mesh = clean(mesh + patches)
             if p["support_distance"]:
                 mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
             if p["floor_distance"]:
