@@ -1,0 +1,47 @@
+import unittest
+import numpy as np
+import open3d as o3d
+from lidar2sim.annotations import dimension
+
+
+def scene(mesh):
+    s=o3d.t.geometry.RaycastingScene(nthreads=1)
+    s.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(mesh))
+    return s
+
+
+class DimensionTests(unittest.TestCase):
+    def definition(self,axis=[1,0,0]):
+        return dimension(scene(o3d.geometry.TriangleMesh.create_box(4,4,3)),
+                         {'id':'D01','label':'box','origin_m':[2,2,1.5],'axis':axis})
+
+    def test_actual_width_and_height_detect_ten_cm_distortion(self):
+        from lidar2sim.dimensions import measure_dimension
+        for axis,size in [([1,0,0],(4.1,4,3)),([0,0,1],(4,4,3.1))]:
+            d=self.definition(axis)
+            good=measure_dimension(scene(o3d.geometry.TriangleMesh.create_box(4,4,3)),d,.05)
+            self.assertEqual(good['status'],'passed')
+            self.assertLess(good['absolute_error_m'],1e-5)
+            bad=measure_dimension(scene(o3d.geometry.TriangleMesh.create_box(*size)),d,.05)
+            self.assertEqual(bad['status'],'failed')
+            self.assertAlmostEqual(bad['absolute_error_m'],.1,places=5)
+
+    def test_missing_and_ambiguous_surface_are_errors(self):
+        from lidar2sim.dimensions import measure_dimension
+        mesh=o3d.geometry.TriangleMesh.create_box(4,4,3).translate([20,0,0])
+        r=measure_dimension(scene(mesh),self.definition(),.05)
+        self.assertEqual(r['status'],'error');self.assertIsNone(r['measured_m'])
+        # A 10 cm step across the probe bundle admits two incompatible spans.
+        left=o3d.geometry.TriangleMesh.create_box(4,2,3)
+        right=o3d.geometry.TriangleMesh.create_box(4.1,2,3).translate([0,2,0])
+        r=measure_dimension(scene(left+right),self.definition(),.05)
+        self.assertEqual(r['status'],'error')
+        self.assertEqual(r['reason'],'ambiguous_surface_probe_spread')
+
+    def test_invalid_boxes_and_nonunit_axis_rejected(self):
+        from lidar2sim.dimensions import validate_dimensions
+        d=self.definition()
+        with self.assertRaises(ValueError):validate_dimensions([d],10)
+        with self.assertRaises(ValueError):validate_dimensions([{**d,'axis':[2,0,0]}],1)
+        d['search_boxes'][0]['min_m']=[float('nan'),0,0]
+        with self.assertRaises(ValueError):validate_dimensions([d],1)

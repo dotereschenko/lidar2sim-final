@@ -148,7 +148,7 @@ def load_common_reference(data, scans, annotations, mode, profile):
                           'region_rule':region}}
 
 
-def evaluate_common(out, gt_scene, context, profile, provenance):
+def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None):
     from lidar2sim.annotations import observed_by_both
     from tools.make_dense_scan import digest
     out = Path(out)
@@ -162,7 +162,8 @@ def evaluate_common(out, gt_scene, context, profile, provenance):
         if int(observed.sum()) < context['minimum']:
             raise ValueError(f'{name}: insufficient common-region mesh samples')
         precision = gt_scene.compute_distance(o3d.core.Tensor(points[observed].astype(np.float32))).numpy()
-        completeness = raycasting(mesh).compute_distance(o3d.core.Tensor(context['reference'])).numpy()
+        mesh_scene = raycasting(mesh)
+        completeness = mesh_scene.compute_distance(o3d.core.Tensor(context['reference'])).numpy()
         if not np.isfinite(precision).all() or not np.isfinite(completeness).all():
             raise ValueError('Nonfinite geometry distances')
         raw = {'precision_fraction':float((precision<=g['precision_distance_m']).mean()),
@@ -177,20 +178,25 @@ def evaluate_common(out, gt_scene, context, profile, provenance):
                         'completeness_direction':'reference_to_mesh_triangles',
                         'surface_samples':len(points),'common_surface_samples':int(observed.sum()),
                         'excluded_surface_fraction':float((~observed).mean())}
+        if dimensions is not None:
+            from lidar2sim.dimensions import measure_dimensions
+            meshes[name]['dimensions'] = measure_dimensions(mesh_scene,dimensions,profile['dimensions'])
     status = 'passed' if all(all(m['passed'].values()) for m in meshes.values()) else 'failed'
+    dimension_status = ('passed' if all(m['dimensions']['status']=='passed' for m in meshes.values()) else 'failed') if dimensions is not None else 'not_run'
     return {'evaluation_mode':'independent_b_common_region' if context['mode']=='b' else 'gt_common_region',
             'meshes':meshes,'acceptance_profile':provenance,'reference_provenance':context['provenance'],
-            'evaluator_sha256':digest(__file__),'geometry_status':status,
+            'evaluator_sha256':digest(__file__),'geometry_status':status,'dimensions_status':dimension_status,
+            'dimension_measurer_sha256':digest(Path(__file__).resolve().parents[1]/'lidar2sim/dimensions.py') if dimensions is not None else None,
             'coverage':{'visual_completeness':'measured','collision_completeness':'measured',
-                        'dimensions':'not_run','physics':'not_run','performance':'not_run'},
-            'poc_status':overall_status({'geometry':status,'remaining_groups':'not_run'})}
+                        'dimensions':'measured' if dimensions is not None else 'not_run','physics':'not_run','performance':'not_run'},
+            'poc_status':overall_status({'geometry':status,'dimensions':dimension_status,'remaining_groups':'not_run'})}
 
 
-def main(data, *outs, profile=None, mode="diagnostic", annotations=None, scans=None):
+def main(data, *outs, profile=None, mode="diagnostic", annotations=None, scans=None, dimensions=False):
     rules, provenance = load_profile(profile)
     if mode == 'diagnostic':
-        if annotations is not None or scans is not None:
-            raise ValueError('--annotations/--scans require explicit --mode b or gt')
+        if annotations is not None or scans is not None or dimensions:
+            raise ValueError('--annotations/--scans/--dimensions require explicit --mode b or gt')
         gt, ref, share = region(Path(data), rules)
         gt_scene = raycasting(gt)
         print(f'диагностика A/GT: видимая область {share * 100:.0f}% поверхности сцены')
@@ -198,9 +204,14 @@ def main(data, *outs, profile=None, mode="diagnostic", annotations=None, scans=N
     else:
         if annotations is None or scans is None:
             raise ValueError('--mode b/gt requires --annotations and --scans')
+        definitions = None
+        if dimensions:
+            from lidar2sim.dimensions import validate_dimensions
+            definitions = json.loads((Path(annotations)/'annotations.json').read_text())['dimensions']
+            validate_dimensions(definitions,rules['dimensions']['required_count'])
         context = load_common_reference(data,scans,annotations,mode,rules)
         gt_scene = raycasting(read_mesh(Path(data)/'gt_mesh.ply'))
-        rows = [(Path(out),evaluate_common(out,gt_scene,context,rules,provenance)) for out in outs]
+        rows = [(Path(out),evaluate_common(out,gt_scene,context,rules,provenance,definitions)) for out in outs]
     for out, result in rows:
         (out / 'eval_scene.json').write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
         if mode != 'diagnostic':
@@ -219,8 +230,9 @@ if __name__ == '__main__':
     ap.add_argument('--mode', choices=['diagnostic','b','gt'], default='diagnostic')
     ap.add_argument('--annotations')
     ap.add_argument('--scans')
+    ap.add_argument('--dimensions', action='store_true', help='Measure all annotated dimensions on both meshes')
     args = ap.parse_args()
     try:
-        main(args.data, *args.outs, profile=args.profile, mode=args.mode, annotations=args.annotations, scans=args.scans)
+        main(args.data, *args.outs, profile=args.profile, mode=args.mode, annotations=args.annotations, scans=args.scans, dimensions=args.dimensions)
     except (ValueError, OSError, KeyError, TypeError) as exc:
         ap.exit(1, f'evaluation error: {exc}\n')

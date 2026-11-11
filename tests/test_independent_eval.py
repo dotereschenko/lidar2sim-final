@@ -97,3 +97,29 @@ class IndependentEvaluationTests(unittest.TestCase):
             ctx=load_common_reference(data,scans,package,'b',profile)
             self.assertGreater(float(ctx['reference'][:,0].mean()),.45)
             self.assertLess(float(ctx['reference'][:,0].mean()),.55)
+
+    def test_dimensions_cli_reports_missing_surfaces_without_false_success(self):
+        import subprocess
+        import sys
+        import yaml
+        from lidar2sim.annotations import dimension
+        from tools.eval_scene import raycasting
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);data,scans,package,out=self.fixture(root)
+            box=o3d.geometry.TriangleMesh.create_box(4,4,3)
+            spec=dimension(raycasting(box),{'id':'D01','origin_m':[2,2,1.5],'axis':[1,0,0]})
+            meta=json.loads((package/'annotations.json').read_text())
+            meta['dimensions']=[{**spec,'id':f'D{i:02d}'} for i in range(1,11)]
+            (package/'annotations.json').write_text(json.dumps(meta))
+            profile,_=load_profile();profile['geometry']['samples']=2000
+            config=root/'rules.yaml';config.write_text(yaml.safe_dump(profile))
+            tool=Path(__file__).resolve().parents[1]/'tools/eval_scene.py'
+            result=subprocess.run([sys.executable,str(tool),str(data),str(out),'--mode','b','--scans',str(scans),'--annotations',str(package),'--profile',str(config),'--dimensions'],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
+            r=json.loads((out/'eval_scene.json').read_text())
+            self.assertEqual(r['coverage']['dimensions'],'measured')
+            self.assertEqual(r['dimensions_status'],'failed')
+            for mesh in r['meshes'].values():
+                self.assertEqual(mesh['dimensions']['passed_count'],0)
+                self.assertEqual(len(mesh['dimensions']['items']),10)
+                self.assertTrue(all(x['status']=='error' for x in mesh['dimensions']['items']))
