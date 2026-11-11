@@ -1,0 +1,61 @@
+{
+  "kind": "poc_orchestration_validation",
+  "scene_a": {
+    "source_sha256": "4254eafc06d87d39f9bdc5e49591c5b7dcd2f9c202ee49a070f39b4753174ec0",
+    "artifact_sha256": {
+      "visual.ply": "44d2bbbfef6fb458a724dc63a64103f953cf453a020e4b8b48053b0dd90def9f",
+      "collision.ply": "fa6c7ee7050dc2685a0a9261bf680347dc13f2abd6ca24e7144830ff385ddf04",
+      "scene.usd": "18d27ba337b5c44ca273877ce79eb21ef1a801d56ca99959d0bce9f80d672f11"
+    },
+    "checks": {
+      "contract": "passed",
+      "geometry": "passed",
+      "physics": "passed"
+    },
+    "acceptance": {
+      "status": "incomplete",
+      "reason": "Профиль порогов не передан"
+    },
+    "single_command_mode": "from A with imported fresh Spark physics result"
+  },
+  "no_isaac": {
+    "checks": {
+      "contract": "passed",
+      "geometry": "passed",
+      "physics": "not_run"
+    },
+    "acceptance": {
+      "status": "incomplete"
+    },
+    "four_contract_files": true
+  },
+  "spark_runner": {
+    "stage": "/home/user05/lidar2sim-poc-runs/1dc1db91e33e41eba999a7da3777e385",
+    "image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+    "isolated_container_exited": true,
+    "network": "none",
+    "cpus": 4,
+    "memory_gib": 16,
+    "scene_usd_sha256": "18d27ba337b5c44ca273877ce79eb21ef1a801d56ca99959d0bce9f80d672f11",
+    "physics_sha256": "c3d5bf1765c47de660cf53b068897f597b5ae7445b258f85e07afb3da0f71e11",
+    "physics_identical_to_prior_manual_run": true,
+    "summary": {
+      "floor": "10/10",
+      "obstacles": "10/10",
+      "routes": "5/5",
+      "passed": true
+    },
+    "max_penetration_m": 0.0349
+  },
+  "failure_case": {
+    "invalid_config_cli_exit": 2,
+    "report_status": "failed"
+  },
+  "software": {
+    "tests_passed": 71
+  },
+  "limitations": [
+    "Final threshold profile is not yet provided, so overall acceptance is incomplete.",
+    "P08 geometry-evaluator qualification is still Todo in Plane; P13 remains In Progress until handoff."
+  ]
+}

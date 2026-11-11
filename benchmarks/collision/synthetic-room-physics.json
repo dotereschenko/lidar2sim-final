@@ -1,0 +1,191 @@
+{
+  "floor": [
+    {
+      "xy": [
+        0.6,
+        0.6
+      ],
+      "min_bottom_z": 0.0,
+      "ok": true
+    },
+    {
+      "xy": [
+        0.6,
+        3.4
+      ],
+      "min_bottom_z": 0.0003,
+      "ok": true
+    },
+    {
+      "xy": [
+        2.6,
+        0.6
+      ],
+      "min_bottom_z": 0.0,
+      "ok": true
+    },
+    {
+      "xy": [
+        3.3,
+        0.6
+      ],
+      "min_bottom_z": -0.0,
+      "ok": true
+    },
+    {
+      "xy": [
+        1.0,
+        2.6
+      ],
+      "min_bottom_z": 0.0002,
+      "ok": true
+    },
+    {
+      "xy": [
+        2.0,
+        2.2
+      ],
+      "min_bottom_z": 0.0002,
+      "ok": true
+    },
+    {
+      "xy": [
+        5.0,
+        1.0
+      ],
+      "min_bottom_z": -0.0,
+      "ok": true
+    },
+    {
+      "xy": [
+        5.2,
+        3.2
+      ],
+      "min_bottom_z": 0.0002,
+      "ok": true
+    },
+    {
+      "xy": [
+        3.2,
+        2.1
+      ],
+      "min_bottom_z": 0.0001,
+      "ok": true
+    },
+    {
+      "xy": [
+        3.05,
+        2.25
+      ],
+      "min_bottom_z": 0.0001,
+      "ok": true
+    }
+  ],
+  "obstacles": [
+    {
+      "name": "стена x=0",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "стена y=0",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "стена y=W",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "стена x=L",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "перегородка, слева",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "перегородка, справа",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "ящик, сбоку",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "ящик, спереди",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "колонна, по x",
+      "penetration_m": 0.0054,
+      "fell": false,
+      "ok": true
+    },
+    {
+      "name": "колонна, по y",
+      "penetration_m": 0.0,
+      "fell": false,
+      "ok": true
+    }
+  ],
+  "door": {
+    "end": [
+      4.426,
+      2.002,
+      0.15
+    ],
+    "track": [
+      [
+        3.738,
+        2.0,
+        0.15
+      ],
+      [
+        3.876,
+        2.001,
+        0.15
+      ],
+      [
+        4.013,
+        2.001,
+        0.15
+      ],
+      [
+        4.151,
+        2.001,
+        0.15
+      ],
+      [
+        4.288,
+        2.001,
+        0.15
+      ],
+      [
+        4.426,
+        2.002,
+        0.15
+      ]
+    ],
+    "ok": true
+  },
+  "summary": {
+    "floor_ok": "10/10",
+    "obstacles_ok": "10/10",
+    "door_ok": true
+  }
+}

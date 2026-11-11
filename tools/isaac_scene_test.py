@@ -25,7 +25,10 @@ ap.add_argument("--scene", required=True)
 ap.add_argument("--config", required=True)
 ap.add_argument("--out", required=True)
 ap.add_argument("--profile")
+ap.add_argument("--cpu-threads", type=int, default=4, help="число рабочих потоков Isaac/PhysX")
 args = ap.parse_args()
+if args.cpu_threads < 1:
+    ap.error("--cpu-threads должен быть ≥ 1")
 
 try:
     profile, provenance = load_profile(args.profile)
@@ -38,7 +41,9 @@ P = profile["physics"]
 
 from isaacsim import SimulationApp  # noqa: E402
 
-app = SimulationApp({"headless": True})
+app = SimulationApp({"headless": True, "disable_viewport_updates": True,
+                     "limit_cpu_threads": args.cpu_threads,
+                     "extra_args": [f"--/persistent/physics/numThreads={args.cpu_threads}"]})
 
 import numpy as np  # noqa: E402
 import omni.usd  # noqa: E402

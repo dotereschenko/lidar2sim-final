@@ -1,0 +1,63 @@
+{
+ "floor": [
+  {
+   "xy": [
+    0.5,
+    0.5
+   ],
+   "floor_z": 0.0,
+   "drop_m": 0.0,
+   "ok": true
+  },
+  {
+   "xy": [
+    2.5,
+    1.5
+   ],
+   "floor_z": 0.0,
+   "drop_m": 0.0,
+   "ok": true
+  }
+ ],
+ "obstacles": [
+  {
+   "name": "example box from left",
+   "start": [
+    0.5,
+    1.0
+   ],
+   "floor_z": 0.0,
+   "dir": [
+    1.0,
+    0.0
+   ],
+   "free_m": 0.7,
+   "travel_m": 0.7,
+   "penetration_m": 0.0,
+   "fell": false,
+   "ok": true
+  }
+ ],
+ "routes": [
+  {
+   "name": "clear floor alongside box",
+   "length_m": 2.2,
+   "status": "ok",
+   "reached_point": 2,
+   "of": 2,
+   "at": [
+    2.450000047683716,
+    0.3499999940395355
+   ],
+   "time_s": 14.8,
+   "ok": true
+  }
+ ],
+ "summary": {
+  "floor": "2/2",
+  "obstacles": "1/1",
+  "routes": "1/1",
+  "passed": true
+ },
+ "passed": true
+}

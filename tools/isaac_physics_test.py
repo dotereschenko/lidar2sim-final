@@ -18,11 +18,16 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--scene", required=True)
 ap.add_argument("--manifest", required=True)
 ap.add_argument("--out", required=True)
+ap.add_argument("--cpu-threads", type=int, default=4, help="число рабочих потоков Isaac/PhysX")
 args = ap.parse_args()
+if args.cpu_threads < 1:
+    ap.error("--cpu-threads должен быть ≥ 1")
 
 from isaacsim import SimulationApp  # noqa: E402
 
-app = SimulationApp({"headless": True})
+app = SimulationApp({"headless": True, "disable_viewport_updates": True,
+                     "limit_cpu_threads": args.cpu_threads,
+                     "extra_args": [f"--/persistent/physics/numThreads={args.cpu_threads}"]})
 
 import numpy as np  # noqa: E402
 import omni.usd  # noqa: E402
@@ -95,6 +100,7 @@ for x, y in floor_pts:
     run(30, track=low)
     res["floor"].append({"xy": [x, y], "min_bottom_z": round(float(lowest[0]), 4),
                          "ok": bool(lowest[0] > -0.05)})
+    print(f"floor {len(res['floor'])}/{len(floor_pts)}", flush=True)
 
 # препятствия: (старт, направление, функция проникновения по эталону)
 hx, hy = BODY[0] / 2, BODY[1] / 2
@@ -119,6 +125,7 @@ for name, (x, y), (dx, dy), pen in approaches:
     fell = bool(end[2] < BODY[2] / 2 - 0.05)
     res["obstacles"].append({"name": name, "penetration_m": round(float(worst), 4),
                              "fell": fell, "ok": bool(worst <= 0.02 and not fell)})
+    print(f"obstacles {len(res['obstacles'])}/{len(approaches)}", flush=True)
 
 # проём. Старт вне пятна пола без точек: иначе в простой версии корпус падает сквозь пол
 # и «проезжает» проём под полом. Скорость поддерживается каждый шаг, но трение её срезает,

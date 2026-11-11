@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "python": "3.12.13",
+  "dependency_lock": "uv.lock",
+  "cpu_validation": {
+    "os": "Ubuntu 25.04",
+    "architecture": "x86_64",
+    "system_packages": {
+      "libegl1": "1.7.0-1build1",
+      "libgl1": "1.7.0-1build1",
+      "libglib2.0-0t64": "2.84.1-1ubuntu0.2",
+      "libgomp1": "15-20250404-0ubuntu1"
+    }
+  },
+  "macos": {
+    "architecture": "arm64",
+    "system_packages": {"libusb": "1.0.30"}
+  },
+  "isaac": {
+    "image": "isaac-sim-xvfb:6.2",
+    "image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+    "architecture": "arm64",
+    "python_environment": "Use the image's python.sh, separately from the CPU uv environment."
+  }
+}

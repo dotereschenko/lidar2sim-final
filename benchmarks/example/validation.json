@@ -1,0 +1,31 @@
+{
+  "kind": "asset_free_example_scene_validation",
+  "asset": "examples/example_scene.usd",
+  "scene_sha256": "706faaea622ebf5c9a8c426435e3837994e9b41f1144bdc132ae7ac1f6cb973a",
+  "scene_bytes": 1491,
+  "test_config_sha256": "c31bc0c9d413b537e62e956bd2e7664f8658d1a8059de086c6d0b90213e0c720",
+  "static_checks": {
+    "meters_per_unit": 1,
+    "up_axis": "Z",
+    "default_prim": "/World",
+    "static_collider": true,
+    "external_layers": 0,
+    "triangles": 24
+  },
+  "physics": {
+    "runtime": "Isaac Sim 6.2 on Spark",
+    "image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+    "cpus": 4,
+    "memory_gib": 16,
+    "network": "none",
+    "stage": "/home/user05/lidar2sim-poc-runs/0bf1655936104b3ca568d1ea92afb41e",
+    "summary": {
+      "floor": "2/2",
+      "obstacles": "1/1",
+      "routes": "1/1",
+      "passed": true
+    },
+    "result_sha256": "479a29203d030ccb43ba511e3197dc19e9a4fcb21ea7f1999ac39c08e27d8aed",
+    "result": "benchmarks/example/physics.json"
+  }
+}

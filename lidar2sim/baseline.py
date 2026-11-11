@@ -4,8 +4,7 @@ Collision mesh — та же сетка, упрощённая сильнее. Э
 конвейер проходит от облака до сцены Isaac Sim, но качество сцены не оптимизировано.
 """
 from .common import Timer, clean, decimate, poisson, preprocess
-from .floor import repair_floor
-from .filtering import filter_supported
+from .validation import validate_params
 
 PARAMS = {
     "voxel": 0.03,
@@ -18,14 +17,22 @@ PARAMS = {
     "visual_triangles": 200_000,
     "collision_triangles": 20_000,
     "repair_floor": False,
-    "floor_cell": 0.10,
     "floor_support_radius": 0.25,
     "support_radius": None,
+    "support_distance": 0.0,
+    "floor_distance": 0.0,
+    "floor_cell": 0.08,
+    "floor_max_edge": 1.0,
+    "floor_max_slope_deg": 10.0,
+    "floor_min_points": 100,
+    "floor_clearance": 0.4,
+    "collision_floor_fraction": 0.0,
+    "collision_boundary_weight": 1.0,
 }
 
 
 def run(pcd, meta, traj, params=None):
-    p = {**PARAMS, **(params or {})}
+    p = validate_params({} if params is None else params, PARAMS)
     t = Timer()
     with t("preprocess"):
         pcd = preprocess(pcd, meta, traj, p)
@@ -34,23 +41,38 @@ def run(pcd, meta, traj, params=None):
         mesh = clean(mesh.crop(pcd.get_axis_aligned_bounding_box()))
     filter_report = None
     if p["support_radius"] is not None:
+        from .filtering import filter_supported
         with t("support_filter"):
             mesh, filter_report = filter_supported(mesh, pcd, p["support_radius"])
+    refinement = {}
+    floor_components = (None, None)
+    if p["support_distance"] or p["floor_distance"]:
+        from .refinement import recover_floor, trim_unsupported
+        with t("refinement"):
+            if p["support_distance"]:
+                mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
+            if p["floor_distance"]:
+                mesh, refinement["floor"], *floor_components = recover_floor(
+                    mesh, pcd, traj, p, return_components=True)
     with t("decimate"):
         visual = decimate(mesh, p["visual_triangles"])
-        collision = decimate(mesh, p["collision_triangles"])
-    floor_report = {}
-    if p["repair_floor"]:
-        # Заплатки после decimation: упрощение не должно снова открывать дыры.
-        with t("repair_floor"):
-            visual, floor_report["visual"] = repair_floor(
-                visual, pcd, p["floor_cell"], p["floor_support_radius"])
-            collision, floor_report["collision"] = repair_floor(
-                collision, pcd, p["floor_cell"], p["floor_support_radius"])
-    report = {"solution": "baseline", "params": p, "points_after_voxel": len(pcd.points),
-              "timings_s": t.steps}
-    if p["repair_floor"]:
-        report.update(solution="baseline_floor", floor=floor_report)
+        from .collision import build_collision
+        collision, collision_info = build_collision(
+            mesh, *floor_components, p["collision_triangles"],
+            p["collision_floor_fraction"], p["collision_boundary_weight"])
+    report = {"solution": "supported_poisson" if refinement else "baseline", "params": p,
+              "points_after_voxel": len(pcd.points), "timings_s": t.steps}
+    if refinement:
+        report["refinement"] = refinement
     if filter_report is not None:
-        report.update(solution=report["solution"] + "_filtered", support_filter=filter_report)
+        report["support_filter"] = filter_report
+    if p["repair_floor"]:
+        from .floor import repair_floor
+        floor_report = {}
+        with t("repair_floor"):
+            visual, floor_report["visual"] = repair_floor(visual, pcd, p["floor_cell"], p["floor_support_radius"])
+            collision, floor_report["collision"] = repair_floor(collision, pcd, p["floor_cell"], p["floor_support_radius"])
+        report.update(solution="baseline_floor_filtered" if filter_report is not None else "baseline_floor", floor=floor_report)
+        collision_info["triangles"] = len(collision.triangles)
+    report["collision_build"] = collision_info
     return visual, collision, report
