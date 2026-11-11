@@ -1,0 +1,143 @@
+{
+  "qualified": false,
+  "latest_code_a1c8f6b": "generic tests passed, full-scene validation pending; local heavy runs stopped due disk pressure",
+  "rows": [
+    {
+      "experiment": 1,
+      "scene": "A",
+      "status": "generated",
+      "total_local_s": 71.710419,
+      "physics": "not_run",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": false,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0,
+        "plane_distance": 0.02,
+        "plane_max_edge": 0.3
+      },
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "e9f63156013e7624200a2d85daaacd8b0a3131af0d6f29cc1eb418f7a0540ac7",
+        "collision": "774fdea5f7bdd58b6a4ff8501d0cd357c1da976fcc075c142e8002a764a48fe8"
+      },
+      "usd_sha256": "d768949ab4991374e394bf1d2a40bb6162745660940dbf918e5697b95749f8ed"
+    },
+    {
+      "experiment": 1,
+      "scene": "C",
+      "status": "failed",
+      "total_local_s": 88.629,
+      "physics": "not_run",
+      "failure": "local disk exhausted during USD export"
+    },
+    {
+      "experiment": 2,
+      "scene": "A",
+      "status": "generated",
+      "total_local_s": 69.853603,
+      "physics": "not_run",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": false,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0,
+        "plane_distance": 0.02,
+        "plane_max_edge": 0.3
+      },
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "5be9cadb884226be558f025f7f908d1330f0ea40c33c4cec96e9ea97fbdd74eb",
+        "collision": "b0a4fc170f39a2e076c65a071a5d005322bb6df8a66d63e1613141cd7ffad1dc"
+      },
+      "usd_sha256": "ae66cfcf227050980721946960c278a76defa0432750785b092024c5710aecec"
+    },
+    {
+      "experiment": 2,
+      "scene": "C",
+      "status": "generated",
+      "total_local_s": 80.183714,
+      "physics": "not_run",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": false,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0,
+        "plane_distance": 0.02,
+        "plane_max_edge": 0.3
+      },
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "64fc032bc4a4e64e4d140ed3bdef546f29dc9ec84b7771fd3b6e90c94da74e34",
+        "collision": "34583e69522b349027a21e01b83e5d784483b0432353f3c2f78f05b6fc8b69e0"
+      },
+      "usd_sha256": "2cc6dc3cb0070cf7fd46faf272d5d93cab48ed561451e8311855528be7a3f026"
+    }
+  ]
+}
