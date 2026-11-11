@@ -111,3 +111,20 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
     return patches, {"planes": stats, "triangles": len(patches.triangles),
                      "distance_m": distance, "max_edge_m": max_edge,
                      "boundary_padding_m": distance / 2, "consumed_surface_distance_m": 3 * distance, "seed": 0, "scope": "observed local vertical footprints only"}
+
+
+def uncovered_patches(patches, existing, clearance):
+    """Keep observed patches only away from already reconstructed surfaces."""
+    if not len(patches.triangles) or not len(existing.triangles):
+        return patches, {"triangles_removed": 0, "clearance_m": clearance}
+    scene = o3d.t.geometry.RaycastingScene()
+    scene.add_triangles(o3d.t.geometry.TriangleMesh.from_legacy(existing))
+    vertices, faces = np.asarray(patches.vertices), np.asarray(patches.triangles)
+    triangles = vertices[faces]
+    probes = np.concatenate([triangles, (triangles + np.roll(triangles, 1, axis=1)) / 2,
+                             triangles.mean(axis=1, keepdims=True)], axis=1)
+    distances = scene.compute_distance(o3d.core.Tensor(probes.astype(np.float32)), nthreads=1).numpy()
+    keep = distances.min(axis=1) > clearance
+    result = clean(o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(vertices.copy()),
+                                            o3d.utility.Vector3iVector(faces[keep])))
+    return result, {"triangles_removed": int((~keep).sum()), "clearance_m": clearance}

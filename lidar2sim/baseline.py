@@ -53,12 +53,15 @@ def run(pcd, meta, traj, params=None):
     if p["support_distance"] or p["floor_distance"] or p["plane_distance"]:
         from .refinement import recover_floor, trim_unsupported
         with t("refinement"):
-            if p["plane_distance"]:
-                from .planes import observed_vertical_planes
-                patches, refinement["planes"] = observed_vertical_planes(pcd, p["plane_distance"], p["plane_max_edge"])
-                mesh = clean(mesh + patches)
             if p["support_distance"]:
                 mesh, refinement["support"] = trim_unsupported(mesh, pcd, p["support_distance"])
+            if p["plane_distance"]:
+                from .planes import observed_vertical_planes, uncovered_patches
+                patches, refinement["planes"] = observed_vertical_planes(pcd, p["plane_distance"], p["plane_max_edge"])
+                if p["support_distance"]:
+                    patches, refinement["planes"]["support_filter"] = trim_unsupported(patches, pcd, p["support_distance"])
+                patches, refinement["planes"]["existing_surface_filter"] = uncovered_patches(patches, mesh, 3 * p["plane_distance"])
+                mesh = clean(mesh + patches)
             if p["floor_distance"]:
                 mesh, refinement["floor"], *floor_components = recover_floor(
                     mesh, pcd, traj, p, return_components=True)

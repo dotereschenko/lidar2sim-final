@@ -81,3 +81,15 @@ def test_noise_tails_do_not_become_parallel_duplicate_walls():
     mesh, stats = observed_vertical_planes(cloud(points), .012, .3)
     assert len(stats['planes']) == 1
     assert abs(hit(mesh, [[-1, 1.5, 1]], [1, 0, 0])[0] - 1) < .005
+
+
+def test_patch_fills_missing_side_without_overlaying_existing_surface():
+    from lidar2sim.planes import uncovered_patches
+    a, _ = observed_vertical_planes(cloud(wall()), .012, .3)
+    b, _ = observed_vertical_planes(cloud(wall(.1)), .012, .3)
+    result, stats = uncovered_patches(a + b, a, .036)
+    assert stats['triangles_removed'] > 0
+    assert len(result.triangles) == len(b.triangles)
+    assert abs(hit(result, [[-1, 1.5, 1]], [1, 0, 0])[0] - 1.1) < 1e-5
+    empty, _ = uncovered_patches(a, a, .036)
+    assert len(empty.triangles) == 0

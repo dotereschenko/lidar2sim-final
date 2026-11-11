@@ -51,3 +51,14 @@ using the original distance for actual patch support and the original edge bound
 The acceptance tolerance remains unchanged. Existing nearby-opposing-surface
 and doorway tests must still pass. Limitation: distinct surfaces closer than this
 consumed neighbourhood may not both receive patches; the Poisson input is intact.
+
+## Avoid overlapping collision surfaces
+
+349a43f passes A/C geometry and all dimensions, but fresh A physics regresses
+(floor8/10, obstacles2/10, routes4/5). Treat overlapping planar and Poisson
+surfaces as a candidate cause, not a proven explanation. Add patches only where
+all triangle vertices, edge midpoints and centre are farther than three fitting
+distances from the already supported mesh. Both existing mesh and patches retain
+the original A-support filter; floor recovery remains unchanged. A generic test
+keeps the missing opposite side and removes the duplicate existing side. Fresh
+physics is mandatory; successful geometry alone must not promote the candidate.
