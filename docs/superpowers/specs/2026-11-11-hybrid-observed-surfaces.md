@@ -24,3 +24,12 @@ from sparse/horizontal support; padding stays within declared uncertainty; inval
 configuration rejected. Release gates: A/C geometry and all dimensions, fresh
 25/25 physics on both, target 10M runtime, five-repeat qualification. Default
 `plane_distance=0` preserves existing release behavior until these gates pass.
+
+Measured revision: full boundary padding did not fix A D03 (still 5.71 cm).
+Its measured gap is too narrow, caused by a fitted patch offset, not insufficient
+boundary coverage. Revert padding to half the fitting distance. Fit vertical
+planes directly as seeded XY line RANSAC, then refine in XY. Do not fit a tilted
+3D plane and force it vertical afterward: that changes intersections beyond the
+initial residual bound. The generic two-surface, doorway and translation tests
+exercise the new fit. Candidate v1 C export failed from local disk exhaustion;
+it is an infrastructure failure, not a geometry/physics result.

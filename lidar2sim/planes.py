@@ -21,17 +21,28 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         if len(remaining) < min_points:
             break
         subset = remaining if len(remaining) <= 25000 else remaining[np.sort(rng.choice(len(remaining), 25000, replace=False))]
-        sample = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(points[subset]))
-        # Open3D documents seed + probability=1 for a fixed RANSAC iteration count.
-        o3d.utility.random.seed(0)
-        model, inliers = sample.segment_plane(distance, 3, 500, probability=1.0)
-        if len(inliers) < max(20, round(min_points * len(subset) / len(remaining))):
+        # Fit a vertical plane directly in XY. Flattening a tilted 3D fit after
+        # RANSAC can move its intersection beyond the fitting tolerance.
+        xy_sample = points[subset, :2]
+        pairs = rng.integers(0, len(subset), size=(500, 2))
+        delta = xy_sample[pairs[:, 1]] - xy_sample[pairs[:, 0]]
+        lengths = np.linalg.norm(delta, axis=1)
+        valid = lengths > max_edge
+        if not np.any(valid):
             break
-        normal = np.asarray(model[:3])
-        selected = np.abs(points[remaining] @ normal + model[3]) <= distance
-        if abs(normal[2]) > np.sin(np.deg2rad(10)):
-            remaining = remaining[~selected]
-            continue
+        directions = delta[valid] / lengths[valid, None]
+        candidates = np.column_stack([-directions[:, 1], directions[:, 0]])
+        offsets = -np.einsum("ij,ij->i", xy_sample[pairs[valid, 0]], candidates)
+        best_count, normal, offset = 0, None, None
+        for first in range(0, len(candidates), 32):
+            ns, ds = candidates[first:first + 32], offsets[first:first + 32]
+            counts = (np.abs(xy_sample @ ns.T + ds) <= distance).sum(axis=0)
+            winner = int(counts.argmax())
+            if counts[winner] > best_count:
+                best_count, normal, offset = counts[winner], np.r_[ns[winner], 0.], ds[winner]
+        if best_count < max(20, round(min_points * len(subset) / len(remaining))):
+            break
+        selected = np.abs(points[remaining] @ normal + offset) <= distance
         # Refine a strictly vertical plane, so its local coordinates are height
         # and distance along the wall. This mode deliberately leaves slopes alone.
         fitting = points[remaining[selected]]
@@ -71,12 +82,12 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         if not len(faces):
             continue
         # A noisy observed boundary is uncertain within the fitting distance.
-        # Expand only its local footprint by that distance, not a room box.
+        # Expand only its local footprint by half that distance, not a room box.
         edges = np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]])
         edges.sort(axis=1)
         edges, counts = np.unique(edges, axis=0, return_counts=True)
         boundary = xy[np.unique(edges[counts == 1])]
-        padding = distance
+        padding = distance / 2
         offsets = np.array([[padding, 0], [-padding, 0], [0, padding], [0, -padding]])
         xy = np.unique(np.vstack([xy, (boundary[:, None, :]+offsets).reshape(-1, 2)]), axis=0)
         try:
@@ -96,4 +107,4 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
     patches = clean(patches)
     return patches, {"planes": stats, "triangles": len(patches.triangles),
                      "distance_m": distance, "max_edge_m": max_edge,
-                     "boundary_padding_m": distance, "seed": 0, "scope": "observed local vertical footprints only"}
+                     "boundary_padding_m": distance / 2, "seed": 0, "scope": "observed local vertical footprints only"}

@@ -60,7 +60,7 @@ def test_boundary_uncertainty_stays_local_and_parameters_reject_invalid_values()
     mesh,_=observed_vertical_planes(cloud(wall()),.012,.3)
     vertices=np.asarray(mesh.vertices)
     assert np.max(np.abs(vertices[:,0]))<1e-6
-    assert vertices[:,1].min()>=-.01201 and vertices[:,1].max()<=3.01201
-    assert vertices[:,2].min()>=-.01201 and vertices[:,2].max()<=2.41201
+    assert vertices[:,1].min()>=-.00601 and vertices[:,1].max()<=3.00601
+    assert vertices[:,2].min()>=-.00601 and vertices[:,2].max()<=2.40601
     for params in [{'plane_distance':-.01},{'plane_distance':float('nan')},{'plane_max_edge':0}]:
         with pytest.raises(ContractError):validate_params(params,PARAMS)
