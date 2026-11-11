@@ -165,7 +165,8 @@ def test_legacy_reconstruction_options_remain_validated():
     legacy = validate_params({'repair_floor': True, 'support_radius': .08,
                               'floor_support_radius': .25, 'floor_cell': .10}, PARAMS)
     assert legacy['repair_floor'] is True
-    for invalid in [{'repair_floor': 'yes'}, {'support_radius': -1}, {'floor_support_radius': float('nan')},
+    for invalid in [{'repair_floor': 'yes'}, {'support_radius': -1},
+                    {'floor_support_radius': float('nan')},
                     {'repair_floor': True, 'floor_distance': .04}]:
         with pytest.raises(ContractError):
             validate_params(invalid, PARAMS)

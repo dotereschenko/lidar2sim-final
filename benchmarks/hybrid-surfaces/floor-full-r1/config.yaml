@@ -1,0 +1,20 @@
+# EXPERIMENTAL: retain the observed floor without decimation; not release-qualified.
+# Poisson с опорой на наблюдения и локальным восстановлением пола. Метры.
+# Высокая детализация для разреженных проёмов; больше времени и памяти.
+poisson_depth: 10
+support_distance: 0.06
+floor_distance: 0.04
+floor_cell: 0.08
+floor_max_edge: 2.0
+floor_max_slope_deg: 10.0
+floor_min_points: 100
+floor_clearance: 0.4
+collision_triangles: 200000
+collision_floor_fraction: 0.15
+collision_boundary_weight: 1.0
+
+# Local vertical patches from observed A support; no B/GT or scene template.
+plane_distance: 0.02
+plane_max_edge: 0.3
+
+density_quantile: 0.0

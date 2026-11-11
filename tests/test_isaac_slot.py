@@ -17,6 +17,16 @@ def test_slot_lock_rejects_concurrent_owner(tmp_path):
     with acquire_slot(lock):pass
 
 
+def test_shared_read_only_lock_rejects_concurrent_owner(tmp_path):
+    from tools.isaac_slot import acquire_slot
+    lock=tmp_path/'isaac.lock'
+    lock.touch()
+    lock.chmod(0o444)
+    with acquire_slot(lock):
+        with pytest.raises(RuntimeError, match='occupied'):
+            acquire_slot(lock)
+
+
 def test_only_explicit_known_sessions_may_be_paused():
     from tools.isaac_slot import classify_sessions
     rows=[{'Names':'isaac-stream','Image':'isaac-sim-xvfb:6.2'},

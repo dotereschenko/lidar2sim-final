@@ -22,6 +22,7 @@ PARAMS = {
     "support_radius": None,
     "support_distance": 0.0,
     "floor_distance": 0.0,
+    "floor_boundary_pad": 0.0,
     "floor_cell": 0.08,
     "floor_max_edge": 1.0,
     "floor_max_slope_deg": 10.0,

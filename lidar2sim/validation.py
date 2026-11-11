@@ -54,7 +54,7 @@ def validate_params(params, defaults):
     if result["support_radius"] is not None and result["support_distance"]:
         raise ContractError("config.yaml: select one support filtering method")
     for key in ("voxel", "outlier_std", "normal_radius", "density_quantile",
-                "support_distance", "floor_distance", "floor_cell", "floor_max_edge",
+                "support_distance", "floor_distance", "floor_boundary_pad", "floor_cell", "floor_max_edge",
                 "floor_max_slope_deg", "floor_clearance", "collision_floor_fraction",
                 "collision_boundary_weight", "plane_distance", "plane_max_edge"):
         value = result[key]
@@ -66,7 +66,7 @@ def validate_params(params, defaults):
         elif key == "collision_floor_fraction":
             if not 0 <= value < 1:
                 raise ContractError("config.yaml: collision_floor_fraction должен быть в [0, 1)")
-        elif key in ("support_distance", "floor_distance", "plane_distance"):
+        elif key in ("support_distance", "floor_distance", "floor_boundary_pad", "plane_distance"):
             if value < 0:
                 raise ContractError(f"config.yaml: {key} должен быть неотрицательным")
         elif key == "floor_max_slope_deg":
@@ -75,6 +75,9 @@ def validate_params(params, defaults):
         elif value <= 0:
             raise ContractError(f"config.yaml: {key} должен быть больше нуля")
         result[key] = float(value)
+    if result["floor_boundary_pad"]:
+        if not result["floor_distance"] or result["floor_boundary_pad"] > result["floor_support_radius"]:
+            raise ContractError("config.yaml: floor_boundary_pad requires floor_distance and must be within floor_support_radius")
     for key, minimum in (("outlier_neighbors", 2), ("normal_max_nn", 3),
                          ("poisson_depth", 2), ("visual_triangles", 1), ("collision_triangles", 1),
                          ("floor_min_points", 3)):

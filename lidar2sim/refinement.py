@@ -125,6 +125,43 @@ def recover_floor(mesh, pcd, traj, p, *, return_components=False):
     faces = faces[keep]
     if not len(faces):
         return finish(mesh, {"status": "skipped", "reason": "no_local_floor_triangles"})
+    padded_vertices = 0
+    if p["floor_boundary_pad"]:
+        edges = np.concatenate([faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]])
+        opposite = np.concatenate([faces[:, 2], faces[:, 0], faces[:, 1]])
+        _, inverse, counts = np.unique(np.sort(edges, axis=1), axis=0,
+                                       return_inverse=True, return_counts=True)
+        boundary = counts[inverse] == 1
+        edges, opposite = edges[boundary], opposite[boundary]
+        direction = xy[edges[:, 1]] - xy[edges[:, 0]]
+        outward = np.column_stack([direction[:, 1], -direction[:, 0]])
+        outward /= np.linalg.norm(outward, axis=1)[:, None]
+        midpoint = xy[edges].mean(axis=1)
+        outward[((xy[opposite] - midpoint) * outward).sum(axis=1) > 0] *= -1
+        shifted = xy[edges] + p["floor_boundary_pad"] * outward[:, None, :]
+        extended_xy = np.unique(np.vstack([xy, shifted.reshape(-1, 2)]), axis=0)
+        extended = Delaunay(extended_xy)
+        extended_faces = extended.simplices.copy()
+        extended_triangles = extended_xy[extended_faces]
+        lengths = np.linalg.norm(extended_triangles - np.roll(extended_triangles, 1, axis=1), axis=2)
+        probes = np.concatenate([extended_triangles, extended_triangles.mean(axis=1, keepdims=True)], axis=1)
+        support = cKDTree(observed).query(probes.reshape(-1, 2), workers=1)[0]
+        support = (support.reshape(-1, 4) <= p["floor_support_radius"]).all(axis=1)
+        old_simplex = triangulation.find_simplex(extended_triangles.mean(axis=1))
+        previously_covered = old_simplex >= 0
+        previously_covered[previously_covered] &= keep[old_simplex[previously_covered]]
+        extended_keep = (lengths.max(axis=1) <= p["floor_max_edge"]) & (support | previously_covered)
+        if len(lower) >= 3:
+            lower_count = cKDTree(lower).query_ball_point(probes.reshape(-1, 2),
+                                                          p["floor_cell"] * 1.5, return_length=True)
+            contradicted = (lower_count.reshape(-1, 4).max(axis=1) >= 3)
+            blocked += int((extended_keep & contradicted).sum())
+            extended_keep &= ~contradicted
+        padded_vertices = len(extended_xy) - len(xy)
+        xy, triangulation, keep = extended_xy, extended, extended_keep
+        faces = extended_faces[keep]
+        if not len(faces):
+            return finish(mesh, {"status": "skipped", "reason": "no_supported_boundary_floor"})
     floor_vertices = np.column_stack([xy, xy @ model[:2] + model[2]])
 
     # Delaunay даёт CCW в XY: односторонний коллайдер смотрит вверх.
@@ -136,13 +173,14 @@ def recover_floor(mesh, pcd, traj, p, *, return_components=False):
     old_triangles = vertices[old_faces]
     old_center = old_triangles.mean(axis=1)
     old_z = old_triangles[:, :, 2] - old_triangles[:, :, :2] @ model[:2] - model[2]
-    cross = np.cross(old_triangles[:, 1] - old_triangles[:, 0], old_triangles[:, 2] - old_triangles[:, 0])
-    horizontal = np.abs(cross[:, 2]) >= .8 * np.linalg.norm(cross, axis=1)
     near_plane = np.abs(old_z).max(axis=1) <= 2 * p["floor_distance"]
     simplex = triangulation.find_simplex(old_center[:, :2])
     covered = simplex >= 0
     covered[covered] &= keep[simplex[covered]]
-    replace = horizontal & near_plane & covered
+    # The completed floor also replaces low sloped Poisson shards. Leaving
+    # them stacked on its collider can create unstable contact at sparse spots.
+    # Taller walls and obstacles remain because all vertices must be near it.
+    replace = near_plane & covered
     rest = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(vertices.copy()),
                                     o3d.utility.Vector3iVector(old_faces[~replace]))
     output = clean(rest + floor)
@@ -151,5 +189,6 @@ def recover_floor(mesh, pcd, traj, p, *, return_components=False):
     stats = {"status": "applied", "plane_z_ax_by_c": model.tolist(),
              "observed_points": int(inliers.sum()), "floor_triangles": len(floor.triangles),
              "floor_area_m2": round(float(area), 4), "replaced_triangles": int(replace.sum()),
-             "triangles_rejected_by_lower_observations": blocked}
+             "triangles_rejected_by_lower_observations": blocked,
+             "boundary_pad_m": p["floor_boundary_pad"], "boundary_vertices_added": padded_vertices}
     return finish(output, stats, clean(rest), floor)

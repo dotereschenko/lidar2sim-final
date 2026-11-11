@@ -62,13 +62,41 @@ def test_floor_recovers_local_gap_with_upward_faces():
     assert (np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])[:, 2] > 0).all()
 
 
-def test_floor_does_not_span_large_unobserved_gap_or_extend_beyond_observations():
+@pytest.mark.parametrize("pad", [0, .2])
+def test_floor_does_not_span_large_unobserved_gap_or_extend_beyond_observations(pad):
     points = floor_points()
     points = points[(points[:, 0] < .8) | (points[:, 0] > 2.2)]
-    floor, _ = recover_floor(o3d.geometry.TriangleMesh(), cloud(points), None, floor_params())
+    floor, _ = recover_floor(o3d.geometry.TriangleMesh(), cloud(points), None,
+                             floor_params(floor_boundary_pad=pad))
     heights = height_at(floor, [[.4, 1.], [1.5, 1.], [3.4, 1.]])
     assert abs(heights[0]) < 1e-6
     assert np.isneginf(heights[1:]).all()
+
+
+def test_floor_boundary_padding_stays_near_observations():
+    floor, stats = recover_floor(o3d.geometry.TriangleMesh(), cloud(floor_points()),
+                                 None, floor_params(floor_boundary_pad=.2))
+    heights = height_at(floor, [[3.1, 1.], [3.4, 1.]])
+    np.testing.assert_allclose(heights[0], 0, atol=1e-6)
+    assert np.isneginf(heights[1])
+    assert stats["boundary_vertices_added"] > 0
+
+
+def test_boundary_padding_does_not_cover_observed_lower_level():
+    points = floor_points()
+    hole = (points[:, 0] >= 1.2) & (points[:, 0] <= 1.8) & (points[:, 1] >= .7) & (points[:, 1] <= 1.3)
+    points[hole, 2] = -.4
+    floor, _ = recover_floor(o3d.geometry.TriangleMesh(), cloud(points), None,
+                             floor_params(floor_boundary_pad=.2, floor_max_edge=2.0))
+    assert np.isneginf(height_at(floor, [[1.5, 1.]])[0])
+
+
+@pytest.mark.parametrize("params", [{"floor_boundary_pad": -.01},
+                                   {"floor_boundary_pad": .2},
+                                   {"floor_distance": .04, "floor_boundary_pad": .3}])
+def test_boundary_padding_requires_supported_floor(params):
+    with pytest.raises(ContractError, match="config"):
+        validate_params(params, PARAMS)
 
 
 @pytest.mark.parametrize("max_edge", [.8, 2.0])
@@ -81,9 +109,11 @@ def test_observed_lower_level_is_not_covered_by_completed_floor(max_edge):
     assert np.isneginf(height_at(floor, [[1.5, 1.]])[0])
 
 
-def test_floor_recovery_preserves_vertical_obstacle():
+@pytest.mark.parametrize("pad", [0, .2])
+def test_floor_recovery_preserves_vertical_obstacle(pad):
     box = o3d.geometry.TriangleMesh.create_box(.4, .4, .6).translate([1.2, .8, 0])
-    result, _ = recover_floor(box, cloud(floor_points()), None, floor_params())
+    result, _ = recover_floor(box, cloud(floor_points()), None,
+                              floor_params(floor_boundary_pad=pad))
     assert abs(height_at(result, [[1.4, 1.]])[0] - .6) < 1e-6
     np.testing.assert_allclose(height_at(result, [[.5, .5]]), 0, atol=1e-6)
     scene = o3d.t.geometry.RaycastingScene()
@@ -128,6 +158,16 @@ def test_completed_floor_replaces_existing_floor_instead_of_stacking_on_it():
                                      o3d.utility.Vector3iVector([[0, 1, 2], [0, 2, 3]]))
     result, stats = recover_floor(mesh, cloud(floor_points()), None, floor_params())
     assert stats["replaced_triangles"] == 2
+    assert len(result.triangles) == stats["floor_triangles"]
+
+
+def test_completed_floor_replaces_low_sloped_shard():
+    mesh = o3d.geometry.TriangleMesh(
+        o3d.utility.Vector3dVector([[.5, .5, 0], [.55, .5, .05], [.5, .55, 0]]),
+        o3d.utility.Vector3iVector([[0, 1, 2]]),
+    )
+    result, stats = recover_floor(mesh, cloud(floor_points()), None, floor_params())
+    assert stats["replaced_triangles"] == 1
     assert len(result.triangles) == stats["floor_triangles"]
 
 

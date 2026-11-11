@@ -8,8 +8,15 @@ import subprocess
 
 
 def acquire_slot(path):
-    fd=os.open(path,os.O_CREAT|os.O_RDWR,0o666)
-    stream=os.fdopen(fd,'w')
+    try:
+        fd=os.open(path,os.O_CREAT|os.O_RDWR,0o666)
+        mode='w'
+    except PermissionError:
+        # A shared lock may belong to another operator. flock(2) can take an
+        # exclusive lock on a readable descriptor without modifying the file.
+        fd=os.open(path,os.O_RDONLY)
+        mode='r'
+    stream=os.fdopen(fd,mode)
     try:fcntl.flock(stream,fcntl.LOCK_EX|fcntl.LOCK_NB)
     except BlockingIOError:
         stream.close();raise RuntimeError('Isaac slot occupied by another job') from None
