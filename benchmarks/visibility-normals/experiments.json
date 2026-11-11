@@ -1,0 +1,557 @@
+{
+  "qualified": false,
+  "rows": [
+    {
+      "experiment": 1,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v1",
+        "ambiguous": 238949,
+        "flipped": 13509
+      },
+      "total_local_s": 69.74999,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "559d359bd84a36e4ad227fdd7e8bf11bebcf18bedf5990296b510ce2dee9e242",
+        "collision": "11ea346443b1af8efb670af27d9e76f155847db672dc0496e889c0980a5e5dd0"
+      },
+      "usd_sha256": "82b2aac0b22c6bcbce660ae7ce1438bd7612cc40b2f0e3eecd3cf91809345224",
+      "physics": {
+        "floor": "10/10",
+        "obstacles": "9/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "physics_sha256": "b24a435fab035d1b4fa4d516d0f7af8a8b0cfaeb5a3d7536affc476373703b50"
+    },
+    {
+      "experiment": 1,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v1",
+        "ambiguous": 138784,
+        "flipped": 13060
+      },
+      "total_local_s": 70.234979,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "feb52c7e3f651d63bc87252de8b5bfbb800ee1da18754feff6a523b1608b1428",
+        "collision": "05d45b67381b1f6f15d3f494fd7dff380fc1ce4819cf16ecb87366b459e2c44c"
+      },
+      "usd_sha256": "543cc6974e093a8e867ae67207d0d037bd01c6007ad7e55d2331ade81aab75ac",
+      "physics": {
+        "floor": "10/10",
+        "obstacles": "9/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "physics_sha256": "bb9b950c82c5a77f7d642d79ca460a0dcd9edf8aedf62f3f989e8f1182a40a77"
+    },
+    {
+      "experiment": 2,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.08,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v1",
+        "ambiguous": 245442,
+        "flipped": 12694
+      },
+      "total_local_s": 73.091513,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "e6e03c8a435cf0b575301a1e92a35b4f944ddcfd9b81cf9cc57557fdab1d3b0d",
+        "collision": "0694a22339821b04c2500463334d7af6cd7933e248fad69d6cb2f46cfb6a5735"
+      },
+      "usd_sha256": "6c0bd09f961be1854b850b09d519afe7ee2c1698612e4f2e1386de70ad3d8b66",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 2,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.08,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v1",
+        "ambiguous": 141274,
+        "flipped": 13157
+      },
+      "total_local_s": 71.954385,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "a38920166b4879d8b04180b5f1b9ce94d963b4033d8a2332755afe000d4669ed",
+        "collision": "c70b8d34d00bdcfd30e3a42f5bb17a5cb55bd85ff661d587f0a77216bd32b176"
+      },
+      "usd_sha256": "9a4efb979cae351ff2affcacc672f890fea5268b91709d5fb1a21be1db28a4dc",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 3,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v2",
+        "ambiguous": 227787,
+        "flipped": 28811
+      },
+      "total_local_s": 75.009554,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "e12d949d6bd81468f6e324ffbc538c0a62768536ffffa2a4616b4d6d56401b9e",
+        "collision": "39f6405c3d8a9f028f9fab9c7b667455ff3f40b09c28e24830a22b049cc39e97"
+      },
+      "usd_sha256": "9095b6cd3debd0dd549f070e971f85d3777adccafeb70aeed9597dbaf074e4be",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 3,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v2",
+        "ambiguous": 132806,
+        "flipped": 29939
+      },
+      "total_local_s": 75.293796,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "bb731b45d4602c26bbd0a57bc31eacc62e1c10a3f2f00b3c6cb0ff272ae02936",
+        "collision": "5a4cc45ed35b44e4371af2704e346ee88051e5a91b17cedbf251b013799ddba6"
+      },
+      "usd_sha256": "435381c63f7c906683d719aa1a463498483990e22a20efbd633e7331a5587a35",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 4,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.15,
+        "normal_max_nn": 60,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v2",
+        "ambiguous": 228101,
+        "flipped": 28703
+      },
+      "total_local_s": 74.357504,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 8,
+        "collision": 8
+      },
+      "mesh_sha256": {
+        "visual": "f4033f65dacdb5ea1a52384465b9650a63224f670555e79ed007c5a16a8746be",
+        "collision": "2bafd1290ee8d14f9dfa68dcf7b0d9bec38b31926773e45e5417a7da501f205f"
+      },
+      "usd_sha256": "32f81bc3fe70dde8bc1e88615f2163a4b7720670e8bffacf05dcafeed508cf41",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 4,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.15,
+        "normal_max_nn": 60,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v2",
+        "ambiguous": 131594,
+        "flipped": 29087
+      },
+      "total_local_s": 76.371118,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 9,
+        "collision": 9
+      },
+      "mesh_sha256": {
+        "visual": "d1b56581f52078e0938d7230fb1181ec768d50a2a1990562fd15a7ebcc21abd2",
+        "collision": "6c15bc20726e9eec176bc4d0f8e0bff2c826150b75a80ff40155fe859e5133a5"
+      },
+      "usd_sha256": "9bc755bc8699239b3e8c7d79ffce53cfc990ff46622302bf90cab6800153112f",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 5,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v3",
+        "ambiguous": 228162,
+        "flipped": 23524
+      },
+      "total_local_s": 75.45321,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "a02484106a8de314490f26217d05e7129e3ba931ad65b5f3d44b9d3fd4f04b43",
+        "collision": "769dd5e5ab0a47b46dd3bd5368805e5db7814e30124deb9a40cc4f957b7457aa"
+      },
+      "usd_sha256": "42e2550c9f6cac8095305699322b0e27a5360be286cee92d787508eb62e83d11",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 5,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "local-visibility-v3",
+        "ambiguous": 133066,
+        "flipped": 20325
+      },
+      "total_local_s": 76.966603,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "d81ec27b93b8a1bfea30cde532eac494e84e05faae4d8809ccfeb0a5c470a92f",
+        "collision": "2137bcf84f1312d9bd244905dcc09d873723fc639e42e8a10f1f62d3fd67913e"
+      },
+      "usd_sha256": "60a97562645088f8df5cf1e4279732ab4bf2bbe776c544cdf93ea9271d30e4e2",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 6,
+      "scene": "A",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "full-visibility-v4",
+        "ambiguous": 228162,
+        "flipped": 19131
+      },
+      "total_local_s": 77.014303,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "369bd13b52b1f03d298e606faaafe186de7ff8f62105a6ca05af2aa1066bdc85",
+        "collision": "a1668399b51a9ee55b10ffa04ec1f04833c1fbb54e6b774b41ae5511cd7f127d"
+      },
+      "usd_sha256": "ca0a7e3345209a55cc26b3eeae7cbe45712f85dd78e484ebff2120365364e199",
+      "physics": "not_run"
+    },
+    {
+      "experiment": 6,
+      "scene": "C",
+      "params": {
+        "voxel": 0.03,
+        "outlier_neighbors": 20,
+        "outlier_std": 2.0,
+        "normal_radius": 0.1,
+        "normal_max_nn": 30,
+        "visibility_normals": true,
+        "poisson_depth": 10,
+        "density_quantile": 0.0,
+        "visual_triangles": 200000,
+        "collision_triangles": 200000,
+        "repair_floor": false,
+        "floor_support_radius": 0.25,
+        "support_radius": null,
+        "support_distance": 0.06,
+        "floor_distance": 0.04,
+        "floor_cell": 0.08,
+        "floor_max_edge": 2.0,
+        "floor_max_slope_deg": 10.0,
+        "floor_min_points": 100,
+        "floor_clearance": 0.4,
+        "collision_floor_fraction": 0.025,
+        "collision_boundary_weight": 1.0
+      },
+      "normal_orientation": {
+        "method": "full-visibility-v4",
+        "ambiguous": 133066,
+        "flipped": 19985
+      },
+      "total_local_s": 77.788286,
+      "geometry": "passed",
+      "dimensions": {
+        "visual": 10,
+        "collision": 10
+      },
+      "mesh_sha256": {
+        "visual": "d94ac44eef72674b31ca411412d262a74ac4aa2c8112129bb45ac3623d1e76bb",
+        "collision": "df17048b7c8c26993ce2e9c132f7bda188ae1600ccf199192b72c1355a68f8fb"
+      },
+      "usd_sha256": "3dbcafb4e41c90aa701467c8700ab2046ca7753ae591e1c9a426a0372ab27374",
+      "physics": "not_run"
+    }
+  ]
+}

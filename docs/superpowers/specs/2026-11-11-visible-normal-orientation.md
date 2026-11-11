@@ -21,3 +21,9 @@ is strictly boolean and defaults off. Record corrected normal count in report.
 Then measure unchanged A/C geometry, dimensions and fresh physics. A regression
 or C obstacle failure keeps the method experimental. Release qualification still
 requires target-machine runtime and repeated real reconstruction/physics runs.
+
+Measured revisions: local-only probes can accept a pose occluded farther away.
+The latest experiment retains the original nearest-facing ray, selects a usable
+opposite ray and checks that entire opposite ray before flipping. Generic tests
+cover grazing alternatives and a distant intervening sheet. None of these
+experiments is release-qualified; see docs/validation/visibility-normals.md.
