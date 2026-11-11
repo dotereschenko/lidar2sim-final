@@ -40,3 +40,14 @@ Normals select fitting seeds, but must not discard the lower part of a thin wall
 once its plane is established. A generic test verifies low-wall recovery with
 corrupted local normals. Heavy runs paused on user report of disk exhaustion;
 subsequent full-scene runs should execute on Spark with private evidence storage.
+
+## Suppress repeated extraction of noise tails
+
+Spark d307ce3 reconstructed a single wall as several parallel patches. The
+remaining C span error is 6.16 cm, caused by the inward copies of two boundaries.
+A generic single noisy wall reproduces duplicate extraction. After fitting,
+consume candidate seeds within three fitting distances of that surface; continue
+using the original distance for actual patch support and the original edge bound.
+The acceptance tolerance remains unchanged. Existing nearby-opposing-surface
+and doorway tests must still pass. Limitation: distinct surfaces closer than this
+consumed neighbourhood may not both receive patches; the Poisson input is intact.

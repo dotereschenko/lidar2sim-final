@@ -73,3 +73,11 @@ def test_observed_low_wall_is_kept_despite_unreliable_local_normals():
     mesh, stats = observed_vertical_planes(cloud(points, normals), .012, .3)
     assert stats['planes']
     assert abs(hit(mesh, [[-1, 1.5, .1]], [1, 0, 0])[0] - 1) < 1e-5
+
+
+def test_noise_tails_do_not_become_parallel_duplicate_walls():
+    points = wall()
+    points[:, 0] += np.random.default_rng(19).normal(0, .01, len(points))
+    mesh, stats = observed_vertical_planes(cloud(points), .012, .3)
+    assert len(stats['planes']) == 1
+    assert abs(hit(mesh, [[-1, 1.5, 1]], [1, 0, 0])[0] - 1) < .005

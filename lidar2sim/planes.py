@@ -56,8 +56,9 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         # Once fitted, use actual near-plane returns even where thin-wall or
         # floor adjacency makes their local PCA normal unreliable.
         supported = np.abs(points @ normal + offset) <= distance
-        selected = (np.abs(points[remaining] @ normal + offset) <= distance)
-        # Always consume the fitted segment; degenerate footprints must terminate.
+        selected = np.abs(points[remaining] @ normal + offset) <= 3 * distance
+        # Consume the noisy surface neighbourhood, not just its fitting core:
+        # otherwise residual noise tails become parallel duplicate walls.
         remaining = remaining[~selected]
         support = points[supported]
         if len(support) < min_points:
@@ -109,4 +110,4 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
     patches = clean(patches)
     return patches, {"planes": stats, "triangles": len(patches.triangles),
                      "distance_m": distance, "max_edge_m": max_edge,
-                     "boundary_padding_m": distance / 2, "seed": 0, "scope": "observed local vertical footprints only"}
+                     "boundary_padding_m": distance / 2, "consumed_surface_distance_m": 3 * distance, "seed": 0, "scope": "observed local vertical footprints only"}
