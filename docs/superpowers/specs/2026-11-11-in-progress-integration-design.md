@@ -20,3 +20,9 @@ No arbitrary YAML counts as an approved threshold profile. Geometry records must
 ## Validation
 
 Run the union of unittest and pytest suites, not just one test style. Test qualified-record adapters, missing/mismatched profile and mesh hashes, failed dimensions, stale physics reuse, unavailable runner, stage failure/timeout and --reuse. Rebuild a clean candidate and evaluate it using the exact branch version before any physics or demo. Publish immutable evidence and remaining gaps for each Plane task.
+
+## Measured integration findings: dimension method v2
+
+The v1 0.8 normal-alignment gate rejects an analytically correct 4 m span between oblique parallel surfaces. Replace that gate with existing spatial search-box and probe-stability correspondence; retain 5 mm transverse probes, >=4/5 valid probes including center, <=2 cm spread and <=5 cm length error. Version the method as local-ray-bundle-v2. Requalify GT, 10 cm distortion, missing and stepped surfaces, and the full H22 controls. Do not redefine reference lengths or widen boxes.
+
+PR PoC uses 20000 collision triangles (5000 floor). Trial config uses 60000 with the same 5000 floor allocation; only non-floor detail increases. Record actual dimensions, geometry and physics before choosing it.

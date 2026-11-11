@@ -45,3 +45,14 @@ class DimensionTests(unittest.TestCase):
         with self.assertRaises(ValueError):validate_dimensions([{**d,'axis':[2,0,0]}],1)
         d['search_boxes'][0]['min_m']=[float('nan'),0,0]
         with self.assertRaises(ValueError):validate_dimensions([d],1)
+
+    def test_oblique_surface_is_measurable_when_bundle_is_stable(self):
+        from lidar2sim.dimensions import measure_dimension
+        mesh=o3d.geometry.TriangleMesh.create_box(4,4,3)
+        vertices=np.asarray(mesh.vertices)
+        vertices[:,0]+=1.2*(vertices[:,2]-1.5)
+        # At z=1.5 both real intersections still define a 4 m span. Tilted
+        # normals alone must not turn an unambiguous measurement into missing data.
+        result=measure_dimension(scene(mesh),self.definition(),.05)
+        self.assertEqual(result['status'],'passed')
+        self.assertAlmostEqual(result['measured_m'],4,places=5)

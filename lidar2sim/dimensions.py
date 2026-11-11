@@ -3,8 +3,8 @@ import numpy as np
 import open3d as o3d
 from .annotations import cloud_array, unit_vector
 
-METHOD = {'id':'local-ray-bundle-v1','probe_offset_m':.005,'probes_per_side':5,
-          'minimum_valid_probes':4,'minimum_normal_alignment':.8,'maximum_surface_spread_m':.02}
+METHOD = {'id':'local-ray-bundle-v2','probe_offset_m':.005,'probes_per_side':5,
+          'minimum_valid_probes':4,'maximum_surface_spread_m':.02}
 
 
 def validate_dimensions(items, required_count):
@@ -39,12 +39,13 @@ def measure_dimension(scene, item, tolerance):
         # Missing rays remain invalid without inf*0 or NaN entering the report.
         points=starts+np.where(finite,distances,0)[:,None]*direction
         valid=finite & (points>=np.array(box['min_m'])-1e-6).all(1) & (points<=np.array(box['max_m'])+1e-6).all(1)
-        valid &= np.abs(hits['primitive_normals'].numpy() @ axis)>=METHOD['minimum_normal_alignment']
+        # Correspondence uses actual hits and bundle stability, not axis-aligned
+        # triangle normals: smooth/oblique reconstructed faces are valid surfaces.
         count=int(valid.sum())
         side={'valid_probes':count,'spread_m':None}
         result['sides'].append(side)
         if not valid[0] or count<METHOD['minimum_valid_probes']:
-            result['reason']='missing_or_unaligned_surface_in_search_box';return result
+            result['reason']='missing_surface_in_search_box';return result
         spread=float(np.ptp(points[valid]@axis));side['spread_m']=spread
         if spread>METHOD['maximum_surface_spread_m']:
             result['reason']='ambiguous_surface_probe_spread';return result

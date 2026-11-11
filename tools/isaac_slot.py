@@ -17,7 +17,7 @@ def acquire_slot(path):
 
 
 def classify_sessions(rows, allowed_pause):
-    active=[x['Names'] for x in rows if 'isaac' in x['Image'].lower() or x['Names'].startswith('lidar2sim-')]
+    active=[x['Names'] for x in rows if any(tag in x['Image'].lower() for tag in ('isaac-sim', 'isaac-lab', 'isaaclab')) or x['Names'].startswith('lidar2sim-')]
     return [n for n in active if n in allowed_pause],[n for n in active if n not in allowed_pause]
 
 

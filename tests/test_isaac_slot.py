@@ -21,7 +21,7 @@ def test_only_explicit_known_sessions_may_be_paused():
     from tools.isaac_slot import classify_sessions
     rows=[{'Names':'isaac-stream','Image':'isaac-sim-xvfb:6.2'},
           {'Names':'another-team','Image':'isaac-sim-xvfb:6.2'},
-          {'Names':'isaac-foxglove','Image':'foxglove:latest'}]
+          {'Names':'isaac-foxglove','Image':'isaac-foxglove:jazzy'}]
     pauses,blocked=classify_sessions(rows,['isaac-stream'])
     assert pauses==['isaac-stream']
     assert blocked==['another-team']

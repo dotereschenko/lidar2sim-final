@@ -154,7 +154,8 @@ def main(argv=None):
                 raise StageError("physics", str(exc)) from exc
         elif args.isaac_python or args.physics_runner:
             command = ([str(args.isaac_python), str(ROOT / "tools/isaac_scene_test.py")]
-                       if args.isaac_python else [str(args.physics_runner), *args.runner_arg])
+                       if args.isaac_python else ([sys.executable, str(args.physics_runner), *args.runner_arg]
+                                                 if args.physics_runner.suffix == ".py" else [str(args.physics_runner), *args.runner_arg]))
             command += ["--scene", str(out / "scene.usd"), "--config", str(test_config),
                         "--out", str(physics_path), "--cpu-threads", str(args.cpu_threads), "--profile", str(selected_profile)]
             run_command("physics", command, args.physics_timeout, log)
