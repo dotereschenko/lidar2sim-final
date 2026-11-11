@@ -28,5 +28,5 @@ Files: tools/spark_physics_runner.py, configs/spark.example.json, docs, benchmar
 - [x] Test staging of qualified evaluator dependencies and host-wide locking/conflict behavior.
 - [x] Obtain a managed shared-GPU slot, run exact candidate physics and record evidence; resolve route floor gaps. Current profile passes 9/10 floor, 10/10 obstacles, 4/5 routes; remaining failures documented.
 - [ ] Run pinned 10M benchmark on chosen machine; record full wall/RSS and quality separately.
-- [ ] Record final candidate demo, baseline/final comparison and hashes.
+- [x] Record final candidate demo, baseline/final comparison and hashes.
 - [ ] Finalize H3/H13 decision record from user/organizer choices; close only satisfied Plane tasks.

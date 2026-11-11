@@ -102,7 +102,29 @@ H17: выбрать зачётную машину и выполнить на н�
 H8: назначить оператора и расписание. H16: текущий профиль пройден,
 но один пограничный участок пола проваливается и обратный маршрут застревает.
 Профиль допускает 9/10 пола и 4/5 маршрутов; это не означает отсутствие дефектов.
-Окончательная приёмка зависит от H3. H29: завершить запись проверенного USD.
+Окончательная приёмка зависит от H3. H29: запись проверенного USD и сравнение готовы; общий статус приёмки incomplete показан явно.
 
 Финальный USD SHA256: `c5e0f3e9e16bd3cae3404e5107de09c4b400e8d370a0454660f78b3b3acfb3e9`.
 Физика PASS; общая приёмка incomplete из-за performance=not_run и pending_H3.
+
+## Сценарий демонстрации H29
+
+1. Открыть [сравнение](../img/integration/overview.svg): A → baseline collision → final visual → final collision. Это один вход и одна система координат.
+2. Показать [сцену в Isaac](../img/integration/overview.png); визуальный срез ниже 1,6 м не меняет collision.
+3. Воспроизвести [видео симуляции](../img/integration/simulation.mp4): 10 с, 720p, 24 fps, 240 кадров. [Последний кадр](../img/integration/simulation-0239.png).
+4. Открыть таблицу выше и `benchmarks/integration-2026-11-11/final/report.json`: geometry/dimensions/physics passed, общая приёмка incomplete. Видео — демонстрация движения, не замена 25 физических тестов.
+5. Показать `demo.json` и `recording.json`: USD SHA совпадает с проверенной физикой, collision_modified=false. Отдельный `recording-slot.json` подтверждает восстановление двух сессий.
+
+Для повторной записи в согласованном Isaac-слоте используется неизменённый
+`tools/isaac_record.py`:
+
+```bash
+/isaac-sim/python.sh tools/isaac_record.py --scene out/integration-floor-release/scene.usd \
+  --config data/scene_a/test_config.json --out out/new-recording
+ffmpeg -framerate 24 -i out/new-recording/frames/%04d.png \
+  -c:v libx264 -pix_fmt yuv420p out/new-recording/simulation.mp4
+```
+
+Нужны графический сеанс/Xvfb и опыт `isaacsim.exp.full.kit` из существующего
+образа. На Spark запускать через `isaac_slot.py` с приватным stage, как
+физические задания; не запускать второй Isaac поверх занятого слота.
