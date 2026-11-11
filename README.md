@@ -152,6 +152,37 @@ uv run --locked pytest
     --physics out/baseline/physics.json
 ```
 
+### Единый прогон PoC
+
+`tools/run_poc.py` одной командой строит четыре контрактных файла из A,
+запускает геометрический оценщик, вызывает физический runner и объединяет
+результаты в `report.json`. CPU-этапы выполняются локально; физику можно
+выполнить на Spark через `tools/spark_physics_runner.py`. Скопируйте
+`configs/spark.example.json` в собственный файл настроек и укажите доступные
+SSH-адрес, порт и при необходимости `ssh_control_path` (путь к существующему
+SSH master-соединению). Пароли и ключи в JSON не записываются.
+
+```bash
+.venv/bin/python tools/run_poc.py --data data/scene_a --config configs/poc.yaml \
+    --out out/poc --physics-runner .venv/bin/python \
+    --runner-arg tools/spark_physics_runner.py \
+    --runner-arg=--settings=path/to/spark.json
+```
+
+Runner передаёт USD, конфигурацию физических тестов и оценщик в отдельный
+каталог Spark, сверяет SHA256 каждого файла, запускает изолированный Docker
+с 4 CPU, 16 GiB и без сети, возвращает `physics.json`. Логи `run.log` хранятся
+рядом с результатом; `physics.log` и `xvfb.log` остаются в каталоге запуска
+на Spark. Для повторной оценки готовой сцены добавьте `--reuse`. Вместо
+запуска Isaac можно присоединить уже полученный файл через
+`--physics-result path/to/physics.json`; он должен относиться к тому же USD.
+Без runner физика получает явный статус `not_run` и команда возвращает код 1.
+Код 2 означает ошибку этапа и фиксирует её в `report.json` (когда отчёт уже
+создан). Без окончательного профиля порогов даже успешные проверки дают общий
+статус `incomplete`; после его получения передайте `--profile`. Проверка
+сценария, включая реальный Spark, записана в
+[benchmarks/orchestration/validation.json](benchmarks/orchestration/validation.json).
+
 Результаты оценщиков сохраняются целиком. Незапущенная физика имеет статус
 `not_run`; итоговая приёмка становится `passed` после прохождения файлового
 контракта, геометрии и физики с указанным профилем порогов. После фиксации профиля
