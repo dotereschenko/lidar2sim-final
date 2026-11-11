@@ -34,6 +34,17 @@ def memory_bytes():
     return None
 
 
+def cpu_model():
+    if sys.platform == "darwin":
+        return subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"],
+                                       text=True).strip()
+    if Path("/proc/cpuinfo").exists():
+        for line in Path("/proc/cpuinfo").read_text().splitlines():
+            if line.startswith(("model name", "Hardware", "Model")):
+                return line.partition(":")[2].strip()
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, required=True)
@@ -85,7 +96,8 @@ def main():
         "exit_code": exit_code, "wall_s": round(wall, 3), "peak_rss_bytes": peak_bytes,
         "under_1800_s": bool(exit_code == 0 and wall <= 1800),
         "machine": {"platform": platform.platform(), "architecture": platform.machine(),
-                    "cpu_count": os.cpu_count(), "ram_bytes": memory_bytes()},
+                    "cpu_model": cpu_model(), "cpu_count": os.cpu_count(),
+                    "ram_bytes": memory_bytes()},
         "runtime": {"python": platform.python_version(), "open3d": metadata.version("open3d"),
                     "numpy": metadata.version("numpy")},
         "report_status": report.get("status") if report else None,
