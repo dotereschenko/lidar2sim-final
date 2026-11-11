@@ -36,6 +36,7 @@ def command(image, source, output, with_trajectory, name):
 
 
 def run(scans, config, out, image, timeout=1800):
+    image=subprocess.check_output(['docker','image','inspect',image,'--format','{{.Id}}'],text=True).strip()
     out=Path(out).resolve()
     if out.exists():raise FileExistsError(out)
     out.parent.mkdir(parents=True,exist_ok=True)

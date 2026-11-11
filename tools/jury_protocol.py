@@ -35,7 +35,8 @@ def protocol(jury, batches, performance, repeats, out):
                            'GT_sha256': sha(path/'source/gt_mesh.ply'),
                            'manifest_sha256': sha(path/'scans/manifest.json'),
                            'physics_config_sha256': sha(path/'source/test_config.json'),
-                           'annotations_sha256': sha(path/'annotations/annotations.json')}
+                           'annotations_sha256': sha(path/'annotations/annotations.json'),
+                           'acquisition_seeds': {n: json.loads((path/'scans/manifest.json').read_text())['scans'][n]['seed'] for n in ['A','B']}}
     manifest = {'required_repeats': repeats, 'datasets': datasets,
                 'profile_sha256': sha(ROOT/'configs/acceptance/lidar2sim-rules-v2.yaml'),
                 'config_sha256': {'reference/'+v: sha(ROOT/'configs'/c) for v,c in

@@ -74,5 +74,8 @@
     "selfcheck/gt_scene.usd": "c9e014af7b31eb98e6f98eaaedb1bafaf6ab0b4848da120ff9609f182fec9dfd"
   },
   "independent_human_rehearsal": false,
-  "network_download_time_included": false
+  "network_download_time_included": false,
+  "submitted_source_sha256": "8b22e0d42ea39e3f13a4ad47c11ff24cefe9dd8d8ab751605de4b215125f157c",
+  "jury_reconstruction_source_sha256": "8b22e0d42ea39e3f13a4ad47c11ff24cefe9dd8d8ab751605de4b215125f157c",
+  "source_match": true
 }

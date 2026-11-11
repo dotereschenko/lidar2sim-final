@@ -20,6 +20,8 @@ def test_only_complete_fresh_runs_in_same_environment_rank(tmp_path):
     hashes={}
     for name in ['visual.ply','collision.ply','scene.usd']:
         (folder/name).write_text(name);hashes[name]=sha(folder/name)
+    (folder/'isolation.json').write_text(json.dumps({'exit_code':0,'timed_out':False,
+        'required_outputs_present':True,'image':'linux','cpu_limit':4,'memory_limit_gib':16,'wall_s':12}))
     profile='profile';config='config'
     meshes={n:{'sha256':hashes[n+'.ply'],'raw_metrics':{'p95_m':.02},
                'dimensions':{'passed_count':10,'items':[{'absolute_error_m':.01}]*10}}
@@ -31,14 +33,16 @@ def test_only_complete_fresh_runs_in_same_environment_rank(tmp_path):
             'artifacts':{n:{'sha256':h} for n,h in hashes.items()},'checks':checks,'total_s':10,'code':{'source_sha256':'code'}}
     (folder/'report.json').write_text(json.dumps(report))
     perf={'exit_code':0,'timed_out':False,'point_count':10000000,'input_sha256':'dense','wall_s':50,
-          'peak_rss_bytes':1000,'config_sha256':config,'execution':{'image_id':'linux'}}
+          'peak_rss_bytes':1000,'config_sha256':config,'execution':{'image_id':'linux','cpus':4,'memory_gib':16}}
     performance=tmp_path/'performance.json';performance.write_text(json.dumps(perf))
     manifest={'required_repeats':1,'profile_sha256':profile,'config_sha256':{'team/final':config},
               'datasets':{'A':{'A_sha256':'a','B_sha256':'b','GT_sha256':'gt'}},
               'performance':{'team/final':str(performance)},'performance_input_sha256':'dense',
-              'scoring_environment':{'image_id':'linux'},
+              'scoring_environment':{'image_id':'linux','cpus':4,'memory_gib':16},
               'runs':[{'team':'team','variant':'final','scene':'A','repeat':1,'directory':str(folder)}]}
-    assert compare(manifest)['groups'][0]['rank']==1
+    result=compare(manifest)
+    assert result['groups'][0]['rank']==1
+    assert result['rows'][0]['wall_s']==12  # Ignore submitted total_s=10.
     perf['execution']={'image_id':'other-machine'};performance.write_text(json.dumps(perf))
     assert compare(manifest)['groups'][0]['rank'] is None
     (folder/'collision.ply').write_text('tampered')

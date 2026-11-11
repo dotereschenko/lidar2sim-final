@@ -30,7 +30,16 @@ def row(run, manifest):
         p95=max(m['raw_metrics']['p95_m'] for m in geometry['meshes'].values())
         errors=[d['absolute_error_m'] for m in geometry['meshes'].values() for d in m['dimensions']['items']]
         maximum=max(errors) if all(number(x) for x in errors) else None
-        wall=report['total_s']
+        isolation=json.loads((folder/'isolation.json').read_text())
+        environment=manifest['scoring_environment']
+        if (isolation['exit_code']!=0 or isolation['timed_out'] or not isolation['required_outputs_present']
+                or isolation['image']!=environment['image_id']
+                or isolation['cpu_limit']!=environment['cpus']
+                or isolation['memory_limit_gib']!=environment['memory_gib']):
+            raise ValueError('Reconstruction execution mismatch or failure')
+        # Ranking uses the operator's process clock, never a submitted report time.
+        wall=isolation['wall_s']
+        if wall>1800:raise ValueError('Reconstruction exceeded time limit')
         if not number(p95) or not number(wall):raise ValueError('Invalid measured values')
         passed=all(checks[k]['status']=='passed' for k in ['contract','geometry','dimensions','physics'])
         if passed and not number(maximum):raise ValueError('Passed dimensions lack measured errors')
