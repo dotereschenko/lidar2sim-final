@@ -33,3 +33,10 @@ planes directly as seeded XY line RANSAC, then refine in XY. Do not fit a tilted
 initial residual bound. The generic two-surface, doorway and translation tests
 exercise the new fit. Candidate v1 C export failed from local disk exhaustion;
 it is an infrastructure failure, not a geometry/physics result.
+
+Next hypothesis (unit tested, full-scene run pending): retain all observed returns
+within a fitted plane's distance, even when their local PCA normals are unreliable.
+Normals select fitting seeds, but must not discard the lower part of a thin wall
+once its plane is established. A generic test verifies low-wall recovery with
+corrupted local normals. Heavy runs paused on user report of disk exhaustion;
+subsequent full-scene runs should execute on Spark with private evidence storage.

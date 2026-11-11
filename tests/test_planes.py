@@ -64,3 +64,12 @@ def test_boundary_uncertainty_stays_local_and_parameters_reject_invalid_values()
     assert vertices[:,2].min()>=-.00601 and vertices[:,2].max()<=2.40601
     for params in [{'plane_distance':-.01},{'plane_distance':float('nan')},{'plane_max_edge':0}]:
         with pytest.raises(ContractError):validate_params(params,PARAMS)
+
+
+def test_observed_low_wall_is_kept_despite_unreliable_local_normals():
+    points = wall()
+    normals = np.tile([1., 0., 0.], (len(points), 1))
+    normals[points[:, 2] < .35] = [0., 0., 1.]
+    mesh, stats = observed_vertical_planes(cloud(points, normals), .012, .3)
+    assert stats['planes']
+    assert abs(hit(mesh, [[-1, 1.5, .1]], [1, 0, 0])[0] - 1) < 1e-5

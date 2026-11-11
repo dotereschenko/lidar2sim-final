@@ -53,7 +53,9 @@ def observed_vertical_planes(pcd, distance, max_edge, min_points=100, max_planes
         if np.median(normals[remaining[selected]] @ normal) < 0:
             normal = -normal
             offset = -offset
-        supported = (np.abs(points @ normal + offset) <= distance) & (np.abs(normals @ normal) >= .65)
+        # Once fitted, use actual near-plane returns even where thin-wall or
+        # floor adjacency makes their local PCA normal unreliable.
+        supported = np.abs(points @ normal + offset) <= distance
         selected = (np.abs(points[remaining] @ normal + offset) <= distance)
         # Always consume the fitted segment; degenerate footprints must terminate.
         remaining = remaining[~selected]
