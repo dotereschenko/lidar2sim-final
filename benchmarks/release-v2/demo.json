@@ -1,0 +1,27 @@
+{
+  "kind": "demonstration_not_acceptance",
+  "scene_sha256": "ffba811c171a4af250dea11cadcc4ad2e9c056189c0a43c29ea39f7aee37fb91",
+  "physics_report": "benchmarks/release-v2/scene-a/physics-spark-r1.json",
+  "physics_report_sha256": "d057f027e4895e440716091b54429a814bf1483cf57a78c0020b9c3cb40c27ef",
+  "profile_sha256": "f58868ac364c6cdd77e3f535e81c5ae46c28c8b331f78701e83c1caee9b07074",
+  "physics_config_sha256": "8d42dcd8249ce1f5765003f7d780f899080719e7ee9edc24bb65f8527fd5a083",
+  "video": {
+    "path": "docs/img/release-v2/simulation.mp4",
+    "sha256": "db6c43bb7bb2514f2d157f700289b96a0f29867bb6ba6c05a0028b65cae14d76",
+    "codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "frames": 240,
+    "fps": 24,
+    "duration_s": 10,
+    "url": "http://10.10.0.2:18091/demo-v2/simulation.mp4",
+    "anonymous_download_verified": true
+  },
+  "collision_modified": false,
+  "visual_cutaway_height_m": 1.6,
+  "frame_review": "overview and final frame inspected; actual scene and body visible",
+  "shared_sessions_restored": [
+    "isaac-flight",
+    "isaac-stream"
+  ]
+}

@@ -44,6 +44,8 @@ def row(run, manifest):
         passed=all(checks[k]['status']=='passed' for k in ['contract','geometry','dimensions','physics'])
         if passed and not number(maximum):raise ValueError('Passed dimensions lack measured errors')
         result.update(valid=True,scene_passed=passed,p95_m=p95,max_dimension_error_m=maximum,wall_s=wall,
+                      geometry_passed=checks['geometry']['status']=='passed',
+                      geometry={n:m['raw_metrics'] for n,m in geometry['meshes'].items()},
                       dimensions={n:m['dimensions']['passed_count'] for n,m in geometry['meshes'].items()},
                       physics={n:sum(x['ok'] for x in physics[n]) for n in ['floor','obstacles','routes']},
                       code_sha256=report['code']['source_sha256'],report_sha256=sha(folder/'report.json'))
@@ -85,9 +87,16 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('manifest');p.add_argument('--out',required=True);a=p.parse_args()
     result=compare(json.loads(Path(a.manifest).read_text()));out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
     (out/'comparison.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
-    lines=['# Jury comparison','','| Team | Variant | Scene | Repeat | Valid | Scene passed | p95, m | Time, s |','|---|---|---|---:|---|---|---:|---:|']
+    lines=['# Jury comparison','','| Team | Variant | Scene | Repeat | Valid | Scene passed | Geometry | Dimensions V/C | Physics floor/obstacles/routes | p95, m | Time, s |',
+           '|---|---|---|---:|---|---|---|---|---|---:|---:|']
     for r in result['rows']:
-        values=[r.get(k,'—') for k in ['team','variant','scene','repeat','valid','scene_passed','p95_m','wall_s']]
+        dims='/'.join(str(r.get('dimensions',{}).get(n,'—')) for n in ['visual','collision'])
+        physics='/'.join(str(r.get('physics',{}).get(n,'—')) for n in ['floor','obstacles','routes'])
+        values=[r.get(k,'—') for k in ['team','variant','scene','repeat','valid','scene_passed','geometry_passed']]
+        values += [dims,physics,r.get('p95_m','—'),r.get('wall_s','—')]
         lines.append('| '+' | '.join(str(v).replace('|','\\|').replace('\n',' ') for v in values)+' |')
+    lines += ['','Only eligible final submissions receive a rank. Detailed precision/median metrics and invalid-run reasons are in comparison.json.','']
+    for g in result['groups']:
+        lines.append(f"- {g['team']} / {g['variant']}: eligible={g['eligible']}, rank={g['rank']}, complete repetitions={g['complete_repetitions']}, 10M={g['performance_passed']}")
     (out/'comparison.md').write_text('\n'.join(lines)+'\n')
     print(json.dumps(result['groups']))
