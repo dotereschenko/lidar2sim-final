@@ -96,3 +96,9 @@ def test_single_worker_keeps_second_job_queued(server, monkeypatch):
     finally:
         release.set()
     assert done.wait(1)
+
+
+def test_validation_error_survives_buffered_native_warning():
+    from lidar2sim.web.server import failure_message
+    assert failure_message(['WEB_ERROR "Empty cloud"', '\x1b[1;33mwarning\x1b[0;m']) == 'Empty cloud'
+    assert failure_message(['\x1b[1;33mwarning\x1b[0;m']) == 'warning'

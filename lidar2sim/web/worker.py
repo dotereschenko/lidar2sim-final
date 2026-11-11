@@ -58,5 +58,5 @@ if __name__ == '__main__':
     try:
         raise SystemExit(main())
     except (ValueError, RuntimeError, OSError) as exc:
-        print(str(exc), file=sys.stderr)
+        print("WEB_ERROR " + json.dumps(str(exc), ensure_ascii=False), file=sys.stderr, flush=True)
         raise SystemExit(2)

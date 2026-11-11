@@ -50,5 +50,16 @@
     "scene.usd": "c1dab71dee6777c3e9dcc67ad7c1f844023ef9c699588c30df66cf80dc1df69a",
     "report.json": "27ab36582a17e4d1b6262fce28a7ce0bf123cbdb4105cedb03b6e11bf908fea8"
   },
-  "notes": "No trajectory supplied; acceptance not_run, no GT/B/Isaac checks; frontend failure/mobile checks pending."
+  "notes": "No trajectory supplied; acceptance not_run, no GT/B/Isaac checks; frontend failure/mobile checks pending.",
+  "validation": {
+    "full_suite": "139 tests and 185 subtests passed before final error-format fix",
+    "final_targeted_tests": 7,
+    "javascript_syntax": "passed",
+    "browser": "Chrome: real file selection, PLY preview, submit, completed, mesh layers, wireframe",
+    "invalid_input": "empty PLY rejected by worker; failed status and log available",
+    "not_verified": [
+      "mobile browser layout",
+      "Isaac integration from UI"
+    ]
+  }
 }

@@ -21,6 +21,14 @@ ARTIFACTS = {'input.ply': 'preview.ply', 'visual.ply': 'result/visual.ply',
              'report.json': 'result/report.json', 'run.log': 'run.log'}
 
 
+def failure_message(lines):
+    for line in reversed(lines):
+        if line.startswith('WEB_ERROR '):
+            return json.loads(line[len('WEB_ERROR '):])[:600]
+    message = lines[-1] if lines else 'Ошибка реконструкции'
+    return re.sub(r'\x1b\[[0-9;]*m', '', message)[:600]
+
+
 class Jobs:
     def __init__(self, root):
         self.root = Path(root).resolve()
@@ -87,7 +95,7 @@ class Jobs:
                     raise RuntimeError('Превышен лимит обработки: 30 минут')
             if code:
                 lines = (folder/'run.log').read_text(errors='replace').strip().splitlines()
-                raise RuntimeError(lines[-1][:600] if lines else 'Ошибка реконструкции')
+                raise RuntimeError(failure_message(lines))
             from lidar2sim.validation import validate_outputs
             validate_outputs(folder/'result')
             self.update(ident, status='completed', error=None)
