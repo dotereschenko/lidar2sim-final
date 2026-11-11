@@ -1,0 +1,26 @@
+{
+  "release_id": "private-scene-c-v2",
+  "freeze_sha256": "cef05c88f17e0978253f1524481011ec72b469b288d5eff872d22f7ba91dc37c",
+  "recipe_sha256": "eadbd20e17209851ecbe0039f8e647caf7bd5ec897b4eec09b1f50bbbf20b8df",
+  "storage": "private jury storage outside participant checkout and archive",
+  "acquisition_repeat_verified": true,
+  "A_points": 750000,
+  "B_points": 750000,
+  "GT_geometry": "passed",
+  "GT_dimensions": "10/10 both meshes",
+  "GT_physics": {
+    "floor": "10/10",
+    "obstacles": "10/10",
+    "routes": "5/5",
+    "passed": true
+  },
+  "baseline_dimensions": {
+    "visual": 9,
+    "collision": 8
+  },
+  "high_detail_dimensions": {
+    "visual": 9,
+    "collision": 9
+  },
+  "candidate_qualified": false
+}
