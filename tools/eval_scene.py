@@ -158,7 +158,10 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
         path = out/f'{name}.ply'
         mesh = read_mesh(path)
         points = sample(mesh,profile)
-        observed,_,_ = observed_by_both(points,context['a'],context['b'],region['radius_m'],region['min_neighbors'])
+        # Membership belongs to the reference surface: a displaced prediction must
+        # not hide its own geometric error by falling outside the sensor radius.
+        projected = gt_scene.compute_closest_points(o3d.core.Tensor(points.astype(np.float32)))['points'].numpy()
+        observed,_,_ = observed_by_both(projected,context['a'],context['b'],region['radius_m'],region['min_neighbors'])
         if int(observed.sum()) < context['minimum']:
             raise ValueError(f'{name}: insufficient common-region mesh samples')
         precision = gt_scene.compute_distance(o3d.core.Tensor(points[observed].astype(np.float32))).numpy()
@@ -174,6 +177,7 @@ def evaluate_common(out, gt_scene, context, profile, provenance, dimensions=None
                   'p95':raw['p95_m']<=g['completeness_p95_max_m']}
         meshes[name] = {'raw_metrics':raw,'passed':checks,'sha256':digest(path),
                         'precision_reference':'GT_triangles','precision_direction':'mesh_surface_to_GT',
+                        'precision_region_membership':'nearest_GT_surface_observed_by_both_A_B',
                         'completeness_reference':context['provenance']['reference_type'],
                         'completeness_direction':'reference_to_mesh_triangles',
                         'surface_samples':len(points),'common_surface_samples':int(observed.sum()),

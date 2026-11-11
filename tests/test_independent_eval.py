@@ -56,6 +56,9 @@ class IndependentEvaluationTests(unittest.TestCase):
             profile,provenance=load_profile();profile['geometry']['samples']=2000
             ctx=load_common_reference(data,scans,package,'b',profile)
             mesh=read_mesh(out/'collision.ply').translate([100,0,0]);o3d.io.write_triangle_mesh(str(out/'collision.ply'),mesh)
+            far=evaluate_common(out,raycasting(read_mesh(data/'gt_mesh.ply')),ctx,profile,provenance)
+            self.assertFalse(far['meshes']['collision']['passed']['precision'])
+            profile['geometry']['samples']=500
             with self.assertRaisesRegex(ValueError,'sample'):
                 evaluate_common(out,raycasting(read_mesh(data/'gt_mesh.ply')),ctx,profile,provenance)
             with (package/'eval_region.npz').open('ab') as f:f.write(b'changed')
