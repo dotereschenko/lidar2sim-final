@@ -169,3 +169,22 @@ def test_legacy_reconstruction_options_remain_validated():
                     {'repair_floor': True, 'floor_distance': .04}]:
         with pytest.raises(ContractError):
             validate_params(invalid, PARAMS)
+
+
+def test_export_stages_inside_output_mount(tmp_path, monkeypatch):
+    """Read-only container roots permit writes only within the output mount."""
+    import tempfile
+    from lidar2sim import common
+    original = tempfile.TemporaryDirectory
+    output = tmp_path / 'output'
+    observed = []
+    def local_stage(*args, **kwargs):
+        observed.append(kwargs['dir'])
+        assert kwargs['dir'] == output
+        return original(*args, **kwargs)
+    monkeypatch.setattr(common.tempfile, 'TemporaryDirectory', local_stage)
+    mesh = o3d.geometry.TriangleMesh.create_box(1, 1, 1)
+    write_outputs(output, mesh, mesh, {'solution': 'fixture', 'params': {}, 'input': {'sha256': '0' * 64}, 'total_s': 0.1})
+    assert observed == [output]
+    assert (output / 'scene.usd').is_file()
+    assert not list(output.glob('.lidar2sim-*'))

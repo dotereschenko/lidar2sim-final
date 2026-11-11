@@ -146,12 +146,12 @@ def write_outputs(out, visual, collision, report, started_at=None):
     out = Path(out)
     validate_mesh(visual, "visual")
     validate_mesh(collision, "collision")
-    out.parent.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     report["outputs"] = {
         "visual_triangles": len(visual.triangles),
         "collision_triangles": len(collision.triangles),
     }
-    with tempfile.TemporaryDirectory(dir=out.parent, prefix=".lidar2sim-") as tmp:
+    with tempfile.TemporaryDirectory(dir=out, prefix=".lidar2sim-") as tmp:
         staged = Path(tmp)
         for name, mesh in (("visual.ply", visual), ("collision.ply", collision)):
             if not o3d.io.write_triangle_mesh(str(staged / name), mesh):
