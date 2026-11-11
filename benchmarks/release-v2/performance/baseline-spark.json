@@ -1,0 +1,59 @@
+{
+  "kind": "full_reconstruction_10m",
+  "input_sha256": "eb41ac637917ccdbf0bbe8c26e0b0cc32a8fbaff4a9bb08ad36b565e4d8fb4ad",
+  "point_count": 10000000,
+  "config_sha256": "e5ed657f3c39b1baadf38d88f9bcd916c557ef65b8a6b905310b2a16c43f0ae6",
+  "command": [
+    "/app/.venv/bin/python",
+    "-m",
+    "lidar2sim",
+    "--input",
+    "/input/scene_10M.ply",
+    "--manifest",
+    "/input/manifest.json",
+    "--trajectory",
+    "/input/trajectory.csv",
+    "--config",
+    "/app/configs/baseline.yaml",
+    "--out",
+    "/output"
+  ],
+  "timeout_s": 1800,
+  "timed_out": false,
+  "exit_code": 0,
+  "wall_s": 46.53,
+  "peak_rss_bytes": 1651818496,
+  "under_1800_s": true,
+  "machine": {
+    "platform": "Linux-6.11.0-1014-nvidia-aarch64-with-glibc2.41",
+    "architecture": "aarch64",
+    "cpu_model": null,
+    "cpu_count": 20,
+    "ram_bytes": 128526278656
+  },
+  "runtime": {
+    "python": "3.11.15",
+    "open3d": "0.20.0",
+    "numpy": "2.4.6"
+  },
+  "report_status": "generated",
+  "report_commit": null,
+  "report_dirty": null,
+  "output_hashes": {
+    "visual.ply": "5b7150752116b1df005fa06ca6f7424a3a0c31dd328f59f66843699c7b3734eb",
+    "collision.ply": "8ff1629e7e701e0818d0dceb7743788e260ecfe62cda2ba21d5da8ee5517ecf2",
+    "scene.usd": "b337a2aa046be87bab79ce8ab9fadeaf58aacdd2960a2e943b1069fb84093b1c"
+  },
+  "execution": {
+    "image_id": "sha256:1f28d620caa385d6f45b119bfb3322e21f9200b22327e3c1e359fef83eb154f5",
+    "cpus": 4,
+    "memory_gib": 16,
+    "network": "none"
+  },
+  "host": {
+    "uname": "Linux spark-78b7 6.11.0-1014-nvidia #14-Ubuntu SMP PREEMPT_DYNAMIC Thu Aug 14 18:27:36 UTC 2025 aarch64 aarch64 aarch64 GNU/Linux",
+    "os_release": "PRETTY_NAME=\"Ubuntu 24.04.3 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.3 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "processor": "NVIDIA GB10",
+    "concurrent_work": "Isaac validation in separate container limited to 4 CPUs/16 GiB; shared host"
+  }
+}
