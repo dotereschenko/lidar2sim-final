@@ -50,6 +50,19 @@ def test_upload_and_whitelisted_files(server):
     with pytest.raises(ValueError): jobs.folder('../outside')
 
 
+@pytest.mark.parametrize('method,depth,triangles', [
+    ('baseline', 9, 20000), ('improved', 9, 60000), ('high-detail', 10, 200000)])
+def test_upload_pins_selected_reconstruction_config(server, method, depth, triangles):
+    import yaml
+    from lidar2sim.baseline import PARAMS
+    base, jobs = server
+    result = post(base, '/api/jobs?method='+method, b'ply\nend_header\n')
+    params = PARAMS | yaml.safe_load((jobs.folder(result['id'])/'config.yaml').read_text())
+    assert result['settings']['method'] == method
+    assert params['poisson_depth'] == depth
+    assert params['collision_triangles'] == triangles
+
+
 def test_restart_marks_interrupted_job(tmp_path):
     jobs = Jobs(tmp_path); ident = 'a'*32; (tmp_path/ident).mkdir()
     jobs.update(ident, status='running'); jobs.pool.shutdown()

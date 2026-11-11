@@ -140,7 +140,7 @@ def handler(jobs):
                     query = parse_qs(url.query)
                     method = query.get('method', ['improved'])[0]
                     scale = float(query.get('scale', ['1'])[0]); up = query.get('up', ['Z'])[0]
-                    if method not in ('baseline', 'improved') or scale not in (1, .01, .001) or up not in ('Y', 'Z'):
+                    if method not in ('baseline', 'improved', 'high-detail') or scale not in (1, .01, .001) or up not in ('Y', 'Z'):
                         raise ValueError('Некорректные параметры обработки')
                     ident = uuid.uuid4().hex; folder = jobs.root/ident; folder.mkdir()
                     try:
@@ -150,7 +150,8 @@ def handler(jobs):
                                 raise ValueError('Нужен PLY-файл с заголовком ply')
                         settings = {'method': method, 'scale': scale, 'up': up}
                         (folder/'settings.json').write_text(json.dumps(settings))
-                        config = 'baseline.yaml' if method == 'baseline' else 'poc-detailed.yaml'
+                        config = {'baseline': 'baseline.yaml', 'improved': 'poc-detailed.yaml',
+                                  'high-detail': 'poc-high-detail.yaml'}[method]
                         shutil.copyfile(ROOT/'configs'/config, folder/'config.yaml')
                         jobs.update(ident, status='uploaded', settings=settings,
                                     created_at=datetime.now(timezone.utc).isoformat())
