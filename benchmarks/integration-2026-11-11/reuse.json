@@ -1,0 +1,27 @@
+{
+  "command": [
+    ".venv/bin/python",
+    "tools/run_poc.py",
+    "--data",
+    "data/scene_ab_candidate",
+    "--reference-data",
+    "data/scene_a",
+    "--scans",
+    "data/scene_ab_candidate",
+    "--annotations",
+    "out/annotations-v1-observed",
+    "--evaluation-mode",
+    "b",
+    "--out",
+    "out/integration-floor-release",
+    "--reuse",
+    "--physics-result",
+    "out/integration-floor-release/physics.json"
+  ],
+  "exit_code": 1,
+  "artifacts_unchanged": true,
+  "checks": {
+    "status": "incomplete",
+    "reason": "Required evidence or organizer approval is missing"
+  }
+}

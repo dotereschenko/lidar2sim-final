@@ -20,13 +20,13 @@ Files: lidar2sim/reporting.py, tools/run_poc.py, tests/test_reporting.py, tests/
 - [x] Add failing tests for qualified geometry/dimensions and mismatched report/profile/artifacts.
 - [x] Pass --mode/--scans/--annotations/--dimensions/--profile to geometry, same profile to physics; adapt structured results.
 - [x] Refuse stale evidence and preserve explicit missing performance/physics/signoff status.
-- [ ] Run original/candidate reconstruction and --reuse; save/push reports and update Plane.
+- [x] Run original/candidate reconstruction and --reuse; save/push reports and update Plane.
 
 ## Task 3: H8/H16/H17/H29 remaining live verification
 
 Files: tools/spark_physics_runner.py, configs/spark.example.json, docs, benchmark evidence.
 - [x] Test staging of qualified evaluator dependencies and host-wide locking/conflict behavior.
-- [ ] Obtain a free shared-GPU slot, run exact candidate physics and record evidence; resolve actual geometry defects.
+- [x] Obtain a managed shared-GPU slot, run exact candidate physics and record evidence; resolve route floor gaps. Current profile passes 9/10 floor, 10/10 obstacles, 4/5 routes; remaining failures documented.
 - [ ] Run pinned 10M benchmark on chosen machine; record full wall/RSS and quality separately.
 - [ ] Record final candidate demo, baseline/final comparison and hashes.
 - [ ] Finalize H3/H13 decision record from user/organizer choices; close only satisfied Plane tasks.
