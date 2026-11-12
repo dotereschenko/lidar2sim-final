@@ -13,6 +13,7 @@ import sys
 import threading
 from urllib.parse import parse_qs, urlsplit
 import uuid
+from lidar2sim.input_contract import LIMITS, contract
 
 ROOT = Path(__file__).resolve().parents[2]
 STATIC = Path(__file__).parent/'static'
@@ -144,7 +145,7 @@ def handler(jobs):
                         raise ValueError('Некорректные параметры обработки')
                     ident = uuid.uuid4().hex; folder = jobs.root/ident; folder.mkdir()
                     try:
-                        self.receive(folder/'source.ply', 512*1048576)
+                        self.receive(folder/'source.ply', LIMITS['max_file_bytes'])
                         with (folder/'source.ply').open('rb') as stream:
                             if stream.read(4) not in (b'ply\n', b'ply\r'):
                                 raise ValueError('Нужен PLY-файл с заголовком ply')
@@ -179,6 +180,8 @@ def handler(jobs):
             try:
                 self.safe()
                 path = urlsplit(self.path).path; parts = path.strip('/').split('/')
+                if parts == ['api', 'input-contract']:
+                    return self.json(contract())
                 if parts == ['api', 'jobs']:
                     data = [jobs.read(p.parent.name) for p in sorted(jobs.root.glob('*/job.json'), key=lambda p:p.stat().st_mtime, reverse=True)[:30]]
                     return self.json(data)

@@ -23,8 +23,6 @@ def main():
     folder = Path(sys.argv[1])
     settings = json.loads((folder/'settings.json').read_text())
     cloud, _, _ = load_inputs(folder/'source.ply')
-    if len(cloud.points) > 20_000_000:
-        raise ValueError('Максимум 20 млн точек')
     cloud.points = o3d.utility.Vector3dVector(normalize(cloud.points, settings['scale'], settings['up']))
     cloud.normals = o3d.utility.Vector3dVector(np.empty((0, 3)))
     if not o3d.io.write_point_cloud(str(folder/'input.ply'), cloud):

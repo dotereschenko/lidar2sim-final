@@ -33,6 +33,31 @@ def test_load_inputs_preserves_points_and_trajectory(inputs):
     np.testing.assert_equal(trajectory, [[0, 0, 0], [1, 1, 1]])
 
 
+def test_cli_loader_enforces_shared_byte_limit_before_parsing(inputs, monkeypatch):
+    from lidar2sim.input_contract import LIMITS
+    cloud, _, _ = inputs
+    monkeypatch.setitem(LIMITS, 'max_file_bytes', cloud.stat().st_size - 1)
+    with pytest.raises(ContractError, match='PLY bytes'):
+        load_inputs(cloud)
+
+
+@pytest.mark.parametrize('encoding', ['ascii', 'binary_little_endian', 'binary_big_endian'])
+def test_supported_ply_encodings_preserve_xyz(tmp_path, encoding):
+    import struct
+    points = [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    header = (f'ply\nformat {encoding} 1.0\nelement vertex 4\n'
+              'property float x\nproperty float y\nproperty float z\nend_header\n').encode()
+    if encoding == 'ascii':
+        payload = ''.join(' '.join(map(str, p))+'\n' for p in points).encode()
+    else:
+        endian = '<' if encoding == 'binary_little_endian' else '>'
+        payload = b''.join(struct.pack(endian+'fff', *p) for p in points)
+    path = tmp_path/'cloud.ply'
+    path.write_bytes(header+payload)
+    cloud, _, _ = load_inputs(path)
+    np.testing.assert_equal(np.asarray(cloud.points), points)
+
+
 @pytest.mark.parametrize("update", [{"units": "cm"}, {"up_axis": "Y"},
                                    {"bounds_min": [3, 3, 3]}, {"bounds_max": [1, 2]},
                                    {"bounds_min": [float("nan"), 0, 0]}])

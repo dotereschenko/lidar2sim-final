@@ -1,0 +1,23 @@
+{
+  "contract_id": "lidar2sim-ply-input-v1",
+  "schema_version": 1,
+  "limits": {"max_file_bytes": 536870912, "min_points": 4, "max_points": 20000000},
+  "limits_basis": "Existing UI operational limits and loader minimum; not quality thresholds",
+  "formats": ["ascii", "binary_little_endian", "binary_big_endian"],
+  "required_coordinates": ["x", "y", "z"],
+  "source_units": ["m", "cm", "mm"],
+  "source_up_axes": ["Y", "Z"],
+  "normalized_units": "m",
+  "normalized_up_axis": "Z",
+  "supported_scope": ["static_single_level_indoor"],
+  "quality_envelope": {
+    "status": "uncalibrated",
+    "density_range": null,
+    "noise_range_m": null,
+    "minimum_observed_fraction": null,
+    "required_evidence": ["H35 independent real scenes", "H41 held-out qualification"]
+  },
+  "quality_states": ["not_verified", "accepted", "failed", "needs_rescan"],
+  "acceptance_requires": ["versioned calibrated scope", "independent geometry evidence", "scene-specific physics and robot", "matching artifact hashes"],
+  "legacy_profile": "lidar2sim-rules-v2; qualified only on recorded A/C runs"
+}
