@@ -88,6 +88,13 @@ def test_cloud_and_trajectory_coordinate_transform():
     np.testing.assert_allclose(result, [[1,-3,2]])
 
 
+def test_ui_publishes_the_shared_input_contract(server):
+    from lidar2sim.input_contract import contract
+    base, _ = server
+    with urllib.request.urlopen(base+'/api/input-contract') as response:
+        assert json.load(response) == contract()
+
+
 def test_single_worker_keeps_second_job_queued(server, monkeypatch):
     base, jobs = server
     first = post(base, '/api/jobs', b'ply\nend_header\n')['id']

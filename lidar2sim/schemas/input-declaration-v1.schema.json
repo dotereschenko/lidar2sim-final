@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "units", "up_axis", "scene_kind"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "units": {"enum": ["m", "cm", "mm", null]},
+    "up_axis": {"enum": ["Y", "Z", null]},
+    "scene_kind": {"enum": ["static_single_level_indoor", "multi_level_indoor", "outdoor", "object", "dynamic", null]}
+  }
+}

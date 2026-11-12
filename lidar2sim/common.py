@@ -12,6 +12,7 @@ from scipy.spatial import cKDTree
 
 from .validation import (ContractError, load_trajectory, validate_manifest,
                          validate_mesh, validate_outputs, validate_point_cloud)
+from .input_contract import validate_limits
 
 
 class Timer:
@@ -44,6 +45,10 @@ def sha256(path):
 def load_inputs(ply, manifest=None, trajectory=None):
     if Path(ply).suffix.lower() != ".ply" or not Path(ply).is_file():
         raise ContractError(f"{ply}: требуется существующий PLY-файл")
+    try:
+        validate_limits(file_bytes=Path(ply).stat().st_size)
+    except ValueError as exc:
+        raise ContractError(str(exc)) from exc
     try:
         meta = json.loads(Path(manifest).read_text()) if manifest else {"units": "m", "up_axis": "Z"}
     except json.JSONDecodeError as exc:

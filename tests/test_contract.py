@@ -33,6 +33,14 @@ def test_load_inputs_preserves_points_and_trajectory(inputs):
     np.testing.assert_equal(trajectory, [[0, 0, 0], [1, 1, 1]])
 
 
+def test_cli_loader_enforces_shared_byte_limit_before_parsing(inputs, monkeypatch):
+    from lidar2sim.input_contract import LIMITS
+    cloud, _, _ = inputs
+    monkeypatch.setitem(LIMITS, 'max_file_bytes', cloud.stat().st_size - 1)
+    with pytest.raises(ContractError, match='PLY bytes'):
+        load_inputs(cloud)
+
+
 @pytest.mark.parametrize("update", [{"units": "cm"}, {"up_axis": "Y"},
                                    {"bounds_min": [3, 3, 3]}, {"bounds_max": [1, 2]},
                                    {"bounds_min": [float("nan"), 0, 0]}])

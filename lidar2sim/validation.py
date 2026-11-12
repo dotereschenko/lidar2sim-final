@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import yaml
+from .input_contract import validate_limits
 
 
 class ContractError(ValueError):
@@ -124,8 +125,10 @@ def load_trajectory(path):
 
 def validate_point_cloud(pcd, label="scene.ply"):
     points = np.asarray(pcd.points)
-    if points.shape[0] < 4:
-        raise ContractError(f"{label}: для реконструкции нужны хотя бы четыре точки")
+    try:
+        validate_limits(point_count=len(points))
+    except ValueError as exc:
+        raise ContractError(f'{label}: {exc}') from exc
     if not np.isfinite(points).all():
         raise ContractError(f"{label}: координаты содержат NaN или бесконечность")
 
