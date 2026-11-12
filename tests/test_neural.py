@@ -68,3 +68,12 @@ def test_failed_neural_run_cannot_be_reported_as_baseline(tmp_path):
     report = json.loads((tmp_path/'report.json').read_text())
     assert report['status'] == 'failed'
     assert report['solution'] == 'nksr'
+
+
+def test_millimetres_misread_as_metres_rejected_before_cuda(monkeypatch):
+    from lidar2sim import neural
+    cloud=sphere();cloud.scale(1000,center=[0,0,0])
+    monkeypatch.setattr(neural,'runtime',lambda:pytest.fail('CUDA must not initialize for invalid extent'))
+    with pytest.raises(ValueError,match='Проверьте единицы'):
+        neural.run(cloud,{},None)
+    cloud.scale(.001,center=[0,0,0]);neural.validate_extent(cloud)

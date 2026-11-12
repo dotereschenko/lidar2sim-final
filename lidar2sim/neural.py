@@ -13,6 +13,15 @@ CHECKPOINT_SHA256 = "c2edb6437d6485c2ed48a756523849628f0c34e232c601113ff657db871
 UPSTREAM_COMMIT = "e40336845e67761343a756788e5a98b827d4a143"
 
 
+def validate_extent(pcd):
+    extent = np.ptp(np.asarray(pcd.points), axis=0)
+    if (extent > 100).any():
+        dimensions = ' × '.join(f'{x:.2f}' for x in extent)
+        raise ValueError(f'NKSR: размер облака {dimensions} м превышает предел 100 м по оси '
+                         'для текущего режима. Проверьте единицы PLY (мм/см/м), выбросы '
+                         'или разделите большую сцену. Масштаб автоматически не меняется.')
+
+
 def runtime():
     """Check the actual runtime; no download and no silent CPU/Poisson fallback."""
     try:
@@ -41,6 +50,7 @@ def run(pcd, meta, traj, params=None):
     from .collision import build_collision
 
     p = validate_params({} if params is None else params, PARAMS)
+    validate_extent(pcd)
     torch, nksr = runtime()
     if pcd.has_normals():
         normals = np.asarray(pcd.normals)

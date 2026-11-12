@@ -1,4 +1,4 @@
-"""Scene A catalog and opt-in physics runners; never substitute preview for physics."""
+"""Physics jobs bound to an explicit reconstructed scene and validated route."""
 import hashlib
 import json
 import math
@@ -40,7 +40,7 @@ class Simulations:
     def read(self, ident):
         folder = self.folder(ident)
         state = json.loads((folder/'state.json').read_text())
-        state['files'] = [name for name in ('simulation.mp4', 'overview.png', 'preview.jpg', 'recording.json', 'run.log')
+        state['files'] = [name for name in ('simulation.mp4', 'overview.png', 'preview.jpg', 'recording.json', 'config.json', 'scene.usd', 'run.log')
                           if self.file(ident, name).is_file() and
                           (state['status'] == 'completed' or name in ('overview.png', 'preview.jpg', 'run.log'))]
         log = folder/'run.log'
@@ -51,10 +51,10 @@ class Simulations:
         return state
 
     def file(self, ident, name):
-        if name not in ('simulation.mp4', 'overview.png', 'preview.jpg', 'recording.json', 'run.log'):
+        if name not in ('simulation.mp4', 'overview.png', 'preview.jpg', 'recording.json', 'config.json', 'scene.usd', 'run.log'):
             raise ValueError('Неизвестный файл симуляции')
         folder = self.folder(ident)
-        return folder/name if name == 'run.log' else folder/'result'/name
+        return folder/name if name in ('run.log', 'config.json', 'scene.usd') else folder/'result'/name
 
     def command(self):
         command = json.loads(os.environ.get('LIDAR2SIM_NEWTON_COMMAND') or os.environ.get('LIDAR2SIM_ISAAC_COMMAND', '[]'))
@@ -94,34 +94,46 @@ class Simulations:
             command = self.command()
             if not command:
                 raise ValueError('Физический запуск недоступен: подключите Isaac-сервер')
-            catalog = self.catalog()
-            if not catalog['scene']:
-                raise ValueError('Реконструкция сцены A ещё не подготовлена')
-            if payload.get('scene_job') != catalog['scene']['id']:
-                raise ValueError('Маршруты настроены только для сцены A. Откройте её явно перед запуском.')
-            if payload.get('robot') != 'velocity_body':
-                raise ValueError('Неизвестная модель робота')
-            route, start, end = (payload.get(k) for k in ('route', 'start', 'end'))
-            if any(type(x) is not int for x in (route, start, end)):
-                raise ValueError('Маршрут, старт и цель должны быть целыми индексами')
-            if not 0 <= route < len(catalog['routes']):
-                raise ValueError('Неизвестный маршрут')
-            if not 0 <= start < end < len(catalog['routes'][route]['points']):
-                raise ValueError('Цель должна находиться после старта на выбранном маршруте')
             if self.active():
                 raise ValueError('Уже выполняется симуляция')
             if any(json.loads(p.read_text())['status'] in ('queued', 'running')
                    for p in self.jobs.root.glob('*/job.json')):
                 raise ValueError('Сначала дождитесь завершения реконструкции')
+            scene_id = payload.get('scene_job')
+            if not isinstance(scene_id, str):
+                raise ValueError('Выберите завершённую реконструкцию')
+            job = self.jobs.read(scene_id)
+            if job['status'] != 'completed':
+                raise ValueError('Сначала завершите реконструкцию выбранной сцены')
+            if payload.get('robot') != 'velocity_body':
+                raise ValueError('Неизвестная модель робота')
+            from .routes import route_config
+            if 'waypoints' in payload:
+                if self.backend() != 'newton':
+                    raise ValueError('Пользовательский маршрут требует исполнителя Newton')
+                config = route_config(self.jobs.folder(scene_id)/'result/collision.ply', payload['waypoints'])
+                route, start, end = 0, 0, len(payload['waypoints'])-1
+            else:
+                catalog = self.catalog()
+                if not catalog['scene'] or scene_id != catalog['scene']['id']:
+                    raise ValueError('Готовые маршруты относятся только к сцене A; задайте свои точки')
+                route, start, end = (payload.get(k) for k in ('route', 'start', 'end'))
+                if any(type(x) is not int for x in (route, start, end)):
+                    raise ValueError('Маршрут, старт и цель должны быть целыми индексами')
+                if not 0 <= route < len(catalog['routes']):
+                    raise ValueError('Неизвестный маршрут')
+                if not 0 <= start < end < len(catalog['routes'][route]['points']):
+                    raise ValueError('Цель должна находиться после старта на выбранном маршруте')
+                config = json.loads((self.root/'data/scene_a/test_config.json').read_text())
             self.jobs.ensure_free_space()
             ident = uuid.uuid4().hex
             folder = self.folder(ident); folder.mkdir(parents=True)
-            scene = self.jobs.folder(catalog['scene']['id'])/'result/scene.usd'
+            scene = self.jobs.folder(scene_id)/'result/scene.usd'
             # Snapshot inputs so a subsequent reconstruction cannot change this run.
             import shutil
             shutil.copyfile(scene, folder/'scene.usd')
-            shutil.copyfile(self.root/'data/scene_a/test_config.json', folder/'config.json')
-            state = self.update(ident, status='queued', error=None, scene_job=catalog['scene']['id'],
+            (folder/'config.json').write_text(json.dumps(config, allow_nan=False))
+            state = self.update(ident, status='queued', error=None, scene_job=scene_id, route_kind='custom' if 'waypoints' in payload else 'scene_a',
                                 route=route, start=start, end=end, robot='velocity_body', backend=self.backend())
             thread = threading.Thread(target=self.run, args=(ident, command), daemon=True)
             thread.start()
@@ -173,7 +185,7 @@ class Simulations:
                     validate_newton_record(record)
                 elif not video.is_file() or video.stat().st_size == 0:
                     raise RuntimeError('Нет видео физического прогона')
-                self.update(ident, status='completed', result=record, error=None)
+                self.update(ident, status='completed', goal_reached=record['outcome']=='reached', result=record, error=None)
         except Exception as exc:
             with self.lock:
                 if self.read(ident)['status'] != 'cancelled':

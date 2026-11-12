@@ -138,6 +138,26 @@ def test_reconstruction_waits_for_simulation(simulation):
 @pytest.mark.parametrize('scene_job', [None, 'b'*32])
 def test_missing_or_different_scene_cannot_silently_launch_scene_a(simulation, monkeypatch, scene_job):
     monkeypatch.setenv('LIDAR2SIM_NEWTON_COMMAND', json.dumps([sys.executable]))
-    with pytest.raises(ValueError, match='только для сцены A'):
+    with pytest.raises((ValueError, FileNotFoundError)):
         simulation.start({'scene_job': scene_job, 'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
     assert not simulation.directory.exists()
+
+
+def test_custom_route_binds_uploaded_scene_not_preset(simulation, monkeypatch):
+    import open3d as o3d
+    ident='b'*32
+    folder=simulation.jobs.root/ident/'result';folder.mkdir(parents=True)
+    (folder/'scene.usd').write_bytes(b'uploaded scene snapshot')
+    (folder/'report.json').write_text(json.dumps({'input':{'points':100},'solution':'nksr'}))
+    mesh=o3d.geometry.TriangleMesh.create_box(4,4,.1).translate([-2,-2,-.1])
+    o3d.io.write_triangle_mesh(str(folder/'collision.ply'),mesh)
+    simulation.jobs.update(ident,status='completed')
+    monkeypatch.setenv('LIDAR2SIM_NEWTON_COMMAND',json.dumps([sys.executable,'-c','import time;time.sleep(30)']))
+    job=simulation.start({'scene_job':ident,'robot':'velocity_body','waypoints':[[-.5,0,0],[.5,0,0]]})
+    try:
+        assert job['scene_job']==ident
+        assert (simulation.folder(job['id'])/'scene.usd').read_bytes()==b'uploaded scene snapshot'
+        cfg=json.loads((simulation.folder(job['id'])/'config.json').read_text())
+        assert cfg['routes'][0]['points']==[[-.5,0,0],[.5,0,0]]
+    finally:simulation.cancel(job['id'])
+    wait_for(simulation,job['id'])

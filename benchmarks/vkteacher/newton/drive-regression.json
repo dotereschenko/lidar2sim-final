@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "device": "cuda:0",
+  "free_final_xyz": [
+    0.6972740292549133,
+    7.646229427393791e-09,
+    0.14999258518218994
+  ],
+  "wall_final_xyz": [
+    0.5000193119049072,
+    9.005515444471257e-09,
+    0.14976295828819275
+  ],
+  "body_shape": "box_with_spherical_skids",
+  "body_mass_kg": 20,
+  "friction": 0.3,
+  "steps": 840,
+  "dt_s": 0.008333333333333333,
+  "driven_s": 5
+}
