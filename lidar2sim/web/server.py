@@ -29,6 +29,13 @@ def failure_message(lines):
     for line in reversed(lines):
         if line.startswith('WEB_ERROR '):
             return json.loads(line[len('WEB_ERROR '):])[:600]
+        if line.startswith('{'):
+            try:
+                record = json.loads(line)
+                if record.get('status') == 'failed' and isinstance(record.get('error'), str):
+                    return record['error'][:600]
+            except (ValueError, AttributeError):
+                pass
     message = lines[-1] if lines else 'Ошибка реконструкции'
     return re.sub(r'\x1b\[[0-9;]*m', '', message)[:600]
 

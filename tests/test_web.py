@@ -122,6 +122,8 @@ def test_validation_error_survives_buffered_native_warning():
     from lidar2sim.web.server import failure_message
     assert failure_message(['WEB_ERROR "Empty cloud"', '\x1b[1;33mwarning\x1b[0;m']) == 'Empty cloud'
     assert failure_message(['\x1b[1;33mwarning\x1b[0;m']) == 'warning'
+    assert failure_message(['{"status":"failed","error":"CUDA unavailable"}',
+                            'native warning']) == 'CUDA unavailable'
 
 
 def test_unavailable_nksr_rejects_upload_without_fallback(server):

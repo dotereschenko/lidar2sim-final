@@ -220,11 +220,11 @@ def write_outputs(out, visual, collision, report, started_at=None):
         os.replace(staged / "report.json", out / "report.json")
 
 
-def write_failure_report(out, error, elapsed):
+def write_failure_report(out, error, elapsed, *, solution="baseline"):
     """Ошибка нового запуска заменяет прежнюю отметку успешного результата."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    report = {"schema_version": 1, "status": "failed", "solution": "baseline", "total_s": round(elapsed, 3),
+    report = {"schema_version": 1, "status": "failed", "solution": solution, "total_s": round(elapsed, 3),
               "error": {"type": type(error).__name__, "message": str(error)}}
     with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=out, delete=False) as stream:
         tmp = Path(stream.name)

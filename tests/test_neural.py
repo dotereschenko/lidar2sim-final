@@ -59,3 +59,12 @@ def test_usd_preserves_visual_vertex_colors(tmp_path):
     colors = UsdGeom.Mesh(stage.GetPrimAtPath('/World/Visual')).GetDisplayColorPrimvar()
     assert colors.GetInterpolation() == 'vertex'
     np.testing.assert_allclose(np.asarray(colors.Get()), np.asarray(visual.vertex_colors))
+
+
+def test_failed_neural_run_cannot_be_reported_as_baseline(tmp_path):
+    import json
+    from lidar2sim.common import write_failure_report
+    write_failure_report(tmp_path, RuntimeError('CUDA unavailable'), .1, solution='nksr')
+    report = json.loads((tmp_path/'report.json').read_text())
+    assert report['status'] == 'failed'
+    assert report['solution'] == 'nksr'

@@ -79,7 +79,7 @@ def run(pcd, meta, traj, params=None):
         "collision_build": collision_info, "quality_status": "not_verified",
         "neural_backend": {"name": "nksr", "model": "ks", "upstream_commit": UPSTREAM_COMMIT,
             "checkpoint_sha256": CHECKPOINT_SHA256, "torch": torch.__version__,
-            "compatibility_patches": ["explicit_thrust_tuple_include_cuda13"],
+            "compatibility_patches": ["explicit_thrust_tuple_include_cuda13", "rename_unused_lerp_cpp20"],
             "cuda": torch.version.cuda, "image_id": os.environ.get("LIDAR2SIM_IMAGE_ID"),
             "detail_level": 0.0, "mise_iter": 1, "chunk_size": None,
             "peak_cuda_allocated_bytes": peak_memory,

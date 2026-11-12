@@ -53,7 +53,8 @@ def main():
     except (ValueError, OSError, RuntimeError) as exc:
         error = {"status": "failed", "error": str(exc)}
         try:
-            write_failure_report(a.out, exc, time.perf_counter() - t0)
+            write_failure_report(a.out, exc, time.perf_counter() - t0,
+                                 solution="nksr" if a.backend == "nksr" else "baseline")
         except OSError as report_error:
             error["report_error"] = str(report_error)
         print(json.dumps(error, ensure_ascii=False), file=sys.stderr)
