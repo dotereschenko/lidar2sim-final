@@ -53,6 +53,8 @@ class Jobs:
         self.pool = ThreadPoolExecutor(max_workers=1)
         from lidar2sim.neural import availability
         self.backends = {'nksr': availability()}
+        from .simulation import Simulations
+        self.simulations = Simulations(self, ROOT)
         for path in self.root.glob('*/job.json'):
             job = json.loads(path.read_text())
             if job['status'] in ('queued', 'running'):
@@ -200,6 +202,16 @@ def handler(jobs):
             try:
                 self.safe()
                 url = urlsplit(self.path); parts = url.path.strip('/').split('/')
+                if parts == ['api', 'simulations']:
+                    size = int(self.headers.get('Content-Length', '0'))
+                    if not 0 < size <= 4096:
+                        raise ValueError('Некорректный запрос симуляции')
+                    payload = json.loads(self.rfile.read(size))
+                    if not isinstance(payload, dict):
+                        raise ValueError('Нужен объект параметров симуляции')
+                    return self.json(jobs.simulations.start(payload), 201)
+                if len(parts) == 4 and parts[:2] == ['api', 'simulations'] and parts[3] == 'cancel':
+                    return self.json(jobs.simulations.cancel(parts[2]))
                 if parts == ['api', 'jobs']:
                     query = parse_qs(url.query)
                     method = query.get('method', ['improved'])[0]
@@ -247,6 +259,14 @@ def handler(jobs):
             try:
                 self.safe()
                 path = urlsplit(self.path).path; parts = path.strip('/').split('/')
+                if parts == ['api', 'simulation-scene']:
+                    return self.json(jobs.simulations.catalog())
+                if parts == ['api', 'simulations']:
+                    return self.json([jobs.simulations.read(p.parent.name) for p in
+                        sorted(jobs.simulations.directory.glob('*/state.json'),
+                               key=lambda p:p.stat().st_mtime, reverse=True)[:20]])
+                if len(parts) == 3 and parts[:2] == ['api', 'simulations']:
+                    return self.json(jobs.simulations.read(parts[2]))
                 if parts == ['api', 'backends']:
                     return self.json(jobs.backends)
                 if parts == ['api', 'input-contract']:
@@ -256,7 +276,13 @@ def handler(jobs):
                     return self.json(data)
                 if len(parts) == 3 and parts[:2] == ['api', 'jobs']:
                     return self.json(jobs.read(parts[2]))
-                if len(parts) == 5 and parts[:2] == ['api', 'jobs'] and parts[3] == 'files':
+                if parts == ['api', 'simulation-archive']:
+                    file = ROOT/'docs/img/release-v2/simulation.mp4'
+                elif len(parts) == 5 and parts[:2] == ['api', 'simulations'] and parts[3] == 'files':
+                    state = jobs.simulations.read(parts[2])
+                    if parts[4] not in state['files']: raise FileNotFoundError()
+                    file = jobs.simulations.file(parts[2], parts[4])
+                elif len(parts) == 5 and parts[:2] == ['api', 'jobs'] and parts[3] == 'files':
                     if parts[4] not in ARTIFACTS: raise FileNotFoundError()
                     file = jobs.folder(parts[2])/ARTIFACTS[parts[4]]
                 else:

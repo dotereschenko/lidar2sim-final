@@ -1,3 +1,4 @@
+import {initSimulationPanel} from '/simulation.js';
 import * as THREE from 'three';
 import {PLYLoader} from '/vendor/PLYLoader.js';
 import {OrbitControls} from '/vendor/OrbitControls.js';
@@ -5,6 +6,7 @@ const $ = id => document.getElementById(id);
 const labels = {uploaded:'Файл загружен',queued:'В очереди — ожидает свободного обработчика',running:'Реконструкция и экспорт…',completed:'Обработка завершена',failed:'Ошибка обработки',cancelled:'Обработка отменена'};
 const stages={loading:'Чтение облака…',reconstructing:'Реконструкция…',normals:'Подготовка и ориентация нормалей…',nksr:'Нейросетевая реконструкция NKSR…',collision:'Подготовка сеток и коллизий…',exporting:'Экспорт и проверка файлов…'};
 let current=null, localBuffer=null, object=null, camera, controls, renderer, scene, viewVersion=0, pollVersion=0;
+let clearSimulation=()=>{};
 const loader=new PLYLoader();
 function error(message){$('error').textContent=message; $('error').hidden=!message;}
 try {
@@ -15,7 +17,7 @@ try {
  new ResizeObserver(()=>{const w=$('viewer').clientWidth,h=$('viewer').clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}).observe($('viewer'));
  renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera);});
 } catch(e){error('3D-просмотр недоступен: '+e.message+'. Обработка и скачивание остаются доступны.');}
-function clearView(){if(object){scene.remove(object);object.geometry.dispose();object.material.dispose();object=null;}$('empty').hidden=false;}
+function clearView(){clearSimulation();if(object){scene.remove(object);object.geometry.dispose();object.material.dispose();object=null;}$('empty').hidden=false;}
 function fit(){if(!object||!camera)return; const box=new THREE.Box3().setFromObject(object),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()).length()||1;controls.target.copy(center);camera.position.copy(center).add(new THREE.Vector3(size*.65,-size*.85,size*.65));camera.near=Math.max(size/10000,.0001);camera.far=size*100;camera.updateProjectionMatrix();controls.update();}
 function show(buffer, points, local=false){
  if(!renderer)return;
@@ -53,3 +55,5 @@ history().catch(e=>error(e.message));
 api('/api/backends').then(backends=>{const info=backends.nksr;document.querySelector('#method option[value=nksr]').disabled=!info.available;$('method').disabled=false;$('method').onchange();$('nksr-status').textContent=info.available?'NKSR доступен · исследовательский режим':info.reason||'NKSR недоступен';}).catch(()=>{$('nksr-status').textContent='Не удалось проверить доступность NKSR';});
 
 $('cancel').onclick=async()=>{if(!current)return;try{renderJob(await api(`/api/jobs/${current.id}/cancel`,{method:'POST'}));}catch(e){error(e.message);}};
+
+clearSimulation=initSimulationPanel({THREE,api,openJob:async id=>{localBuffer=null;await watch(id);},view:()=>({scene,camera,controls,renderer})});
