@@ -1,0 +1,3024 @@
+{
+  "passed": true,
+  "checks": {
+    "b_ordering_and_single_runs": true,
+    "b_visual_gt": true,
+    "b_visual_shift_precision": true,
+    "b_visual_missing_wall": true,
+    "b_visual_expanded_width": true,
+    "b_collision_gt": true,
+    "b_collision_shift_precision": true,
+    "b_collision_missing_wall": true,
+    "b_collision_expanded_width": true
+  },
+  "acceptance_profile": {
+    "profile_id": "lidar2sim-rules-v2",
+    "schema_version": 2,
+    "sha256": "e56a1163cc4674f80948eb465286d8bee7ec3f9d5342f60e40f6098c33f372e8"
+  },
+  "sampling_note": "12000 samples for fixture regression; production thresholds unchanged",
+  "numerical_tolerances": {
+    "gt_distance_m": 2e-06,
+    "b_p95_m": 0.01,
+    "distortion_error_m": 2e-06,
+    "order": 1e-12
+  },
+  "code_sha256": {
+    "runner": "974fbe8774efe771c80a3f981bfdb10f3cc0d586221e433398ac1dd8eccedba0",
+    "evaluator": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+    "dimensions": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29"
+  },
+  "fixture_inputs_sha256": {
+    "gt_mesh.ply": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+    "A.ply": "19fc5d553d5fac0975fd2a4ef8af758e66614ad5aaadb2470f750cbd51aa4517",
+    "B.ply": "49bbd43d0214f0c1362dfcb06cce30d1b29ae873cdda389e5f9dc388bc0c4987"
+  },
+  "reports": {
+    "b": {
+      "gt": {
+        "evaluation_mode": "independent_b_common_region",
+        "meshes": {
+          "visual": {
+            "raw_metrics": {
+              "precision_fraction": 1.0,
+              "median_m": 0.0006688833236694336,
+              "p95_m": 0.0019289875635877252
+            },
+            "passed": {
+              "precision": true,
+              "median": true,
+              "p95": true
+            },
+            "sha256": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.9999999403953552,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      1.9999999523162841,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.9999999403953552,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      1.9999999523162841,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 10,
+              "required_count": 10,
+              "status": "passed"
+            }
+          },
+          "collision": {
+            "raw_metrics": {
+              "precision_fraction": 1.0,
+              "median_m": 0.0006688833236694336,
+              "p95_m": 0.0019289875635877252
+            },
+            "passed": {
+              "precision": true,
+              "median": true,
+              "p95": true
+            },
+            "sha256": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.9999999403953552,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      1.9999999523162841,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.9999999403953552,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      1.9999999523162841,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 10,
+              "required_count": 10,
+              "status": "passed"
+            }
+          }
+        },
+        "acceptance_profile": {
+          "profile_id": "lidar2sim-rules-v2",
+          "schema_version": 2,
+          "sha256": "e56a1163cc4674f80948eb465286d8bee7ec3f9d5342f60e40f6098c33f372e8"
+        },
+        "reference_provenance": {
+          "annotations_sha256": "140a69a33fe9d3f843b0549dd5822189abc30c6ffa877bea4b212bbfe530a7dd",
+          "region_sha256": "fe513282eadc02c32590fb698bd75557dc832a77432dcb5451470908e4e58d11",
+          "inputs_sha256": {
+            "gt_mesh.ply": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "A.ply": "19fc5d553d5fac0975fd2a4ef8af758e66614ad5aaadb2470f750cbd51aa4517",
+            "B.ply": "49bbd43d0214f0c1362dfcb06cce30d1b29ae873cdda389e5f9dc388bc0c4987"
+          },
+          "annotation_status": "regression_fixture",
+          "reference_type": "B_returns",
+          "reference_weighting": "uniform_B_returns",
+          "B_anchor_mapping": null,
+          "eligible_reference_samples": 15606,
+          "reference_samples": 12000,
+          "region_rule": {
+            "radius_m": 0.1,
+            "min_neighbors": 10,
+            "min_common_samples": 1000,
+            "samples": 12000,
+            "common_samples": 12000
+          }
+        },
+        "evaluator_sha256": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+        "geometry_status": "passed",
+        "dimensions_status": "passed",
+        "dimension_measurer_sha256": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29",
+        "coverage": {
+          "visual_completeness": "measured",
+          "collision_completeness": "measured",
+          "dimensions": "measured",
+          "physics": "not_run",
+          "performance": "not_run"
+        },
+        "poc_status": "incomplete"
+      },
+      "shift_10cm": {
+        "evaluation_mode": "independent_b_common_region",
+        "meshes": {
+          "visual": {
+            "raw_metrics": {
+              "precision_fraction": 0.7475,
+              "median_m": 0.001199865248054266,
+              "p95_m": 0.10097410529851913
+            },
+            "passed": {
+              "precision": false,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "04f18cf67549d81141e57cafb07783fddba5be3a3855e1e5df1c2abd7824d9ef",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.999999821186066,
+                  "absolute_error_m": 1.1920928932873665e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000003576278682,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0000000596046448,
+                  "absolute_error_m": 5.960464477539063e-08,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      -3.5762786843029915e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 1.9999998807907104,
+                  "absolute_error_m": 1.1920928955078125e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000002384185791,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.999999821186066,
+                  "absolute_error_m": 1.1920928932873665e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000003576278682,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0000000596046448,
+                  "absolute_error_m": 5.960464477539063e-08,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      -3.5762786843029915e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 1.9999998807907104,
+                  "absolute_error_m": 1.1920928955078125e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000002384185791,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 10,
+              "required_count": 10,
+              "status": "passed"
+            }
+          },
+          "collision": {
+            "raw_metrics": {
+              "precision_fraction": 0.7475,
+              "median_m": 0.001199865248054266,
+              "p95_m": 0.10097410529851913
+            },
+            "passed": {
+              "precision": false,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "04f18cf67549d81141e57cafb07783fddba5be3a3855e1e5df1c2abd7824d9ef",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.999999821186066,
+                  "absolute_error_m": 1.1920928932873665e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000003576278682,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0000000596046448,
+                  "absolute_error_m": 5.960464477539063e-08,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      -3.5762786843029915e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 1.9999998807907104,
+                  "absolute_error_m": 1.1920928955078125e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000002384185791,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 1.999999821186066,
+                  "absolute_error_m": 1.1920928932873665e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000003576278682,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0000000596046448,
+                  "absolute_error_m": 5.960464477539063e-08,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      -3.5762786843029915e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 1.9999998807907104,
+                  "absolute_error_m": 1.1920928955078125e-07,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.10000002384185791,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 10,
+              "required_count": 10,
+              "status": "passed"
+            }
+          }
+        },
+        "acceptance_profile": {
+          "profile_id": "lidar2sim-rules-v2",
+          "schema_version": 2,
+          "sha256": "e56a1163cc4674f80948eb465286d8bee7ec3f9d5342f60e40f6098c33f372e8"
+        },
+        "reference_provenance": {
+          "annotations_sha256": "140a69a33fe9d3f843b0549dd5822189abc30c6ffa877bea4b212bbfe530a7dd",
+          "region_sha256": "fe513282eadc02c32590fb698bd75557dc832a77432dcb5451470908e4e58d11",
+          "inputs_sha256": {
+            "gt_mesh.ply": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "A.ply": "19fc5d553d5fac0975fd2a4ef8af758e66614ad5aaadb2470f750cbd51aa4517",
+            "B.ply": "49bbd43d0214f0c1362dfcb06cce30d1b29ae873cdda389e5f9dc388bc0c4987"
+          },
+          "annotation_status": "regression_fixture",
+          "reference_type": "B_returns",
+          "reference_weighting": "uniform_B_returns",
+          "B_anchor_mapping": null,
+          "eligible_reference_samples": 15606,
+          "reference_samples": 12000,
+          "region_rule": {
+            "radius_m": 0.1,
+            "min_neighbors": 10,
+            "min_common_samples": 1000,
+            "samples": 12000,
+            "common_samples": 12000
+          }
+        },
+        "evaluator_sha256": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+        "geometry_status": "failed",
+        "dimensions_status": "passed",
+        "dimension_measurer_sha256": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29",
+        "coverage": {
+          "visual_completeness": "measured",
+          "collision_completeness": "measured",
+          "dimensions": "measured",
+          "physics": "not_run",
+          "performance": "not_run"
+        },
+        "poc_status": "failed"
+      },
+      "missing_wall": {
+        "evaluation_mode": "independent_b_common_region",
+        "meshes": {
+          "visual": {
+            "raw_metrics": {
+              "precision_fraction": 1.0,
+              "median_m": 0.0008192384848371148,
+              "p95_m": 0.4395422339439392
+            },
+            "passed": {
+              "precision": true,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "75a67218f02976aa00c3eade39ab8fe91c86b577d931b4343e49545db1a6751c",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                }
+              ],
+              "passed_count": 6,
+              "required_count": 10,
+              "status": "failed"
+            }
+          },
+          "collision": {
+            "raw_metrics": {
+              "precision_fraction": 1.0,
+              "median_m": 0.0008192384848371148,
+              "p95_m": 0.4395422339439392
+            },
+            "passed": {
+              "precision": true,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "75a67218f02976aa00c3eade39ab8fe91c86b577d931b4343e49545db1a6751c",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": null,
+                  "absolute_error_m": null,
+                  "tolerance_m": 0.05,
+                  "status": "error",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 0,
+                      "spread_m": null
+                    }
+                  ],
+                  "reason": "missing_surface_in_search_box"
+                }
+              ],
+              "passed_count": 6,
+              "required_count": 10,
+              "status": "failed"
+            }
+          }
+        },
+        "acceptance_profile": {
+          "profile_id": "lidar2sim-rules-v2",
+          "schema_version": 2,
+          "sha256": "e56a1163cc4674f80948eb465286d8bee7ec3f9d5342f60e40f6098c33f372e8"
+        },
+        "reference_provenance": {
+          "annotations_sha256": "140a69a33fe9d3f843b0549dd5822189abc30c6ffa877bea4b212bbfe530a7dd",
+          "region_sha256": "fe513282eadc02c32590fb698bd75557dc832a77432dcb5451470908e4e58d11",
+          "inputs_sha256": {
+            "gt_mesh.ply": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "A.ply": "19fc5d553d5fac0975fd2a4ef8af758e66614ad5aaadb2470f750cbd51aa4517",
+            "B.ply": "49bbd43d0214f0c1362dfcb06cce30d1b29ae873cdda389e5f9dc388bc0c4987"
+          },
+          "annotation_status": "regression_fixture",
+          "reference_type": "B_returns",
+          "reference_weighting": "uniform_B_returns",
+          "B_anchor_mapping": null,
+          "eligible_reference_samples": 15606,
+          "reference_samples": 12000,
+          "region_rule": {
+            "radius_m": 0.1,
+            "min_neighbors": 10,
+            "min_common_samples": 1000,
+            "samples": 12000,
+            "common_samples": 12000
+          }
+        },
+        "evaluator_sha256": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+        "geometry_status": "failed",
+        "dimensions_status": "failed",
+        "dimension_measurer_sha256": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29",
+        "coverage": {
+          "visual_completeness": "measured",
+          "collision_completeness": "measured",
+          "dimensions": "measured",
+          "physics": "not_run",
+          "performance": "not_run"
+        },
+        "poc_status": "failed"
+      },
+      "expanded_width": {
+        "evaluation_mode": "independent_b_common_region",
+        "meshes": {
+          "visual": {
+            "raw_metrics": {
+              "precision_fraction": 0.8665,
+              "median_m": 0.0008118152618408203,
+              "p95_m": 0.10024873167276382
+            },
+            "passed": {
+              "precision": false,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "8314640eb88b8e9aa52d6b57415872f8b5b99aa8aae729a0ef2c5313b3c17f88",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 2.0999998450279236,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0999999046325684,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 2.0999998450279236,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0999999046325684,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 6,
+              "required_count": 10,
+              "status": "failed"
+            }
+          },
+          "collision": {
+            "raw_metrics": {
+              "precision_fraction": 0.8665,
+              "median_m": 0.0008118152618408203,
+              "p95_m": 0.10024873167276382
+            },
+            "passed": {
+              "precision": false,
+              "median": true,
+              "p95": false
+            },
+            "sha256": "8314640eb88b8e9aa52d6b57415872f8b5b99aa8aae729a0ef2c5313b3c17f88",
+            "precision_reference": "B_returns",
+            "precision_direction": "mesh_surface_to_B",
+            "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+            "completeness_reference": "B_returns",
+            "completeness_direction": "reference_to_mesh_triangles",
+            "surface_samples": 12000,
+            "common_surface_samples": 12000,
+            "excluded_surface_fraction": 0.0,
+            "dimensions": {
+              "method": {
+                "id": "local-ray-bundle-v2",
+                "probe_offset_m": 0.005,
+                "probes_per_side": 5,
+                "minimum_valid_probes": 4,
+                "maximum_surface_spread_m": 0.02
+              },
+              "items": [
+                {
+                  "id": "D01",
+                  "label": "Box span 1",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 2.0999998450279236,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D02",
+                  "label": "Box span 2",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D03",
+                  "label": "Box span 3",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D04",
+                  "label": "Box span 4",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0999999046325684,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D05",
+                  "label": "Box span 5",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      2.384185793236071e-08,
+                      0.9
+                    ],
+                    [
+                      0.7,
+                      2.000000023841858,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D06",
+                  "label": "Box span 6",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      1.0,
+                      0.0
+                    ],
+                    [
+                      1.0,
+                      1.0,
+                      2.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D07",
+                  "label": "Box span 7",
+                  "reference_m": 1.9999999403953552,
+                  "measured_m": 2.0999998450279236,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      1.1920928910669204e-08,
+                      0.8,
+                      0.9
+                    ],
+                    [
+                      2.0999998569488527,
+                      0.8,
+                      0.9
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D08",
+                  "label": "Box span 8",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      1.0,
+                      2.384185793236071e-08,
+                      1.0
+                    ],
+                    [
+                      1.0,
+                      2.000000023841858,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D09",
+                  "label": "Box span 9",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0,
+                  "absolute_error_m": 0.0,
+                  "tolerance_m": 0.05,
+                  "status": "passed",
+                  "passed": true,
+                  "surface_points_m": [
+                    [
+                      0.7,
+                      1.0,
+                      2.384185793236071e-08
+                    ],
+                    [
+                      0.7,
+                      1.0,
+                      2.000000023841858
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                },
+                {
+                  "id": "D10",
+                  "label": "Box span 10",
+                  "reference_m": 2.0,
+                  "measured_m": 2.0999999046325684,
+                  "absolute_error_m": 0.09999990463256836,
+                  "tolerance_m": 0.05,
+                  "status": "failed",
+                  "passed": false,
+                  "surface_points_m": [
+                    [
+                      0.0,
+                      0.8,
+                      1.0
+                    ],
+                    [
+                      2.0999999046325684,
+                      0.8,
+                      1.0
+                    ]
+                  ],
+                  "sides": [
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    },
+                    {
+                      "valid_probes": 5,
+                      "spread_m": 0.0
+                    }
+                  ]
+                }
+              ],
+              "passed_count": 6,
+              "required_count": 10,
+              "status": "failed"
+            }
+          }
+        },
+        "acceptance_profile": {
+          "profile_id": "lidar2sim-rules-v2",
+          "schema_version": 2,
+          "sha256": "e56a1163cc4674f80948eb465286d8bee7ec3f9d5342f60e40f6098c33f372e8"
+        },
+        "reference_provenance": {
+          "annotations_sha256": "140a69a33fe9d3f843b0549dd5822189abc30c6ffa877bea4b212bbfe530a7dd",
+          "region_sha256": "fe513282eadc02c32590fb698bd75557dc832a77432dcb5451470908e4e58d11",
+          "inputs_sha256": {
+            "gt_mesh.ply": "ac724bf865e9cbb7e17fce7d85854949f084752adf8249d7e48fb17a4217a8fc",
+            "A.ply": "19fc5d553d5fac0975fd2a4ef8af758e66614ad5aaadb2470f750cbd51aa4517",
+            "B.ply": "49bbd43d0214f0c1362dfcb06cce30d1b29ae873cdda389e5f9dc388bc0c4987"
+          },
+          "annotation_status": "regression_fixture",
+          "reference_type": "B_returns",
+          "reference_weighting": "uniform_B_returns",
+          "B_anchor_mapping": null,
+          "eligible_reference_samples": 15606,
+          "reference_samples": 12000,
+          "region_rule": {
+            "radius_m": 0.1,
+            "min_neighbors": 10,
+            "min_common_samples": 1000,
+            "samples": 12000,
+            "common_samples": 12000
+          }
+        },
+        "evaluator_sha256": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+        "geometry_status": "failed",
+        "dimensions_status": "failed",
+        "dimension_measurer_sha256": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29",
+        "coverage": {
+          "visual_completeness": "measured",
+          "collision_completeness": "measured",
+          "dimensions": "measured",
+          "physics": "not_run",
+          "performance": "not_run"
+        },
+        "poc_status": "failed"
+      }
+    }
+  }
+}

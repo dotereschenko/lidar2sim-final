@@ -1,0 +1,32 @@
+{
+  "scene_sha256": "c5e0f3e9e16bd3cae3404e5107de09c4b400e8d370a0454660f78b3b3acfb3e9",
+  "video": {
+    "frames": 240,
+    "fps": 24,
+    "width": 1280,
+    "height": 720,
+    "duration_s": 10
+  },
+  "artifacts": {
+    "docs/img/integration/overview.svg": {
+      "sha256": "90e502d666998de6be00009d538ab6f2bdf98f555535d332d25d4eeecdbd8dd5",
+      "bytes": 73605
+    },
+    "docs/img/integration/simulation-0239.png": {
+      "sha256": "1271f006674be033beafdf57ee049245891f4114e44c39a9f030c50412657cc8",
+      "bytes": 228946
+    },
+    "docs/img/integration/overview.png": {
+      "sha256": "e3095d483818348f71f787974f9fe73eb05c72c780feaafdeba79839824a6fb1",
+      "bytes": 172584
+    },
+    "docs/img/integration/comparison.png": {
+      "sha256": "330fd1adddf01258458265a97f0da64600219fe3c55c26b6a56f02118f65a0c6",
+      "bytes": 120535
+    },
+    "docs/img/integration/simulation.mp4": {
+      "sha256": "0af4deb4a1caea2ea9c9f235567b1251689d54d714bc2a132b38df6be143bb62",
+      "bytes": 152969
+    }
+  }
+}

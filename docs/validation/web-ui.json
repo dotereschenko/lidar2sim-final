@@ -1,0 +1,65 @@
+{
+  "browser_flow": "Chrome: file picker A750k → build → completed → visual/collision/wireframe",
+  "job": {
+    "id": "b2deb843f4584143b801a3322cd54cb1",
+    "status": "completed",
+    "settings": {
+      "method": "improved",
+      "scale": 1.0,
+      "up": "Z"
+    },
+    "created_at": "2026-11-11T14:10:16.551123+00:00",
+    "error": null,
+    "files": [
+      "input.ply",
+      "visual.ply",
+      "collision.ply",
+      "scene.usd",
+      "report.json",
+      "run.log"
+    ],
+    "result": {
+      "total_s": 21.825368,
+      "outputs": {
+        "visual_triangles": 199999,
+        "collision_triangles": 59998
+      },
+      "input": {
+        "path": "/Users/denisteresenko/Programming/parph-maniac/frontend/lidar2sim/out/web-jobs/b2deb843f4584143b801a3322cd54cb1/input.ply",
+        "sha256": "62e73e200942814e3a919d2f4441675ec97b68fd1ded5f139db3afe51ced1043",
+        "points": 750000
+      },
+      "acceptance": {
+        "status": "not_run"
+      },
+      "timings_s": {
+        "preprocess": 2.097,
+        "poisson": 9.337,
+        "refinement": 2.449,
+        "decimate": 6.322,
+        "load": 0.043598,
+        "provenance": 0.126426,
+        "imports": 0.659197,
+        "export_and_validation": 0.784122
+      }
+    }
+  },
+  "download_sha256": {
+    "visual.ply": "a5f26b83d9f20c070ef7e04a3b8a9d4603027526483cff40112176ec85920c34",
+    "collision.ply": "fe08e3309e3735f11fcfa14ec9ec0e0af9e22ec3a024edcddc5e9863c902eab2",
+    "scene.usd": "c1dab71dee6777c3e9dcc67ad7c1f844023ef9c699588c30df66cf80dc1df69a",
+    "report.json": "27ab36582a17e4d1b6262fce28a7ce0bf123cbdb4105cedb03b6e11bf908fea8"
+  },
+  "notes": "No trajectory supplied; acceptance not_run, no GT/B/Isaac checks; frontend failure/mobile checks pending.",
+  "validation": {
+    "full_suite": "139 tests and 185 subtests passed before final error-format fix",
+    "final_targeted_tests": 7,
+    "javascript_syntax": "passed",
+    "browser": "Chrome: real file selection, PLY preview, submit, completed, mesh layers, wireframe",
+    "invalid_input": "empty PLY rejected by worker; failed status and log available",
+    "not_verified": [
+      "mobile browser layout",
+      "Isaac integration from UI"
+    ]
+  }
+}

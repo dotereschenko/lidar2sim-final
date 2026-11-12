@@ -1,0 +1,13 @@
+{
+  "ssh_target": "user05@10.10.0.2",
+  "ssh_port": 22,
+  "remote_root": "/home/user05/lidar2sim-poc-runs",
+  "image": "isaac-sim-xvfb:6.2",
+  "docker_runtime": "nvidia",
+  "cpus": 4,
+  "memory_gib": 16,
+  "transfer_timeout_s": 180,
+  "physics_timeout_s": 1800,
+  "lock_path": "/tmp/lidar2sim-isaac-slot.lock",
+  "pause_known_sessions": []
+}

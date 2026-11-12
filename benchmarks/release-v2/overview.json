@@ -1,0 +1,36 @@
+{
+  "sources": [
+    {
+      "path": "/input/A.ply",
+      "sha256": "488883858b49287bd8eea8bbd81507f1d622b454e77ba84b23d7dc2e7d1c3eb1",
+      "bytes": 9000120
+    },
+    {
+      "path": "/baseline/collision.ply",
+      "sha256": "3f239f555cd3e0a7252fad449de8c7120983a2bafabb50c3933ba4ca7e8b2573",
+      "bytes": 778216
+    },
+    {
+      "path": "/final/visual.ply",
+      "sha256": "1fdb60ecfc9beeb069243e9542a34fa80ee57a75e131585b0ec0f32488caba90",
+      "bytes": 5168833
+    },
+    {
+      "path": "/final/collision.ply",
+      "sha256": "c639bcb6c03950d1844228e6613b993151a4e0e4ac6689beac9fcaa3354563b8",
+      "bytes": 5166084
+    }
+  ],
+  "projection": "XY",
+  "height_slice_m": [
+    0.1,
+    1.6
+  ],
+  "mesh_surface_samples": 300000,
+  "seed": 29,
+  "artifact": {
+    "path": "/output/overview.svg",
+    "sha256": "5a545f4c7b9feb63156e527b4d4842313de1986f92ddb9dd9ecaa28a3ac3b466",
+    "bytes": 77557
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "scope": "Public scene A only; five independent reconstructions and Isaac processes. Not B/C or H30 qualification.",
+  "candidate_image_id": "sha256:69df0342b54ccdbff0042e10331e46f5dd78ca7c08dd0e71f95d4b845a355eb4",
+  "profile_sha256": "f58868ac364c6cdd77e3f535e81c5ae46c28c8b331f78701e83c1caee9b07074",
+  "runs": [
+    {
+      "repeat": 1,
+      "folder": "benchmarks/hybrid-surfaces/boundary-pad-r3",
+      "reconstruction_wall_s": 66.12,
+      "usd_sha256": "ec059e482952e6509c50d54cddf4b0c57e4133f587d3c285351a55f3bebf8eb0",
+      "physics_passed": true,
+      "floor_ok": 10,
+      "obstacles_ok": 10,
+      "routes_ok": 5,
+      "max_obstacle_penetration_m": 0.0088,
+      "isaac_sessions_restored": [
+        "isaac-flight",
+        "isaac-stream"
+      ]
+    },
+    {
+      "repeat": 2,
+      "folder": "benchmarks/hybrid-surfaces/boundary-pad-five-r2",
+      "reconstruction_wall_s": 65.42,
+      "usd_sha256": "ec059e482952e6509c50d54cddf4b0c57e4133f587d3c285351a55f3bebf8eb0",
+      "physics_passed": true,
+      "floor_ok": 10,
+      "obstacles_ok": 10,
+      "routes_ok": 5,
+      "max_obstacle_penetration_m": 0.0088,
+      "isaac_sessions_restored": [
+        "isaac-flight",
+        "isaac-stream"
+      ]
+    },
+    {
+      "repeat": 3,
+      "folder": "benchmarks/hybrid-surfaces/boundary-pad-five-r3",
+      "reconstruction_wall_s": 63.378,
+      "usd_sha256": "ec059e482952e6509c50d54cddf4b0c57e4133f587d3c285351a55f3bebf8eb0",
+      "physics_passed": true,
+      "floor_ok": 10,
+      "obstacles_ok": 10,
+      "routes_ok": 5,
+      "max_obstacle_penetration_m": 0.0088,
+      "isaac_sessions_restored": [
+        "isaac-flight",
+        "isaac-stream"
+      ]
+    },
+    {
+      "repeat": 4,
+      "folder": "benchmarks/hybrid-surfaces/boundary-pad-five-r4",
+      "reconstruction_wall_s": 62.959,
+      "usd_sha256": "ec059e482952e6509c50d54cddf4b0c57e4133f587d3c285351a55f3bebf8eb0",
+      "physics_passed": true,
+      "floor_ok": 10,
+      "obstacles_ok": 10,
+      "routes_ok": 5,
+      "max_obstacle_penetration_m": 0.0088,
+      "isaac_sessions_restored": [
+        "isaac-flight",
+        "isaac-stream"
+      ]
+    },
+    {
+      "repeat": 5,
+      "folder": "benchmarks/hybrid-surfaces/boundary-pad-five-r5",
+      "reconstruction_wall_s": 63.11,
+      "usd_sha256": "ec059e482952e6509c50d54cddf4b0c57e4133f587d3c285351a55f3bebf8eb0",
+      "physics_passed": true,
+      "floor_ok": 10,
+      "obstacles_ok": 10,
+      "routes_ok": 5,
+      "max_obstacle_penetration_m": 0.0088,
+      "isaac_sessions_restored": [
+        "isaac-flight",
+        "isaac-stream"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "source_commit": "d307ce3",
+  "image_id": "sha256:f485bd9a8196a654a3b4e227dff77cbf7a65fdf4f70c3248ad4d2cc36cf1b25e",
+  "cpus": 4,
+  "memory_gib": 16,
+  "network": "none",
+  "runs": [
+    {
+      "scene": "scene_a",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:f485bd9a8196a654a3b4e227dff77cbf7a65fdf4f70c3248ad4d2cc36cf1b25e",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 59.806,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "passed",
+      "dimension_counts": {
+        "visual": 10,
+        "collision": 10
+      },
+      "physics": "not_run",
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "da86877a41a3f79d307e08700bccd920de1820f56ad478cf38d682e4c72e8214",
+          "geometry": {
+            "precision_fraction": 0.9999441966231981,
+            "median_m": 0.0041999840177595615,
+            "p95_m": 0.0178428553044796
+          },
+          "dimensions_passed": 10,
+          "maximum_measured_dimension_error_m": 0.04230855571329606
+        },
+        "collision": {
+          "sha256": "c4f28c2f34235efc9dc24c0abda6eb7c0a3f0058fa9f6041112c9d7e7c9d43d4",
+          "geometry": {
+            "precision_fraction": 0.9999441247136391,
+            "median_m": 0.004200543276965618,
+            "p95_m": 0.017837606370449066
+          },
+          "dimensions_passed": 10,
+          "maximum_measured_dimension_error_m": 0.04230855571329606
+        }
+      },
+      "usd_sha256": "a517b8d4c1ae7119f3d43fb2a554da7d817d8fffc76ee3e0feb7e9d2710dc36e"
+    },
+    {
+      "scene": "scene_c",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:f485bd9a8196a654a3b4e227dff77cbf7a65fdf4f70c3248ad4d2cc36cf1b25e",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 68.675,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "failed",
+      "dimension_counts": {
+        "visual": 9,
+        "collision": 9
+      },
+      "physics": "not_run",
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "08e402434bdca4273ffeadc5d96b38ea37086f5fc2830ca223b34cca8e20c793",
+          "geometry": {
+            "precision_fraction": 0.9999797079294648,
+            "median_m": 0.0039053172804415226,
+            "p95_m": 0.013612104579806328
+          },
+          "dimensions_passed": 9,
+          "maximum_measured_dimension_error_m": 0.06156833429336572
+        },
+        "collision": {
+          "sha256": "76c2578c332394d86989a43c31cae9126a78d341464360b3cfc3892fb67073c0",
+          "geometry": {
+            "precision_fraction": 0.9999830981725745,
+            "median_m": 0.003907192498445511,
+            "p95_m": 0.013612257316708565
+          },
+          "dimensions_passed": 9,
+          "maximum_measured_dimension_error_m": 0.061568326842785126
+        }
+      },
+      "usd_sha256": "ceba4aee0f5c67beeef483354e30b15faf457b204c06a9fa7b1b22f82a7b3a93"
+    }
+  ],
+  "qualified": false,
+  "artifact_storage": "Spark private jury directory; no meshes downloaded locally",
+  "new_physics_runs": 0
+}

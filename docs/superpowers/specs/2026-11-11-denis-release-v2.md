@@ -1,0 +1,9 @@
+# SDD: complete Denis data, evaluation and release work
+
+The user delegated all Denis tasks on 2026-11-11. Adopt the original documented numerical promises as the release working contract rather than waiting for another selection: A/B 750000 each; independently planned B; A sectors and 5% random dropout; precision mesh surface→B >=95% within0.10m; B→mesh median<=0.03m p95<=0.10m; ten dimensions <=0.05m; box0.4x0.4x0.3m20kg, all10 floor/all10 obstacles/all5 routes, penetration<=0.02m. Common-region membership remains pinned to observations of GT, not prediction proximity. v2 completeness samples real eligible B returns uniformly. v1 stays an explicit historical compatibility path; release tools always select v2.
+
+Decisions: box surrogate, mentor-operated single-session Spark queue, mandatory hidden C with a different layout, A/B count750000, fixed10M performance input, separate public and private jury packages. These are implementation decisions under user delegation, not a claim of external organizer consensus. Public materials must use this contract consistently.
+
+Sequence: H3 versioned profile/evaluator/docs/decision; H13 freeze existing verified v2 acquisition; H21 private C generation plus GT qualification; H24 allowlisted deterministic public/jury archives and anonymous download check; H26 five repeat records on A/C, baseline/final and GT/negative controls; H28 isolated reconstruction and jury report/ranking; H30 clean-environment participant/jury rehearsal with recorded times and outstanding human/account/access limitations. H2 closes only when children satisfy their actual criteria.
+
+No B/GT/C secrets in public reconstruction mounts or archives. Do not commit the hidden recipe or private datasets to the participant repository. Never promote local timing into designated-machine qualification or automated smoke checks into a witnessed separate-account rehearsal. Retain evidence, commit/push by completed chunk and update Plane/Graphiti.

@@ -1,0 +1,132 @@
+{
+  "source_commit": "e7ce0c9",
+  "image_id": "sha256:9e6b71661301ab86007d3db4e2cb0e47cee5ce47f09d7abcd6d10aa392731740",
+  "cpus": 4,
+  "memory_gib": 16,
+  "network": "none",
+  "runs": [
+    {
+      "scene": "scene_a",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:9e6b71661301ab86007d3db4e2cb0e47cee5ce47f09d7abcd6d10aa392731740",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 57.087,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "passed",
+      "dimension_counts": {
+        "visual": 10,
+        "collision": 10
+      },
+      "physics": {
+        "floor": "9/10",
+        "obstacles": "10/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "da79cd9abeee9aded20656a8fed59fec580046e3105afa3eaf8cddb1e3e21c38",
+          "geometry": {
+            "precision_fraction": 0.9999963854028107,
+            "median_m": 0.005831758491694927,
+            "p95_m": 0.024779511615633965
+          },
+          "dimensions_passed": 10
+        },
+        "collision": {
+          "sha256": "0d8960c502ced494735f3a31dc61bea2e07bae5c115498637f9ba3027f043db3",
+          "geometry": {
+            "precision_fraction": 1.0,
+            "median_m": 0.00583310890942812,
+            "p95_m": 0.024781769141554832
+          },
+          "dimensions_passed": 10
+        }
+      },
+      "usd_sha256": "bdad5e11d324855c5a1958d8517b05751ff2aeb2846b900fcec3f86506812045",
+      "physics_sha256": "091d7c3330507919b3a66309c85774e0c61b0b87880b9270cc22349a12784bf1"
+    },
+    {
+      "scene": "scene_c",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:9e6b71661301ab86007d3db4e2cb0e47cee5ce47f09d7abcd6d10aa392731740",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 67.002,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "passed",
+      "dimension_counts": {
+        "visual": 10,
+        "collision": 10
+      },
+      "physics": {
+        "floor": "10/10",
+        "obstacles": "10/10",
+        "routes": "5/5",
+        "passed": true
+      },
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "240421f9dddd74692a7b96efd79923eb33fadd8e664d1a0e0a7ac46a52882cc8",
+          "geometry": {
+            "precision_fraction": 1.0,
+            "median_m": 0.005932260770350695,
+            "p95_m": 0.02789810672402382
+          },
+          "dimensions_passed": 10
+        },
+        "collision": {
+          "sha256": "7a7714575b308e124fe7ba44fbfd19a714ee0bea7645bfd88b16cfd48ac07ed1",
+          "geometry": {
+            "precision_fraction": 1.0,
+            "median_m": 0.005929483100771904,
+            "p95_m": 0.02794322557747364
+          },
+          "dimensions_passed": 10
+        }
+      },
+      "usd_sha256": "de82580594202ec801b46ba74a08e72b21ffa66c60b70c4f984a35a313935f0b",
+      "physics_sha256": "465b1753bcb3d923a77c03b9a503bcd28e6bbc919633b95712cb5324ab86bba2"
+    }
+  ],
+  "physics_image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+  "new_physics_runs": 2,
+  "physics_slot": {
+    "paused": [
+      "isaac-flight",
+      "isaac-stream"
+    ],
+    "blocked": [],
+    "container_name": "lidar2sim-hybrid-e7ce0c9-physics",
+    "restored": [
+      "isaac-flight",
+      "isaac-stream"
+    ],
+    "restore_errors": []
+  }
+}

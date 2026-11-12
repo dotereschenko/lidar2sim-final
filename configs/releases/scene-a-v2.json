@@ -1,0 +1,20 @@
+{
+  "release_id": "scene-a-v2",
+  "status": "frozen",
+  "contract": "H3-2026-11-11-v2",
+  "point_count": {
+    "A": 750000,
+    "B": 750000
+  },
+  "artifacts": {
+    "data/scene_ab_v2/trajectory_B.csv": "0d367c3a1fc7212fe5c748baba887a617ebcb204b97d13b5ccd0119672a43f57",
+    "data/scene_ab_v2/A.ply": "488883858b49287bd8eea8bbd81507f1d622b454e77ba84b23d7dc2e7d1c3eb1",
+    "data/scene_ab_v2/trajectory_A.csv": "095fd0e64cc09e1b0c3f2efc9f7a2782b60f66958d2f66b61e863a65650e9073",
+    "data/scene_ab_v2/manifest.json": "df16ec8c1e8da5e2102ad0f17fe28a710624c5d8d00cf6e2159fe84ce1e20bcb",
+    "data/scene_ab_v2/B.ply": "ccdd223d1d37ad00892c69be90d6af61855dba219471854633a5c9d95b2877ad",
+    "out/annotations-v2-independent/eval_region.npz": "bff8424a4835d6ea7adfd3a834d0c89e8c2118e42fa9cd5a5efa1eb45986dd9f",
+    "out/annotations-v2-independent/annotations.json": "c83e693b0b7b04b208858bee1e5e85bf28fdb5906074f967bdb13a3a93a2564d"
+  },
+  "acquisition_evidence": "docs/validation/hackathon-13-independent-scans-v2.json",
+  "note": "Candidate status inside immutable source manifests is historical; this release record adopts their exact bytes."
+}

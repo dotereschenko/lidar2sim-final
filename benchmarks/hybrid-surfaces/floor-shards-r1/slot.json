@@ -1,0 +1,13 @@
+{
+  "paused": [
+    "isaac-flight",
+    "isaac-stream"
+  ],
+  "blocked": [],
+  "container_name": "lidar2sim-final-a-floor-shards-r1",
+  "restored": [
+    "isaac-flight",
+    "isaac-stream"
+  ],
+  "restore_errors": []
+}

@@ -1,0 +1,766 @@
+{
+  "evaluation_mode": "independent_b_common_region",
+  "meshes": {
+    "visual": {
+      "raw_metrics": {
+        "precision_fraction": 0.9999963849716039,
+        "median_m": 0.005831576883792877,
+        "p95_m": 0.024828070774674416
+      },
+      "passed": {
+        "precision": true,
+        "median": true,
+        "p95": true
+      },
+      "sha256": "e90ce70be8808193cba1d278e9e5d807df16ddda8d63452a9086365183a3a837",
+      "precision_reference": "B_returns",
+      "precision_direction": "mesh_surface_to_B",
+      "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+      "completeness_reference": "B_returns",
+      "completeness_direction": "reference_to_mesh_triangles",
+      "surface_samples": 300000,
+      "common_surface_samples": 276623,
+      "excluded_surface_fraction": 0.07792333333333333,
+      "dimensions": {
+        "method": {
+          "id": "local-ray-bundle-v2",
+          "probe_offset_m": 0.005,
+          "probes_per_side": 5,
+          "minimum_valid_probes": 4,
+          "maximum_surface_spread_m": 0.02
+        },
+        "items": [
+          {
+            "id": "D01",
+            "label": "Southwest open doorway width",
+            "reference_m": 0.8788757622241974,
+            "measured_m": 0.8998626470565796,
+            "absolute_error_m": 0.020986884832382202,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -18.994975596666336,
+                10.5,
+                1.0
+              ],
+              [
+                -18.095112949609756,
+                10.5,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.013920515775680542
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0010152757167816162
+              }
+            ]
+          },
+          {
+            "id": "D02",
+            "label": "Southeast open doorway width",
+            "reference_m": 1.9999951720237732,
+            "measured_m": 1.991126537322998,
+            "absolute_error_m": 0.008868634700775146,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -16.5032160282135,
+                14.0,
+                1.0
+              ],
+              [
+                -14.512089490890503,
+                14.0,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0003434419631958008
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0026129484176635742
+              }
+            ]
+          },
+          {
+            "id": "D03",
+            "label": "Northeast open doorway width",
+            "reference_m": 1.8404639959335327,
+            "measured_m": 1.8526107668876648,
+            "absolute_error_m": 0.01214677095413208,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -16.435404419898987,
+                24.0,
+                1.0
+              ],
+              [
+                -14.582793653011322,
+                24.0,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0021772384643554688
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.005873262882232666
+              }
+            ]
+          },
+          {
+            "id": "D04",
+            "label": "Southwest doorway height",
+            "reference_m": 2.065050423145294,
+            "measured_m": 2.075954556465149,
+            "absolute_error_m": 0.010904133319854736,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -18.5,
+                10.5,
+                0.00042510032653808594
+              ],
+              [
+                -18.5,
+                10.5,
+                2.076379656791687
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 2.980232238769531e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0006433725357055664
+              }
+            ]
+          },
+          {
+            "id": "D05",
+            "label": "Southeast doorway height",
+            "reference_m": 2.499999761581421,
+            "measured_m": 2.496914863586426,
+            "absolute_error_m": 0.003084897994995117,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -15.2,
+                14.0,
+                0.0003224611282348633
+              ],
+              [
+                -15.2,
+                14.0,
+                2.4972373247146606
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 2.980232238769531e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.00133514404296875
+              }
+            ]
+          },
+          {
+            "id": "D06",
+            "label": "Northeast doorway height",
+            "reference_m": 2.457122027873993,
+            "measured_m": 2.463443398475647,
+            "absolute_error_m": 0.006321370601654053,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -15.5,
+                24.0,
+                0.00037801265716552734
+              ],
+              [
+                -15.5,
+                24.0,
+                2.4638214111328125
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 3.5762786865234375e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.001193404197692871
+              }
+            ]
+          },
+          {
+            "id": "D07",
+            "label": "South room depth",
+            "reference_m": 4.2999982833862305,
+            "measured_m": 4.301516056060791,
+            "absolute_error_m": 0.0015177726745605469,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                10.498629570007324,
+                2.3
+              ],
+              [
+                -21.0,
+                14.800145626068115,
+                2.3
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0012156963348388672
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0022351741790771484
+              }
+            ]
+          },
+          {
+            "id": "D08",
+            "label": "South room floor to ceiling",
+            "reference_m": 3.0,
+            "measured_m": 3.0088484287261963,
+            "absolute_error_m": 0.008848428726196289,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                11.5,
+                0.0005191564559936523
+              ],
+              [
+                -21.0,
+                11.5,
+                3.00936758518219
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 2.384185791015625e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0004044771194458008
+              }
+            ]
+          },
+          {
+            "id": "D09",
+            "label": "Tabletop depth",
+            "reference_m": 0.8999996185302734,
+            "measured_m": 0.8642209973186255,
+            "absolute_error_m": 0.03577862121164799,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                12.48765585757792,
+                0.74
+              ],
+              [
+                -21.0,
+                13.351876854896545,
+                0.74
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 4,
+                "spread_m": 0.008319414220750332
+              },
+              {
+                "valid_probes": 4,
+                "spread_m": 0.0073656439781188965
+              }
+            ]
+          },
+          {
+            "id": "D10",
+            "label": "North pillar depth",
+            "reference_m": 1.0,
+            "measured_m": 1.0007683634757996,
+            "absolute_error_m": 0.0007683634757995605,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -17.5,
+                23.495114266872406,
+                0.5
+              ],
+              [
+                -17.5,
+                24.495882630348206,
+                0.5
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0016671419143676758
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0007888674736022949
+              }
+            ]
+          }
+        ],
+        "passed_count": 10,
+        "required_count": 10,
+        "status": "passed"
+      }
+    },
+    "collision": {
+      "raw_metrics": {
+        "precision_fraction": 1.0,
+        "median_m": 0.005832510069012642,
+        "p95_m": 0.024834632873535156
+      },
+      "passed": {
+        "precision": true,
+        "median": true,
+        "p95": true
+      },
+      "sha256": "04522f988f58afa89e251f338e9eb85059a531dd2c71ccaf88ed5ec87780ad05",
+      "precision_reference": "B_returns",
+      "precision_direction": "mesh_surface_to_B",
+      "precision_region_membership": "nearest_GT_surface_observed_by_both_A_B",
+      "completeness_reference": "B_returns",
+      "completeness_direction": "reference_to_mesh_triangles",
+      "surface_samples": 300000,
+      "common_surface_samples": 276575,
+      "excluded_surface_fraction": 0.07808333333333334,
+      "dimensions": {
+        "method": {
+          "id": "local-ray-bundle-v2",
+          "probe_offset_m": 0.005,
+          "probes_per_side": 5,
+          "minimum_valid_probes": 4,
+          "maximum_surface_spread_m": 0.02
+        },
+        "items": [
+          {
+            "id": "D01",
+            "label": "Southwest open doorway width",
+            "reference_m": 0.8788757622241974,
+            "measured_m": 0.8998626470565796,
+            "absolute_error_m": 0.020986884832382202,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -18.994975596666336,
+                10.5,
+                1.0
+              ],
+              [
+                -18.095112949609756,
+                10.5,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.013413220643997192
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0010152757167816162
+              }
+            ]
+          },
+          {
+            "id": "D02",
+            "label": "Southeast open doorway width",
+            "reference_m": 1.9999951720237732,
+            "measured_m": 1.991126537322998,
+            "absolute_error_m": 0.008868634700775146,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -16.5032160282135,
+                14.0,
+                1.0
+              ],
+              [
+                -14.512089490890503,
+                14.0,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0003434419631958008
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0026129484176635742
+              }
+            ]
+          },
+          {
+            "id": "D03",
+            "label": "Northeast open doorway width",
+            "reference_m": 1.8404639959335327,
+            "measured_m": 1.8543543815612793,
+            "absolute_error_m": 0.013890385627746582,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -16.435404419898987,
+                24.0,
+                1.0
+              ],
+              [
+                -14.581050038337708,
+                24.0,
+                1.0
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0021772384643554688
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0029087066650390625
+              }
+            ]
+          },
+          {
+            "id": "D04",
+            "label": "Southwest doorway height",
+            "reference_m": 2.065050423145294,
+            "measured_m": 2.0759546756744385,
+            "absolute_error_m": 0.010904252529144287,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -18.5,
+                10.5,
+                0.00042498111724853516
+              ],
+              [
+                -18.5,
+                10.5,
+                2.076379656791687
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 4.172325134277344e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0006433725357055664
+              }
+            ]
+          },
+          {
+            "id": "D05",
+            "label": "Southeast doorway height",
+            "reference_m": 2.499999761581421,
+            "measured_m": 2.496914803981781,
+            "absolute_error_m": 0.0030849575996398926,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -15.2,
+                14.0,
+                0.00032252073287963867
+              ],
+              [
+                -15.2,
+                14.0,
+                2.4972373247146606
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 3.5762786865234375e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.00133514404296875
+              }
+            ]
+          },
+          {
+            "id": "D06",
+            "label": "Northeast doorway height",
+            "reference_m": 2.457122027873993,
+            "measured_m": 2.4634435176849365,
+            "absolute_error_m": 0.0063214898109436035,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -15.5,
+                24.0,
+                0.00037789344787597656
+              ],
+              [
+                -15.5,
+                24.0,
+                2.4638214111328125
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 4.172325134277344e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.001193404197692871
+              }
+            ]
+          },
+          {
+            "id": "D07",
+            "label": "South room depth",
+            "reference_m": 4.2999982833862305,
+            "measured_m": 4.301769733428955,
+            "absolute_error_m": 0.0017714500427246094,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                10.498629570007324,
+                2.3
+              ],
+              [
+                -21.0,
+                14.80039930343628,
+                2.3
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0012156963348388672
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0028302669525146484
+              }
+            ]
+          },
+          {
+            "id": "D08",
+            "label": "South room floor to ceiling",
+            "reference_m": 3.0,
+            "measured_m": 3.0088484287261963,
+            "absolute_error_m": 0.008848428726196289,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                11.5,
+                0.0005191564559936523
+              ],
+              [
+                -21.0,
+                11.5,
+                3.00936758518219
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 3.5762786865234375e-07
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0004044771194458008
+              }
+            ]
+          },
+          {
+            "id": "D09",
+            "label": "Tabletop depth",
+            "reference_m": 0.8999996185302734,
+            "measured_m": 0.8642209973186255,
+            "absolute_error_m": 0.03577862121164799,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -21.0,
+                12.48765585757792,
+                0.74
+              ],
+              [
+                -21.0,
+                13.351876854896545,
+                0.74
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 4,
+                "spread_m": 0.008319414220750332
+              },
+              {
+                "valid_probes": 4,
+                "spread_m": 0.0073656439781188965
+              }
+            ]
+          },
+          {
+            "id": "D10",
+            "label": "North pillar depth",
+            "reference_m": 1.0,
+            "measured_m": 1.0007683634757996,
+            "absolute_error_m": 0.0007683634757995605,
+            "tolerance_m": 0.05,
+            "status": "passed",
+            "passed": true,
+            "surface_points_m": [
+              [
+                -17.5,
+                23.495114266872406,
+                0.5
+              ],
+              [
+                -17.5,
+                24.495882630348206,
+                0.5
+              ]
+            ],
+            "sides": [
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0016671419143676758
+              },
+              {
+                "valid_probes": 5,
+                "spread_m": 0.0007888674736022949
+              }
+            ]
+          }
+        ],
+        "passed_count": 10,
+        "required_count": 10,
+        "status": "passed"
+      }
+    }
+  },
+  "acceptance_profile": {
+    "profile_id": "lidar2sim-rules-v2",
+    "schema_version": 2,
+    "sha256": "f58868ac364c6cdd77e3f535e81c5ae46c28c8b331f78701e83c1caee9b07074"
+  },
+  "reference_provenance": {
+    "annotations_sha256": "c83e693b0b7b04b208858bee1e5e85bf28fdb5906074f967bdb13a3a93a2564d",
+    "region_sha256": "bff8424a4835d6ea7adfd3a834d0c89e8c2118e42fa9cd5a5efa1eb45986dd9f",
+    "inputs_sha256": {
+      "gt_mesh.ply": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+      "scan_manifest.json": "df16ec8c1e8da5e2102ad0f17fe28a710624c5d8d00cf6e2159fe84ce1e20bcb",
+      "definition.json": "88e690e99996047408b8daf461187118bf1df93df0d2e7fece97ba1919ac2a60",
+      "A.ply": "488883858b49287bd8eea8bbd81507f1d622b454e77ba84b23d7dc2e7d1c3eb1",
+      "trajectory_A.csv": "095fd0e64cc09e1b0c3f2efc9f7a2782b60f66958d2f66b61e863a65650e9073",
+      "B.ply": "ccdd223d1d37ad00892c69be90d6af61855dba219471854633a5c9d95b2877ad",
+      "trajectory_B.csv": "0d367c3a1fc7212fe5c748baba887a617ebcb204b97d13b5ccd0119672a43f57"
+    },
+    "annotation_status": "candidate_pending_H3_H13",
+    "reference_type": "B_returns",
+    "reference_weighting": "uniform_B_returns",
+    "B_anchor_mapping": null,
+    "eligible_reference_samples": 688110,
+    "reference_samples": 300000,
+    "region_rule": {
+      "radius_m": 0.1,
+      "min_neighbors": 10,
+      "min_common_samples": 1000,
+      "predicate": "neighbors_in_A >= min_neighbors AND neighbors_in_B >= min_neighbors",
+      "sampling": "uniform_triangle_area",
+      "seed": 18,
+      "samples": 300000,
+      "common_samples": 79022,
+      "common_fraction_of_gt_area": 0.2634066666666667,
+      "a_observed_samples": 81350,
+      "b_observed_samples": 92737,
+      "file": "eval_region.npz",
+      "query_contract": "apply the identical predicate to query points using the pinned A and B; never infer region from reconstructed meshes"
+    }
+  },
+  "evaluator_sha256": "8b7ce1f658dfc250de0d3bc4a31bf4f5e4971504f76299d3129500543a1dda84",
+  "geometry_status": "passed",
+  "dimensions_status": "passed",
+  "dimension_measurer_sha256": "379447238f5f68022c8f7118df457c64445902a5e55ca3c24ab1103ede067a29",
+  "coverage": {
+    "visual_completeness": "measured",
+    "collision_completeness": "measured",
+    "dimensions": "measured",
+    "physics": "not_run",
+    "performance": "not_run"
+  },
+  "poc_status": "incomplete"
+}

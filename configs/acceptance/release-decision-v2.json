@@ -1,0 +1,15 @@
+{
+  "decision_id": "H3-2026-11-11-v2",
+  "status": "adopted",
+  "profile_id": "lidar2sim-rules-v2",
+  "profile_sha256": "f58868ac364c6cdd77e3f535e81c5ae46c28c8b331f78701e83c1caee9b07074",
+  "basis": "Original Хакатон.md numerical promises; user delegated all Denis tasks on 2026-11-11",
+  "authority_scope": "Working project contract under user delegation; no assertion of consensus by other organizers",
+  "A_points": 750000,
+  "B_points": 750000,
+  "hidden_scene": "required",
+  "robot": "box_0.4x0.4x0.3m_20kg",
+  "spark_access": "mentor-operated serialized jobs",
+  "release_evaluation": "independent B in pinned common observation region",
+  "legacy_profile": "v1 remains available for historical reproducibility, not release acceptance"
+}

@@ -1,0 +1,130 @@
+# Проверка интеграции активных задач — 11 ноября 2026
+
+Ветка `feat/in-progress-sdd-integration` объединяет PR #1 и квалифицированные
+оценщики. Код реконструкции кандидата: `950fdf3`, конфиг
+`configs/poc-detailed.yaml`. Вход A — 750000 точек, B — независимые 750000;
+это кандидат H13, а не утверждённая замена исходного A. Профиль H3 не согласован.
+
+## Сравнение на одинаковом стенде
+
+Общие A/B, аннотации H18, режим B, профиль и код оценщиков совпадают.
+Точность — доля поверхности в пределах 5 см от GT, полнота — B→mesh
+в общей наблюдаемой области. Измеритель размеров `local-ray-bundle-v2`.
+
+| Показатель | Baseline | Кандидат с восстановлением пола до 2 м |
+|---|---:|---:|
+| Visual: точность | 90,29% | 99,30% |
+| Collision: точность | 90,65% | 99,51% |
+| Visual: median / p95, см | 0,57 / 3,46 | 0,54 / 3,93 |
+| Collision: median / p95, см | 0,57 / 3,99 | 0,54 / 4,19 |
+| Visual: размеры | 9/10 | 10/10 |
+| Collision: размеры | 8/10 | 10/10 |
+| Реконструкция A, секунд внутри CLI | 18,72 | 19,93 |
+| Треугольники visual / collision | 200000 / 19999 | 200000 / 59998 |
+| Физика: пол / препятствия / маршруты | 8/10 / 9/10 / 4/5 | 9/10 / 10/10 / 4/5 |
+
+Первый кандидат `f891596` проходил геометрию и размеры, но имел физику
+9/10, 10/10, 3/5. В обоих mesh отсутствовал пол в части кабинета. Увеличен
+общий предел локальной триангуляции между наблюдениями с 1 до 2 м; эталон
+и тестовые координаты не входят в реконструкцию. Отрицательный тест с
+наблюдаемым нижним уровнем проходит и при увеличенном пределе.
+Первый неудачный результат сохранён, не заменён результатом исправления.
+
+Наклонные поверхности измеряются без прежнего ограничения нормали 0,8:
+аналитическая наклонная поверхность доказывала ложное отклонение v1.
+Порог ошибки 5 см, центральное попадание, >=4/5 проб и разброс <=2 см
+сохранены. Отсутствующие, ступенчатые и искажённые поверхности отклоняются.
+
+## Производительность — предварительно, не зачёт H17
+
+Три полных запуска 10M на локальном Apple M1 Pro (10 CPU, 32 GiB RAM): 48,470 / 46,872 / 51,013 с,
+peak RSS 1,605 / 1,736 / 1,916 GB. Отсчёт включает импорт Python, чтение
+облака, реконструкцию и экспорт. Все три запуска имеют dirty=false.
+SHA256 H14: `eb41ac637917ccdbf0bbe8c26e0b0cc32a8fbaff4a9bb08ad36b565e4d8fb4ad`.
+Выбор зачётной машины остаётся открытым; эти времена не заявлены как Spark/x86.
+Качество расширенного 10M-региона не следует из времени или оценки A/B.
+
+## Артефакты и воспроизведение
+
+Машиночитаемые отчёты: `benchmarks/integration-2026-11-11/`.
+Сборка и геометрия:
+
+```bash
+.venv/bin/python tools/run_poc.py \
+  --data data/scene_ab_candidate --reference-data data/scene_a \
+  --scans data/scene_ab_candidate --annotations out/annotations-v1-observed \
+  --evaluation-mode b --config configs/poc-detailed.yaml \
+  --out out/integration-floor-release
+```
+
+Для физики добавить `--reuse --physics-runner tools/spark_physics_runner.py
+--runner-arg=--settings --runner-arg=/path/to/operator-spark.json`.
+См. `docs/in-progress-integration.md` и `configs/spark.example.json`.
+Без runner физика явно not_run, exit 1. Без H3 и подтверждённого 10M
+общая приёмка не становится passed даже при успешной физике.
+
+Для повторного присоединения физики без Isaac:
+
+```bash
+.venv/bin/python tools/run_poc.py \
+  --data data/scene_ab_candidate --reference-data data/scene_a \
+  --scans data/scene_ab_candidate --annotations out/annotations-v1-observed \
+  --evaluation-mode b --out out/integration-floor-release --reuse \
+  --physics-result out/integration-floor-release/physics.json
+```
+
+Обзор для показа:
+
+```bash
+.venv/bin/python tools/render_demo.py --cloud data/scene_ab_candidate/A.ply \
+  --baseline out/integration-baseline-release --final out/integration-floor-release \
+  --out out/integration-demo/overview.svg
+```
+
+На четырёх панелях одинаковая XY-проекция среза 0,1–1,6 м: облако A,
+baseline collision, final visual, final collision. Пол из этого среза
+исключён; изображение не заменяет физический тест. JSON рядом с SVG
+фиксирует хеши источников и изображения.
+
+## Общий Spark
+
+Существующий `isaac-sim-xvfb:6.2`; сетевой доступ контейнера отключён.
+Приватный stage (0700), передача с SHA256, один оператор и глобальный flock.
+Второе получение блокировки во время настоящего прогона отклонено.
+При первом, baseline и исправленном прогонах восстановлены только ранее разрешённые
+`isaac-stream` и `isaac-flight`. Foxglove продолжал работать.
+Расписание мероприятия и ответственный оператор ещё не согласованы.
+
+## Открытые решения
+
+H3/H13: утвердить вход A, пороги профиля и порядок скрытой сцены.
+H17: выбрать зачётную машину и выполнить на ней квалификацию 10M.
+H8: назначить оператора и расписание. H16: текущий профиль пройден,
+но один пограничный участок пола проваливается и обратный маршрут застревает.
+Профиль допускает 9/10 пола и 4/5 маршрутов; это не означает отсутствие дефектов.
+Окончательная приёмка зависит от H3. H29: запись проверенного USD и сравнение готовы; общий статус приёмки incomplete показан явно.
+
+Финальный USD SHA256: `c5e0f3e9e16bd3cae3404e5107de09c4b400e8d370a0454660f78b3b3acfb3e9`.
+Физика PASS; общая приёмка incomplete из-за performance=not_run и pending_H3.
+
+## Сценарий демонстрации H29
+
+1. Открыть [сравнение](../img/integration/overview.svg): A → baseline collision → final visual → final collision. Это один вход и одна система координат.
+2. Показать [сцену в Isaac](../img/integration/overview.png); визуальный срез ниже 1,6 м не меняет collision.
+3. Воспроизвести [видео симуляции](../img/integration/simulation.mp4): 10 с, 720p, 24 fps, 240 кадров. [Последний кадр](../img/integration/simulation-0239.png).
+4. Открыть таблицу выше и `benchmarks/integration-2026-11-11/final/report.json`: geometry/dimensions/physics passed, общая приёмка incomplete. Видео — демонстрация движения, не замена 25 физических тестов.
+5. Показать `demo.json` и `recording.json`: USD SHA совпадает с проверенной физикой, collision_modified=false. Отдельный `recording-slot.json` подтверждает восстановление двух сессий.
+
+Для повторной записи в согласованном Isaac-слоте используется неизменённый
+`tools/isaac_record.py`:
+
+```bash
+/isaac-sim/python.sh tools/isaac_record.py --scene out/integration-floor-release/scene.usd \
+  --config data/scene_a/test_config.json --out out/new-recording
+ffmpeg -framerate 24 -i out/new-recording/frames/%04d.png \
+  -c:v libx264 -pix_fmt yuv420p out/new-recording/simulation.mp4
+```
+
+Нужны графический сеанс/Xvfb и опыт `isaacsim.exp.full.kit` из существующего
+образа. На Spark запускать через `isaac_slot.py` с приватным stage, как
+физические задания; не запускать второй Isaac поверх занятого слота.

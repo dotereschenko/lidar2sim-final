@@ -1,0 +1,81 @@
+{
+  "kind": "automated fresh extraction and venv; existing user and uv cache, not independent human account",
+  "steps": [
+    {
+      "command": [
+        "uv",
+        "sync",
+        "--locked",
+        "--python",
+        "python3.11"
+      ],
+      "exit_code": 0,
+      "wall_s": 414.113
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "--python",
+        "python3.11",
+        "-m",
+        "lidar2sim",
+        "--input",
+        "../scene_a/scene.ply",
+        "--manifest",
+        "../scene_a/manifest.json",
+        "--trajectory",
+        "../scene_a/trajectory_A.csv",
+        "--config",
+        "configs/baseline.yaml",
+        "--out",
+        "../result"
+      ],
+      "exit_code": 0,
+      "wall_s": 17.151
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "--python",
+        "python3.11",
+        "tools/make_example_scene.py",
+        "../example_scene.usd"
+      ],
+      "exit_code": 0,
+      "wall_s": 1.157
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "--python",
+        "python3.11",
+        "tools/fetch_gt.py",
+        "../selfcheck"
+      ],
+      "exit_code": 0,
+      "wall_s": 106.697
+    }
+  ],
+  "archive_sha256": "f37365cec7da525e07060966b558a4fcbd86249c19f903b6460e83e13ff0deb0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.11.13",
+  "total_through_example_s": 432.421,
+  "total_through_gt_s": 539.118,
+  "artifacts": {
+    "result/scene.usd": "7a5ddc07e3a73d0b1ebf4102664ae6f76f388e5ee996c69e28a3a66827254347",
+    "example_scene.usd": "706faaea622ebf5c9a8c426435e3837994e9b41f1144bdc132ae7ac1f6cb973a",
+    "selfcheck/gt_mesh.ply": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+    "selfcheck/gt_scene.usd": "c9e014af7b31eb98e6f98eaaedb1bafaf6ab0b4848da120ff9609f182fec9dfd"
+  },
+  "independent_human_rehearsal": false,
+  "network_download_time_included": false,
+  "submitted_source_sha256": "8b22e0d42ea39e3f13a4ad47c11ff24cefe9dd8d8ab751605de4b215125f157c",
+  "jury_reconstruction_source_sha256": "8b22e0d42ea39e3f13a4ad47c11ff24cefe9dd8d8ab751605de4b215125f157c",
+  "source_match": true
+}

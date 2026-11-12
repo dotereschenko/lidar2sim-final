@@ -1,0 +1,176 @@
+{
+  "kind": "ten_million_point_performance_validation",
+  "dataset": {
+    "purpose": "performance_only",
+    "point_count": 10000000,
+    "scene_10M_ply_sha256": "eb41ac637917ccdbf0bbe8c26e0b0cc32a8fbaff4a9bb08ad36b565e4d8fb4ad",
+    "generator_sha256": "f7dc50f945d021b29d9f65b2fd11b240a00ece272136b7b950014972b4df012c",
+    "source_gt_sha256": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+    "generator_versions": {
+      "python": "3.11.13",
+      "numpy": "2.4.6",
+      "open3d": "0.20.0"
+    },
+    "provenance": "feat/hackathon-14-dense-scan @ 989fc2a; regenerated locally with identical SHA256"
+  },
+  "measurement_boundary": "External monotonic clock around the complete lidar2sim CLI process, including Python startup, input read, reconstruction, PLY/USD export, report validation and file close. Geometry and physics evaluation run separately.",
+  "machine": {
+    "platform": "macOS-26.6.1-arm64-arm-64bit",
+    "architecture": "arm64",
+    "cpu_model": "Apple M5",
+    "cpu_count": 10,
+    "ram_bytes": 25769803776
+  },
+  "runtime": {
+    "python": "3.12.13",
+    "open3d": "0.20.0",
+    "numpy": "2.5.4"
+  },
+  "results": {
+    "baseline": {
+      "runs": [
+        {
+          "wall_s": 22.933,
+          "peak_rss_bytes": 2432221184,
+          "code_commit": "57866c551302d6aa575629d03bf55b31bdce3516",
+          "output_hashes": {
+            "visual.ply": "ae4a84b3ad54b4834743b01e5abd5801c1182d8c6c51d98c16c515de1010d290",
+            "collision.ply": "1b95992fc46ac7f4b7773352b08fa77e701912ffbed6cbeee8554e32ee0f315e",
+            "scene.usd": "0a94349705764d838ccf6210c86b6249b6b623153220cb7a6c18dbfabc30c716"
+          }
+        },
+        {
+          "wall_s": 22.537,
+          "peak_rss_bytes": 2406334464,
+          "code_commit": "57866c551302d6aa575629d03bf55b31bdce3516",
+          "output_hashes": {
+            "visual.ply": "ae4a84b3ad54b4834743b01e5abd5801c1182d8c6c51d98c16c515de1010d290",
+            "collision.ply": "1b95992fc46ac7f4b7773352b08fa77e701912ffbed6cbeee8554e32ee0f315e",
+            "scene.usd": "0a94349705764d838ccf6210c86b6249b6b623153220cb7a6c18dbfabc30c716"
+          }
+        },
+        {
+          "wall_s": 22.718,
+          "peak_rss_bytes": 2556936192,
+          "code_commit": "76177a0bec6f47fafb053adb9baf70b5746bf6b6",
+          "output_hashes": {
+            "visual.ply": "ae4a84b3ad54b4834743b01e5abd5801c1182d8c6c51d98c16c515de1010d290",
+            "collision.ply": "1b95992fc46ac7f4b7773352b08fa77e701912ffbed6cbeee8554e32ee0f315e",
+            "scene.usd": "0a94349705764d838ccf6210c86b6249b6b623153220cb7a6c18dbfabc30c716"
+          }
+        }
+      ],
+      "wall_median_s": 22.718,
+      "wall_max_s": 22.933,
+      "peak_rss_max_bytes": 2556936192,
+      "all_under_1800_s": true,
+      "all_outputs_identical": true,
+      "geometry_original_a_region": {
+        "extra_5cm_pct": 87.6,
+        "extra_5cm_pct_collision": 88.0,
+        "median_cm": 0.2,
+        "p95_cm": 3.31,
+        "passed": {
+          "лишняя геометрия, visual": false,
+          "лишняя геометрия, collision": false,
+          "полнота, медиана": true,
+          "полнота, p95": true
+        }
+      },
+      "geometry_dense_10m_region": {
+        "extra_5cm_pct": 87.6,
+        "extra_5cm_pct_collision": 88.0,
+        "median_cm": 0.34,
+        "p95_cm": 45.51,
+        "passed": {
+          "лишняя геометрия, visual": false,
+          "лишняя геометрия, collision": false,
+          "полнота, медиана": true,
+          "полнота, p95": false
+        }
+      }
+    },
+    "poc": {
+      "runs": [
+        {
+          "wall_s": 23.251,
+          "peak_rss_bytes": 2402074624,
+          "code_commit": "57866c551302d6aa575629d03bf55b31bdce3516",
+          "output_hashes": {
+            "visual.ply": "c23d5fd701727839f1a07b3feef1fce23522edbcec2c0b52994b4260a2d4d210",
+            "collision.ply": "51140b533663e5cdab1a14b8d89e8fc89561827fd729d6b19d2ad58acf3be338",
+            "scene.usd": "9b05f90bce77540089e1d748bef859521e2ab12f29126e14585a46d831630f6f"
+          }
+        },
+        {
+          "wall_s": 23.222,
+          "peak_rss_bytes": 2406383616,
+          "code_commit": "57866c551302d6aa575629d03bf55b31bdce3516",
+          "output_hashes": {
+            "visual.ply": "c23d5fd701727839f1a07b3feef1fce23522edbcec2c0b52994b4260a2d4d210",
+            "collision.ply": "51140b533663e5cdab1a14b8d89e8fc89561827fd729d6b19d2ad58acf3be338",
+            "scene.usd": "9b05f90bce77540089e1d748bef859521e2ab12f29126e14585a46d831630f6f"
+          }
+        },
+        {
+          "wall_s": 23.448,
+          "peak_rss_bytes": 2557083648,
+          "code_commit": "76177a0bec6f47fafb053adb9baf70b5746bf6b6",
+          "output_hashes": {
+            "visual.ply": "c23d5fd701727839f1a07b3feef1fce23522edbcec2c0b52994b4260a2d4d210",
+            "collision.ply": "51140b533663e5cdab1a14b8d89e8fc89561827fd729d6b19d2ad58acf3be338",
+            "scene.usd": "9b05f90bce77540089e1d748bef859521e2ab12f29126e14585a46d831630f6f"
+          }
+        }
+      ],
+      "wall_median_s": 23.251,
+      "wall_max_s": 23.448,
+      "peak_rss_max_bytes": 2557083648,
+      "all_under_1800_s": true,
+      "all_outputs_identical": true,
+      "geometry_original_a_region": {
+        "extra_5cm_pct": 98.8,
+        "extra_5cm_pct_collision": 99.4,
+        "median_cm": 0.12,
+        "p95_cm": 3.21,
+        "passed": {
+          "лишняя геометрия, visual": true,
+          "лишняя геометрия, collision": true,
+          "полнота, медиана": true,
+          "полнота, p95": true
+        }
+      },
+      "geometry_dense_10m_region": {
+        "extra_5cm_pct": 98.8,
+        "extra_5cm_pct_collision": 99.4,
+        "median_cm": 0.27,
+        "p95_cm": 50.7,
+        "passed": {
+          "лишняя геометрия, visual": true,
+          "лишняя геометрия, collision": true,
+          "полнота, медиана": true,
+          "полнота, p95": false
+        }
+      }
+    }
+  },
+  "quality_note": "On original-A observed GT region, PoC passes geometry. On the broader region defined by the 10M performance scan, baseline and PoC fail p95 completeness (45.51 and 50.70 cm); this is not claimed as a quality pass. The 10M scan has no drift, ghost points or dropout and is a performance input, not independent B.",
+  "physical_10m": {
+    "runtime": "Isaac Sim 6.2 on Spark, isolated 4-CPU/16-GiB no-network container",
+    "stage": "/home/user05/lidar2sim-poc-runs/fac337f5af104ebe9c05ff3180322e30",
+    "scene_usd_sha256": "9b05f90bce77540089e1d748bef859521e2ab12f29126e14585a46d831630f6f",
+    "summary": {
+      "floor": "10/10",
+      "obstacles": "10/10",
+      "routes": "5/5",
+      "passed": true
+    },
+    "max_penetration_m": 0.0108,
+    "result": "benchmarks/performance/10m-poc-physics.json",
+    "result_sha256": "1839279af501686a2466a7ebf937fba3aee5092dd739e5831a76c235eec329f4"
+  },
+  "limitations": [
+    "Mac Apple M5 preliminary measurement; official scoring Ubuntu machine has not been designated or measured.",
+    "Contended simultaneous trial runs were excluded; reported repeats were sequential."
+  ]
+}

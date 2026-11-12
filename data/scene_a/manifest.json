@@ -23,12 +23,26 @@
     "A.ply": "облако точек для работы",
     "trajectory_A.csv": "положения лидара: t,x,y,z",
     "gt_mesh.ply": "точная геометрия сцены, только для самопроверки; собирается tools/fetch_gt.py",
-    "test_config.json": "тесты физики для tools/isaac_scene_test.py"
+    "test_config.json": "тесты физики для tools/isaac_scene_test.py",
+    "gt_scene.usd": "эталонная сцена для физической квалификации; собирается tools/fetch_gt.py",
+    "gt_build.json": "параметры, хеши исходных слоёв и результатов сборки GT"
   },
   "gt": {
     "url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.2/Isaac/Environments/Office/office.usd",
     "triangles": 1344195,
     "area_m2": 1688.716,
-    "note": "собирается tools/fetch_gt.py; сцена — ассет NVIDIA Isaac Sim, в репозитории не лежит"
+    "note": "собирается tools/fetch_gt.py; сцена — ассет NVIDIA Isaac Sim, в репозитории не лежит",
+    "build": {
+      "max_edge_m": 0.2,
+      "transparent_name_pattern": "glass|window|mirror|transparent|crystal",
+      "exclude_name_substrings": [
+        "SM_Buildings"
+      ]
+    },
+    "source_layers_sha256": "1fa44f417e97a7e4957202ccb813ec2fad3686f1a86f478ad8d5395c125259ea",
+    "sha256": {
+      "gt_mesh.ply": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+      "gt_scene.usd": "c9e014af7b31eb98e6f98eaaedb1bafaf6ab0b4848da120ff9609f182fec9dfd"
+    }
   }
 }

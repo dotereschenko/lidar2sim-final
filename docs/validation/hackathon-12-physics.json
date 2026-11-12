@@ -1,0 +1,500 @@
+{
+  "qualification": {
+    "passed": true,
+    "checks": {
+      "gt_floor": true,
+      "gt_obstacles": true,
+      "gt_routes": true,
+      "gt_hash": true,
+      "case_set": true,
+      "missing_floor_provenance": true,
+      "missing_floor_detected": true,
+      "missing_obstacle_provenance": true,
+      "missing_obstacle_detected": true,
+      "blocked_passage_provenance": true,
+      "blocked_passage_detected": true,
+      "expected_profile": true
+    },
+    "acceptance_profile": {
+      "profile_id": "lidar2sim-rules-v1",
+      "schema_version": 1,
+      "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+    }
+  },
+  "cases": {
+    "gt": {
+      "summary": {
+        "floor": "10/10",
+        "obstacles": "10/10",
+        "routes": "5/5",
+        "passed": true
+      },
+      "inputs": {
+        "scene_sha256": "c9e014af7b31eb98e6f98eaaedb1bafaf6ab0b4848da120ff9609f182fec9dfd",
+        "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+        "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+      },
+      "physics_settings": {
+        "static_friction": 0.0,
+        "dynamic_friction": 0.0,
+        "restitution": 0.0,
+        "solver": "TGS",
+        "position_iterations": 16,
+        "velocity_iterations": 4,
+        "ccd": true,
+        "contact": {
+          "/World/Body": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          },
+          "/World/Scene/Collision": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          }
+        },
+        "dt_s": 0.008333333333333333,
+        "speed_m_s": 0.2,
+        "body_size_m": [
+          0.4,
+          0.4,
+          0.3
+        ],
+        "body_mass_kg": 20
+      },
+      "isaac_version": [
+        "6.2.0",
+        "rc.14",
+        "6",
+        "2",
+        "0",
+        "rc",
+        "14",
+        "release.52805.02189a84.gl"
+      ],
+      "acceptance_profile": {
+        "profile_id": "lidar2sim-rules-v1",
+        "schema_version": 1,
+        "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+      },
+      "poc_status": "incomplete",
+      "report_sha256": "2ed541a9255295e6005fddbff265f3c509742259ceb8befdf503ded4f7c9541e",
+      "failures": {
+        "floor": [],
+        "obstacles": [],
+        "routes": []
+      }
+    },
+    "missing_floor": {
+      "summary": {
+        "floor": "9/10",
+        "obstacles": "10/10",
+        "routes": "5/5",
+        "passed": true
+      },
+      "inputs": {
+        "scene_sha256": "8643b5f8436f11567e5bdb61870eb5342d19c79769c196bc6f1c0abcd88fc5ea",
+        "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+        "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+      },
+      "physics_settings": {
+        "static_friction": 0.0,
+        "dynamic_friction": 0.0,
+        "restitution": 0.0,
+        "solver": "TGS",
+        "position_iterations": 16,
+        "velocity_iterations": 4,
+        "ccd": true,
+        "contact": {
+          "/World/Body": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          },
+          "/World/Scene/Collision": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          }
+        },
+        "dt_s": 0.008333333333333333,
+        "speed_m_s": 0.2,
+        "body_size_m": [
+          0.4,
+          0.4,
+          0.3
+        ],
+        "body_mass_kg": 20
+      },
+      "isaac_version": [
+        "6.2.0",
+        "rc.14",
+        "6",
+        "2",
+        "0",
+        "rc",
+        "14",
+        "release.52805.02189a84.gl"
+      ],
+      "acceptance_profile": {
+        "profile_id": "lidar2sim-rules-v1",
+        "schema_version": 1,
+        "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+      },
+      "poc_status": "incomplete",
+      "report_sha256": "52afdafea3ee0adaa35111ebbd9788dff9256a1d34164ce11d7577221af59fc1",
+      "failures": {
+        "floor": [
+          {
+            "xy": [
+              -19.75,
+              26.65
+            ],
+            "floor_z": -0.0,
+            "a_points_15cm": 10,
+            "kind": "редкий пол",
+            "drop_m": 4415.7979,
+            "ok": false
+          }
+        ],
+        "obstacles": [],
+        "routes": []
+      }
+    },
+    "missing_obstacle": {
+      "summary": {
+        "floor": "10/10",
+        "obstacles": "9/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "inputs": {
+        "scene_sha256": "834f437edb5721026435185949a2b909ac4d92c27e07ef3463895bba73217030",
+        "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+        "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+      },
+      "physics_settings": {
+        "static_friction": 0.0,
+        "dynamic_friction": 0.0,
+        "restitution": 0.0,
+        "solver": "TGS",
+        "position_iterations": 16,
+        "velocity_iterations": 4,
+        "ccd": true,
+        "contact": {
+          "/World/Body": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          },
+          "/World/Scene/Collision": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          }
+        },
+        "dt_s": 0.008333333333333333,
+        "speed_m_s": 0.2,
+        "body_size_m": [
+          0.4,
+          0.4,
+          0.3
+        ],
+        "body_mass_kg": 20
+      },
+      "isaac_version": [
+        "6.2.0",
+        "rc.14",
+        "6",
+        "2",
+        "0",
+        "rc",
+        "14",
+        "release.52805.02189a84.gl"
+      ],
+      "acceptance_profile": {
+        "profile_id": "lidar2sim-rules-v1",
+        "schema_version": 1,
+        "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+      },
+      "poc_status": "failed",
+      "report_sha256": "604232d6bac37f5002fda60143680370b7ec350f23807b87a82db278d1260aea",
+      "failures": {
+        "floor": [],
+        "obstacles": [
+          {
+            "start": [
+              -19.65,
+              13.75
+            ],
+            "floor_z": -0.0,
+            "dir": [
+              0.0,
+              1.0
+            ],
+            "free_m": 0.838,
+            "name": "подход 1",
+            "travel_m": 1.307,
+            "penetration_m": 0.4695,
+            "fell": false,
+            "ok": false
+          }
+        ],
+        "routes": []
+      }
+    },
+    "blocked_passage": {
+      "summary": {
+        "floor": "10/10",
+        "obstacles": "10/10",
+        "routes": "3/5",
+        "passed": false
+      },
+      "inputs": {
+        "scene_sha256": "0f9a798008f956ad03d5f42110b5c31927f02f0c06e76cd04a3d99e9fa9b2cbb",
+        "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+        "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+      },
+      "physics_settings": {
+        "static_friction": 0.0,
+        "dynamic_friction": 0.0,
+        "restitution": 0.0,
+        "solver": "TGS",
+        "position_iterations": 16,
+        "velocity_iterations": 4,
+        "ccd": true,
+        "contact": {
+          "/World/Body": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          },
+          "/World/Scene/Collision": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          }
+        },
+        "dt_s": 0.008333333333333333,
+        "speed_m_s": 0.2,
+        "body_size_m": [
+          0.4,
+          0.4,
+          0.3
+        ],
+        "body_mass_kg": 20
+      },
+      "isaac_version": [
+        "6.2.0",
+        "rc.14",
+        "6",
+        "2",
+        "0",
+        "rc",
+        "14",
+        "release.52805.02189a84.gl"
+      ],
+      "acceptance_profile": {
+        "profile_id": "lidar2sim-rules-v1",
+        "schema_version": 1,
+        "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+      },
+      "poc_status": "failed",
+      "report_sha256": "ac745da86f347ad5dfcf7a14f50aab5a85696a66e79372f68de2868bae2da506",
+      "failures": {
+        "floor": [],
+        "obstacles": [],
+        "routes": [
+          {
+            "name": "коридор целиком",
+            "length_m": 15.6,
+            "status": "застрял",
+            "floor_z": 0.0,
+            "reached_point": 4,
+            "of": 32,
+            "at": [
+              -15.649999618530273,
+              11.149999618530273
+            ],
+            "time_s": 13.3,
+            "ok": false
+          },
+          {
+            "name": "кабинет обратно в коридор",
+            "length_m": 16.67,
+            "status": "застрял",
+            "floor_z": 0.0,
+            "reached_point": 23,
+            "of": 33,
+            "at": [
+              -15.960000038146973,
+              11.199999809265137
+            ],
+            "time_s": 67.0,
+            "ok": false
+          }
+        ]
+      }
+    },
+    "filtered": {
+      "summary": {
+        "floor": "7/10",
+        "obstacles": "6/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "inputs": {
+        "scene_sha256": "dbb8c34f2c00f560acbe8093a29121e5c235a2b84b68fa828ba379444a1a5083",
+        "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+        "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+      },
+      "physics_settings": {
+        "static_friction": 0.0,
+        "dynamic_friction": 0.0,
+        "restitution": 0.0,
+        "solver": "TGS",
+        "position_iterations": 16,
+        "velocity_iterations": 4,
+        "ccd": true,
+        "contact": {
+          "/World/Body": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          },
+          "/World/Scene/Collision": {
+            "contact_offset_m": 0.019999999552965164,
+            "rest_offset_m": 0.0
+          }
+        },
+        "dt_s": 0.008333333333333333,
+        "speed_m_s": 0.2,
+        "body_size_m": [
+          0.4,
+          0.4,
+          0.3
+        ],
+        "body_mass_kg": 20
+      },
+      "isaac_version": [
+        "6.2.0",
+        "rc.14",
+        "6",
+        "2",
+        "0",
+        "rc",
+        "14",
+        "release.52805.02189a84.gl"
+      ],
+      "acceptance_profile": {
+        "profile_id": "lidar2sim-rules-v1",
+        "schema_version": 1,
+        "sha256": "f96101b5a83bcaccc44e8df9249477e90530aa7468e20a2c0be990d105bd294b"
+      },
+      "poc_status": "failed",
+      "report_sha256": "e79884efa681f70f9287c9d1a80d3459013748e273a8f4fcd6c2fd711199daac",
+      "failures": {
+        "floor": [
+          {
+            "xy": [
+              -19.75,
+              26.65
+            ],
+            "floor_z": -0.0,
+            "a_points_15cm": 10,
+            "kind": "редкий пол",
+            "drop_m": 3844.8136,
+            "ok": false
+          },
+          {
+            "xy": [
+              -21.75,
+              10.95
+            ],
+            "floor_z": -0.0,
+            "a_points_15cm": 10,
+            "kind": "редкий пол",
+            "drop_m": 4018.765,
+            "ok": false
+          },
+          {
+            "xy": [
+              -14.35,
+              15.05
+            ],
+            "floor_z": -0.0,
+            "a_points_15cm": 44,
+            "kind": "случайная",
+            "drop_m": 3884.7418,
+            "ok": false
+          }
+        ],
+        "obstacles": [
+          {
+            "start": [
+              -16.85,
+              15.95
+            ],
+            "floor_z": -0.0,
+            "dir": [
+              -1.0,
+              0.0
+            ],
+            "free_m": 0.838,
+            "name": "подход 3",
+            "travel_m": 0.926,
+            "penetration_m": 0.0881,
+            "fell": false,
+            "ok": false
+          },
+          {
+            "start": [
+              -15.55,
+              9.75
+            ],
+            "floor_z": -0.0,
+            "dir": [
+              -1.0,
+              0.0
+            ],
+            "free_m": 1.138,
+            "name": "подход 5",
+            "travel_m": 1.188,
+            "penetration_m": 0.0502,
+            "fell": false,
+            "ok": false
+          },
+          {
+            "start": [
+              -16.65,
+              21.55
+            ],
+            "floor_z": -0.0,
+            "dir": [
+              -1.0,
+              0.0
+            ],
+            "free_m": 1.038,
+            "name": "подход 6",
+            "travel_m": 1.157,
+            "penetration_m": 0.1189,
+            "fell": false,
+            "ok": false
+          },
+          {
+            "start": [
+              -19.05,
+              9.55
+            ],
+            "floor_z": -0.0,
+            "dir": [
+              0.0,
+              1.0
+            ],
+            "free_m": 0.538,
+            "name": "подход 7",
+            "travel_m": 0.622,
+            "penetration_m": 0.0842,
+            "fell": false,
+            "ok": false
+          }
+        ],
+        "routes": []
+      }
+    }
+  },
+  "raw_reports_local": "out/physics-qualification/results",
+  "raw_reports_server": "spark:/tmp/lidar-h12-results"
+}

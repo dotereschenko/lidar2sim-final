@@ -1,0 +1,5 @@
+# Фильтр применяется до упрощения и восстановления пола; эталон не используется.
+support_radius: 0.08
+repair_floor: true
+floor_cell: 0.10
+floor_support_radius: 0.25

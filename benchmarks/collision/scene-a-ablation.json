@@ -1,0 +1,408 @@
+{
+  "kind": "collision_ablation",
+  "cached_poisson": true,
+  "input_sha256": "4254eafc06d87d39f9bdc5e49591c5b7dcd2f9c202ee49a070f39b4753174ec0",
+  "gt_sha256": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+  "config_sha256": "cb4549fb17a3bab6876c24b4c806948b7bbd942fc9ece1584eb3485514ac0a2f",
+  "observed_reference_share": 0.19755666666666666,
+  "support": {
+    "distance_m": 0.06,
+    "triangles_before": 617337,
+    "triangles_removed": 70643
+  },
+  "floor": {
+    "status": "applied",
+    "plane_z_ax_by_c": [
+      0.0015118746724615648,
+      -0.0017381963319223202,
+      0.06982612730516423
+    ],
+    "observed_points": 44479,
+    "floor_triangles": 28187,
+    "floor_area_m2": 106.8722,
+    "replaced_triangles": 129262,
+    "triangles_rejected_by_lower_observations": 0
+  },
+  "variants": {
+    "global-20k": {
+      "collision": {
+        "mode": "global",
+        "target_triangles": 20000,
+        "triangles": 20000
+      },
+      "extra_5cm_pct": 98.0,
+      "median_cm": 1.77,
+      "p95_cm": 5.03
+    },
+    "global-30k": {
+      "collision": {
+        "mode": "global",
+        "target_triangles": 30000,
+        "triangles": 30000
+      },
+      "extra_5cm_pct": 97.7,
+      "median_cm": 1.75,
+      "p95_cm": 4.94
+    },
+    "protected-20k-floor-0.15-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 1.0,
+        "floor_triangles": 2999,
+        "other_triangles": 16999,
+        "triangles": 19998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.1,
+      "median_cm": 1.78,
+      "p95_cm": 5.05
+    },
+    "protected-20k-floor-0.15-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 100.0,
+        "floor_triangles": 2999,
+        "other_triangles": 17000,
+        "triangles": 19999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.78,
+      "p95_cm": 5.09
+    },
+    "protected-20k-floor-0.25-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 1.0,
+        "floor_triangles": 4999,
+        "other_triangles": 14999,
+        "triangles": 19998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.2,
+      "median_cm": 1.79,
+      "p95_cm": 5.09
+    },
+    "protected-20k-floor-0.25-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 100.0,
+        "floor_triangles": 4999,
+        "other_triangles": 15000,
+        "triangles": 19999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.79,
+      "p95_cm": 5.14
+    },
+    "protected-20k-floor-0.3-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 1.0,
+        "floor_triangles": 5999,
+        "other_triangles": 13999,
+        "triangles": 19998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.2,
+      "median_cm": 1.79,
+      "p95_cm": 5.11
+    },
+    "protected-20k-floor-0.3-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 100.0,
+        "floor_triangles": 5999,
+        "other_triangles": 14000,
+        "triangles": 19999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.79,
+      "p95_cm": 5.18
+    },
+    "protected-20k-floor-0.4-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 1.0,
+        "floor_triangles": 7999,
+        "other_triangles": 11999,
+        "triangles": 19998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.3,
+      "median_cm": 1.79,
+      "p95_cm": 5.17
+    },
+    "protected-20k-floor-0.4-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 20000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 100.0,
+        "floor_triangles": 7999,
+        "other_triangles": 12000,
+        "triangles": 19999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.8,
+      "p95_cm": 5.23
+    },
+    "protected-30k-floor-0.15-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 1.0,
+        "floor_triangles": 4499,
+        "other_triangles": 25499,
+        "triangles": 29998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.8,
+      "median_cm": 1.76,
+      "p95_cm": 5.0
+    },
+    "protected-30k-floor-0.15-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 100.0,
+        "floor_triangles": 4499,
+        "other_triangles": 25500,
+        "triangles": 29999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.2,
+      "median_cm": 1.76,
+      "p95_cm": 4.98
+    },
+    "protected-30k-floor-0.25-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 1.0,
+        "floor_triangles": 7499,
+        "other_triangles": 22499,
+        "triangles": 29998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.0,
+      "median_cm": 1.77,
+      "p95_cm": 5.01
+    },
+    "protected-30k-floor-0.25-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 100.0,
+        "floor_triangles": 7499,
+        "other_triangles": 22500,
+        "triangles": 29999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.76,
+      "p95_cm": 5.02
+    },
+    "protected-30k-floor-0.3-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 1.0,
+        "floor_triangles": 8999,
+        "other_triangles": 20999,
+        "triangles": 29998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.9,
+      "median_cm": 1.77,
+      "p95_cm": 5.02
+    },
+    "protected-30k-floor-0.3-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 100.0,
+        "floor_triangles": 8999,
+        "other_triangles": 20999,
+        "triangles": 29998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.2,
+      "median_cm": 1.77,
+      "p95_cm": 5.03
+    },
+    "protected-30k-floor-0.4-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 1.0,
+        "floor_triangles": 11999,
+        "other_triangles": 18000,
+        "triangles": 29999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 98.0,
+      "median_cm": 1.77,
+      "p95_cm": 5.05
+    },
+    "protected-30k-floor-0.4-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 30000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 100.0,
+        "floor_triangles": 11999,
+        "other_triangles": 18000,
+        "triangles": 29999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.3,
+      "median_cm": 1.77,
+      "p95_cm": 5.05
+    },
+    "protected-40k-floor-0.15-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 1.0,
+        "floor_triangles": 5999,
+        "other_triangles": 34000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.7,
+      "median_cm": 1.75,
+      "p95_cm": 4.92
+    },
+    "protected-40k-floor-0.15-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.15,
+        "boundary_weight": 100.0,
+        "floor_triangles": 5999,
+        "other_triangles": 34000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.1,
+      "median_cm": 1.74,
+      "p95_cm": 4.94
+    },
+    "protected-40k-floor-0.25-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 1.0,
+        "floor_triangles": 9999,
+        "other_triangles": 30000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.8,
+      "median_cm": 1.75,
+      "p95_cm": 4.94
+    },
+    "protected-40k-floor-0.25-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.25,
+        "boundary_weight": 100.0,
+        "floor_triangles": 9999,
+        "other_triangles": 30000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.2,
+      "median_cm": 1.74,
+      "p95_cm": 4.95
+    },
+    "protected-40k-floor-0.3-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 1.0,
+        "floor_triangles": 11999,
+        "other_triangles": 27999,
+        "triangles": 39998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.8,
+      "median_cm": 1.76,
+      "p95_cm": 4.96
+    },
+    "protected-40k-floor-0.3-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.3,
+        "boundary_weight": 100.0,
+        "floor_triangles": 11999,
+        "other_triangles": 28000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.2,
+      "median_cm": 1.75,
+      "p95_cm": 4.95
+    },
+    "protected-40k-floor-0.4-boundary-1": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 1.0,
+        "floor_triangles": 15999,
+        "other_triangles": 24000,
+        "triangles": 39999,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.8,
+      "median_cm": 1.76,
+      "p95_cm": 5.0
+    },
+    "protected-40k-floor-0.4-boundary-100": {
+      "collision": {
+        "mode": "protected_floor",
+        "target_triangles": 40000,
+        "floor_fraction": 0.4,
+        "boundary_weight": 100.0,
+        "floor_triangles": 15999,
+        "other_triangles": 23999,
+        "triangles": 39998,
+        "floor_faces_upward": true
+      },
+      "extra_5cm_pct": 97.2,
+      "median_cm": 1.76,
+      "p95_cm": 5.0
+    }
+  }
+}

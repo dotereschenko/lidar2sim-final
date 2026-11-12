@@ -1,0 +1,138 @@
+{
+  "source_commit": "349a43f",
+  "image_id": "sha256:4bff6ea48f62a519b9cc20017bb577925dee47d213203323a6117b93a8f6ad6c",
+  "cpus": 4,
+  "memory_gib": 16,
+  "network": "none",
+  "runs": [
+    {
+      "scene": "scene_a",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:4bff6ea48f62a519b9cc20017bb577925dee47d213203323a6117b93a8f6ad6c",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 55.095,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "passed",
+      "dimension_counts": {
+        "visual": 10,
+        "collision": 10
+      },
+      "physics": {
+        "floor": "8/10",
+        "obstacles": "2/10",
+        "routes": "4/5",
+        "passed": false
+      },
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "71c9d96e61f206eedfb899e357b195bbfa8d76bfb39e645a41a0b96b12f2c520",
+          "geometry": {
+            "precision_fraction": 0.9999047528336032,
+            "median_m": 0.00424941023811698,
+            "p95_m": 0.01926938258111477
+          },
+          "dimensions_passed": 10
+        },
+        "collision": {
+          "sha256": "2ce87e1436e720dedaa82e3c7ce0233770a15221d7555337102dbd2d8b826989",
+          "geometry": {
+            "precision_fraction": 0.9999012934088674,
+            "median_m": 0.0042487857863307,
+            "p95_m": 0.019288958981633186
+          },
+          "dimensions_passed": 10
+        }
+      },
+      "usd_sha256": "56faf528d8c854e66ec85e4ded96a100456498fdd6bd620b61329519ea89f1ac",
+      "physics_sha256": "8d0b34e6deace8f2169944c05a48a88bd7825d232d4a104431d0c8c5c029d692",
+      "maximum_penetration_m": 0.1721
+    },
+    {
+      "scene": "scene_c",
+      "reconstruction": {
+        "isolation": "A-only read-only input; no network; nonroot; no host sockets",
+        "input_inventory": [
+          "config.yaml",
+          "manifest.json",
+          "scene.ply",
+          "trajectory_A.csv"
+        ],
+        "image": "sha256:4bff6ea48f62a519b9cc20017bb577925dee47d213203323a6117b93a8f6ad6c",
+        "cpu_limit": 4,
+        "memory_limit_gib": 16,
+        "timeout_s": 1800,
+        "timed_out": false,
+        "exit_code": 0,
+        "wall_s": 61.91,
+        "required_outputs_present": true
+      },
+      "geometry": "passed",
+      "dimensions": "passed",
+      "dimension_counts": {
+        "visual": 10,
+        "collision": 10
+      },
+      "physics": {
+        "floor": "10/10",
+        "obstacles": "9/10",
+        "routes": "5/5",
+        "passed": false
+      },
+      "mesh_metrics": {
+        "visual": {
+          "sha256": "b248f2c664cf77a05f6230bee0675b35ba2fb805fca5ed5e8267169e67db6ac6",
+          "geometry": {
+            "precision_fraction": 0.9999353189287453,
+            "median_m": 0.003952015191316605,
+            "p95_m": 0.016423938795924187
+          },
+          "dimensions_passed": 10
+        },
+        "collision": {
+          "sha256": "48315968efbe90a1923717a9033a90a01ec2d70b70762ca76c9675690aa3c0f2",
+          "geometry": {
+            "precision_fraction": 0.9999387344581233,
+            "median_m": 0.003953797742724419,
+            "p95_m": 0.016433481127023697
+          },
+          "dimensions_passed": 10
+        }
+      },
+      "usd_sha256": "2e9a634371916c15ca7f1386d45f5c5738d52fbc2b5b42d4446dae89922ac00a",
+      "physics_sha256": "e0ee0f85194d2899eef7703884d06de8772e6a4ec62139c8e19ed1cac0075df3",
+      "maximum_penetration_m": 0.0952
+    }
+  ],
+  "physics_image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+  "new_physics_runs": 2,
+  "qualified": false,
+  "slot": {
+    "paused": [
+      "isaac-flight",
+      "isaac-stream"
+    ],
+    "blocked": [],
+    "container_name": "lidar2sim-hybrid-349a43f-physics",
+    "restored": [
+      "isaac-flight",
+      "isaac-stream"
+    ],
+    "restore_errors": []
+  },
+  "test_count": 67,
+  "test_location": "Spark",
+  "regression_before_fix": "single noisy wall test failed on d307ce3"
+}

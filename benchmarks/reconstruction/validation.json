@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "kind": "reconstruction_validation",
+  "recorded_at": "2026-11-10T19:31:21.266781+00:00",
+  "pipeline_commit": "4c9dfd7ccf4a555b57f834c04833fb71994b7fdf",
+  "evaluator_commit": "aa75da5a968bae4c19bf53ec06c1de15302f2d2a",
+  "software_tests": {
+    "passed": 58,
+    "platform": "Ubuntu 25.04 x86_64",
+    "python": "3.12.13"
+  },
+  "physics_runtime": {
+    "image_id": "sha256:5d0af753164932cdb9cb6486fe453d4a676489dc37868859c915b5a33dd6d018",
+    "resources": {
+      "cpu_limit": 4.0,
+      "memory_limit_bytes": 17179869184,
+      "runtime": "nvidia",
+      "network_mode": "none"
+    },
+    "isaac_settings": {
+      "cpu_threads": 4,
+      "physics_threads": 4,
+      "disable_viewport_updates": true
+    },
+    "sha256": {
+      "poc-a/scene.usd": "2b1de25bcfb4405a8da846aaa02f14cdd2e83a243e4ef04705143cb4e58fd28c",
+      "baseline-room/scene.usd": "565177aa9bee529bab3066c1c91533d7edbbd653f651fa9c3913945ae28ef690",
+      "baseline-a/scene.usd": "5d34b4e22a26f89949dc1f157e697158c954ce4550793ae363ac35892bdd5d70",
+      "poc-room/scene.usd": "5e437c0003554a8deb08feeee893b145a7ae0223ab811c69ed9365c7aeb91b61",
+      "tools/isaac_scene_test.py": "52e90c7ffc67332693794bfb574f4efa3d5f0650e379415a7fb30d896fb5ba7c",
+      "tools/isaac_physics_test.py": "e34c12bf5f5fd4c266f9e0e83cfc009db0feb4e86fbbf4cd9b176c29b6541266",
+      "scene_a_test_config.json": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+      "test_room_manifest.json": "0a426128817189f5477f1c68b6b871780b294a5eff5f2c81e956c2b5e920bd69"
+    },
+    "criteria": "Unchanged scene_a_test_config.json and test-room test definitions; only launcher and progress output changed."
+  },
+  "variants": {
+    "baseline-a": {
+      "generation_code": {
+        "commit": "7deb15034992312bcc6b92569eef877c5d823a52",
+        "dirty": true,
+        "source_sha256": "62ef1b72044c7fd980e0e044277428590693062132bce62d6399e7c85e6d08cf"
+      },
+      "input": {
+        "path": "data/scene_a/A.ply",
+        "sha256": "4254eafc06d87d39f9bdc5e49591c5b7dcd2f9c202ee49a070f39b4753174ec0",
+        "points": 248702
+      },
+      "outputs": {
+        "visual_triangles": 200000,
+        "collision_triangles": 19999
+      },
+      "generation_total_s": 26.375909,
+      "geometry": {
+        "extra_5cm_pct": 88.3,
+        "extra_5cm_pct_collision": 88.5,
+        "median_cm": 1.71,
+        "p95_cm": 4.82,
+        "passed": {
+          "лишняя геометрия, visual": false,
+          "лишняя геометрия, collision": false,
+          "полнота, медиана": true,
+          "полнота, p95": true
+        }
+      },
+      "usd_sha256": "5d34b4e22a26f89949dc1f157e697158c954ce4550793ae363ac35892bdd5d70",
+      "physics": {
+        "summary": {
+          "floor": "8/10",
+          "obstacles": "10/10",
+          "routes": "5/5",
+          "passed": false
+        },
+        "max_penetration_m": 0.0287,
+        "failed_floor_indices": [
+          0,
+          1
+        ],
+        "failed_obstacle_indices": [],
+        "report_sha256": "903316a9b2bc3ef953488adcb72eb83eab7f52d86838a05c7092577788c28e26",
+        "wall_s_including_isaac_startup": 319.0
+      }
+    },
+    "poc-a": {
+      "generation_code": {
+        "commit": "4c9dfd7ccf4a555b57f834c04833fb71994b7fdf",
+        "dirty": false,
+        "source_sha256": "2fbf2588d7e75b9a24bf9ba798019d3ac5cf1cef74a47f5b7777e3c48e73c8d7"
+      },
+      "input": {
+        "path": "data/scene_a/A.ply",
+        "sha256": "4254eafc06d87d39f9bdc5e49591c5b7dcd2f9c202ee49a070f39b4753174ec0",
+        "points": 248702
+      },
+      "outputs": {
+        "visual_triangles": 199999,
+        "collision_triangles": 19999
+      },
+      "generation_total_s": 27.441484,
+      "geometry": {
+        "extra_5cm_pct": 96.9,
+        "extra_5cm_pct_collision": 98.0,
+        "median_cm": 1.72,
+        "p95_cm": 4.74,
+        "passed": {
+          "лишняя геометрия, visual": true,
+          "лишняя геометрия, collision": true,
+          "полнота, медиана": true,
+          "полнота, p95": true
+        }
+      },
+      "usd_sha256": "2b1de25bcfb4405a8da846aaa02f14cdd2e83a243e4ef04705143cb4e58fd28c",
+      "physics": {
+        "summary": {
+          "floor": "10/10",
+          "obstacles": "10/10",
+          "routes": "5/5",
+          "passed": true
+        },
+        "max_penetration_m": 0.0345,
+        "failed_floor_indices": [],
+        "failed_obstacle_indices": [],
+        "report_sha256": "97b91c6d4d6901869a96e14fe09477d307bcb5abb1a806821c6a79378b56b271",
+        "wall_s_including_isaac_startup": 103.0
+      }
+    },
+    "baseline-room": {
+      "generation_code": {
+        "commit": "f5a56ea0fd519b96ebb5c5e402d9a3c42488a4a6",
+        "dirty": true,
+        "source_sha256": "8c8c4d2325e6c606b91e2cfc3399e9375bb8ae0e1090b1f2ab1e87db2f30feee"
+      },
+      "input": {
+        "path": "data/test_room/scene.ply",
+        "sha256": "103c5d52214b7ba143581f633c0facdd1ccf7c739fdf5bb32e8e27a87a364d7a",
+        "points": 297521
+      },
+      "outputs": {
+        "visual_triangles": 199999,
+        "collision_triangles": 19999
+      },
+      "generation_total_s": 19.721922,
+      "geometry": {
+        "версия": "baseline-room",
+        "эталон→сетка, медиана, см": 0.28,
+        "эталон→сетка, p95, см": 1.25,
+        "сетка в 10 см от эталона, %": 100.0,
+        "пол держит (лучи вниз), %": 97.3,
+        "пол в пятне без точек, %": 0.0,
+        "проём перекрыт, %": 0.0,
+        "треугольников visual / collision": "199999 / 19999",
+        "время, с": 19.721922
+      },
+      "usd_sha256": "565177aa9bee529bab3066c1c91533d7edbbd653f651fa9c3913945ae28ef690",
+      "physics": {
+        "summary": {
+          "floor_ok": "8/10",
+          "obstacles_ok": "10/10",
+          "door_ok": true
+        },
+        "max_penetration_m": 0.0026,
+        "failed_floor_indices": [
+          8,
+          9
+        ],
+        "failed_obstacle_indices": [],
+        "report_sha256": "92417360576605df07c24d353f57c94b66791eecf96ce5bba1788a92d91fb123",
+        "wall_s_including_isaac_startup": 57.0
+      }
+    },
+    "poc-room": {
+      "generation_code": {
+        "commit": "f5a56ea0fd519b96ebb5c5e402d9a3c42488a4a6",
+        "dirty": true,
+        "source_sha256": "2fbf2588d7e75b9a24bf9ba798019d3ac5cf1cef74a47f5b7777e3c48e73c8d7"
+      },
+      "input": {
+        "path": "data/test_room/scene.ply",
+        "sha256": "103c5d52214b7ba143581f633c0facdd1ccf7c739fdf5bb32e8e27a87a364d7a",
+        "points": 297521
+      },
+      "outputs": {
+        "visual_triangles": 199999,
+        "collision_triangles": 19999
+      },
+      "generation_total_s": 20.329573,
+      "geometry": {
+        "версия": "poc-room",
+        "эталон→сетка, медиана, см": 0.19,
+        "эталон→сетка, p95, см": 1.18,
+        "сетка в 10 см от эталона, %": 99.8,
+        "пол держит (лучи вниз), %": 100.0,
+        "пол в пятне без точек, %": 100.0,
+        "проём перекрыт, %": 0.0,
+        "треугольников visual / collision": "199999 / 19999",
+        "время, с": 20.329573
+      },
+      "usd_sha256": "5e437c0003554a8deb08feeee893b145a7ae0223ab811c69ed9365c7aeb91b61",
+      "physics": {
+        "summary": {
+          "floor_ok": "10/10",
+          "obstacles_ok": "10/10",
+          "door_ok": true
+        },
+        "max_penetration_m": 0.0044,
+        "failed_floor_indices": [],
+        "failed_obstacle_indices": [],
+        "report_sha256": "68ac68590837c6dca10414b11e91906264a3e680d784935a8113ff04197457a7",
+        "wall_s_including_isaac_startup": 56.0
+      }
+    }
+  },
+  "merged_scene_a_checks": {
+    "contract": "passed",
+    "geometry": "passed",
+    "physics": "passed"
+  },
+  "overall_poc_acceptance": {
+    "status": "incomplete",
+    "reason": "Профиль порогов не передан"
+  },
+  "remaining_acceptance_inputs": [
+    "Final agreed threshold profile",
+    "Independent cloud B",
+    "Control-dimension annotations"
+  ],
+  "timing_note": "Physics wall times include Isaac startup and cache warmup; only generation_total_s measures the CPU pipeline."
+}

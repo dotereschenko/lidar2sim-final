@@ -1,0 +1,864 @@
+{
+  "schema_version": 1,
+  "profile_id": "scene-a-annotations-candidate-v1",
+  "units": "m",
+  "up_axis": "Z",
+  "status": "candidate_pending_H3_H13",
+  "dimensions": [
+    {
+      "id": "D01",
+      "label": "Southwest open doorway width",
+      "category": "door",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -18.970001250505447,
+          10.5,
+          1.0
+        ],
+        [
+          -18.09112548828125,
+          10.5,
+          1.0
+        ]
+      ],
+      "reference_m": 0.8788757622241974,
+      "search_boxes": [
+        {
+          "min_m": [
+            -19.120001250505446,
+            10.35,
+            0.85
+          ],
+          "max_m": [
+            -18.82000125050545,
+            10.65,
+            1.15
+          ]
+        },
+        {
+          "min_m": [
+            -18.24112548828125,
+            10.35,
+            0.85
+          ],
+          "max_m": [
+            -17.94112548828125,
+            10.65,
+            1.15
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        129,
+        299
+      ],
+      "surface_neighbors_B": [
+        107,
+        273
+      ]
+    },
+    {
+      "id": "D02",
+      "label": "Southeast open doorway width",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -16.499998092651367,
+          14.0,
+          1.0
+        ],
+        [
+          -14.500002920627594,
+          14.0,
+          1.0
+        ]
+      ],
+      "reference_m": 1.9999951720237732,
+      "search_boxes": [
+        {
+          "min_m": [
+            -16.649998092651366,
+            13.85,
+            0.85
+          ],
+          "max_m": [
+            -16.34999809265137,
+            14.15,
+            1.15
+          ]
+        },
+        {
+          "min_m": [
+            -14.650002920627594,
+            13.85,
+            0.85
+          ],
+          "max_m": [
+            -14.350002920627594,
+            14.15,
+            1.15
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        230,
+        171
+      ],
+      "surface_neighbors_B": [
+        211,
+        171
+      ]
+    },
+    {
+      "id": "D03",
+      "label": "Northeast open doorway width",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -16.420085310935974,
+          24.0,
+          1.0
+        ],
+        [
+          -14.579621315002441,
+          24.0,
+          1.0
+        ]
+      ],
+      "reference_m": 1.8404639959335327,
+      "search_boxes": [
+        {
+          "min_m": [
+            -16.570085310935973,
+            23.85,
+            0.85
+          ],
+          "max_m": [
+            -16.270085310935976,
+            24.15,
+            1.15
+          ]
+        },
+        {
+          "min_m": [
+            -14.729621315002442,
+            23.85,
+            0.85
+          ],
+          "max_m": [
+            -14.429621315002441,
+            24.15,
+            1.15
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        234,
+        189
+      ],
+      "surface_neighbors_B": [
+        223,
+        178
+      ]
+    },
+    {
+      "id": "D04",
+      "label": "Southwest doorway height",
+      "category": "door",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "surface_points_m": [
+        [
+          -18.5,
+          10.5,
+          0.004950582981109619
+        ],
+        [
+          -18.5,
+          10.5,
+          2.070001006126404
+        ]
+      ],
+      "reference_m": 2.065050423145294,
+      "search_boxes": [
+        {
+          "min_m": [
+            -18.65,
+            10.35,
+            -0.14504941701889038
+          ],
+          "max_m": [
+            -18.35,
+            10.65,
+            0.1549505829811096
+          ]
+        },
+        {
+          "min_m": [
+            -18.65,
+            10.35,
+            1.920001006126404
+          ],
+          "max_m": [
+            -18.35,
+            10.65,
+            2.2200010061264037
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        73,
+        107
+      ],
+      "surface_neighbors_B": [
+        60,
+        119
+      ]
+    },
+    {
+      "id": "D05",
+      "label": "Southeast doorway height",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "surface_points_m": [
+        [
+          -15.5,
+          14.0,
+          -2.384185791015625e-07
+        ],
+        [
+          -15.5,
+          14.0,
+          2.499999523162842
+        ]
+      ],
+      "reference_m": 2.499999761581421,
+      "search_boxes": [
+        {
+          "min_m": [
+            -15.65,
+            13.85,
+            -0.1500002384185791
+          ],
+          "max_m": [
+            -15.35,
+            14.15,
+            0.1499997615814209
+          ]
+        },
+        {
+          "min_m": [
+            -15.65,
+            13.85,
+            2.349999523162842
+          ],
+          "max_m": [
+            -15.35,
+            14.15,
+            2.6499995231628417
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        48,
+        65
+      ],
+      "surface_neighbors_B": [
+        48,
+        59
+      ]
+    },
+    {
+      "id": "D06",
+      "label": "Northeast doorway height",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "surface_points_m": [
+        [
+          -15.5,
+          24.0,
+          0.004950582981109619
+        ],
+        [
+          -15.5,
+          24.0,
+          2.4620726108551025
+        ]
+      ],
+      "reference_m": 2.457122027873993,
+      "search_boxes": [
+        {
+          "min_m": [
+            -15.65,
+            23.85,
+            -0.14504941701889038
+          ],
+          "max_m": [
+            -15.35,
+            24.15,
+            0.1549505829811096
+          ]
+        },
+        {
+          "min_m": [
+            -15.65,
+            23.85,
+            2.3120726108551026
+          ],
+          "max_m": [
+            -15.35,
+            24.15,
+            2.6120726108551025
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        59,
+        53
+      ],
+      "surface_neighbors_B": [
+        54,
+        61
+      ]
+    },
+    {
+      "id": "D07",
+      "label": "South room depth",
+      "category": "room",
+      "origin_m": [
+        -21,
+        12,
+        2.3
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -21.0,
+          10.5,
+          2.3
+        ],
+        [
+          -21.0,
+          14.79999828338623,
+          2.3
+        ]
+      ],
+      "reference_m": 4.2999982833862305,
+      "search_boxes": [
+        {
+          "min_m": [
+            -21.15,
+            10.35,
+            2.15
+          ],
+          "max_m": [
+            -20.85,
+            10.65,
+            2.4499999999999997
+          ]
+        },
+        {
+          "min_m": [
+            -21.15,
+            14.64999828338623,
+            2.15
+          ],
+          "max_m": [
+            -20.85,
+            14.94999828338623,
+            2.4499999999999997
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        53,
+        46
+      ],
+      "surface_neighbors_B": [
+        43,
+        50
+      ]
+    },
+    {
+      "id": "D08",
+      "label": "South room floor to ceiling",
+      "category": "height",
+      "origin_m": [
+        -21,
+        11.5,
+        1.5
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ],
+      "surface_points_m": [
+        [
+          -21.0,
+          11.5,
+          0.0
+        ],
+        [
+          -21.0,
+          11.5,
+          3.0
+        ]
+      ],
+      "reference_m": 3.0,
+      "search_boxes": [
+        {
+          "min_m": [
+            -21.15,
+            11.35,
+            -0.15
+          ],
+          "max_m": [
+            -20.85,
+            11.65,
+            0.15
+          ]
+        },
+        {
+          "min_m": [
+            -21.15,
+            11.35,
+            2.85
+          ],
+          "max_m": [
+            -20.85,
+            11.65,
+            3.15
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        30,
+        50
+      ],
+      "surface_neighbors_B": [
+        35,
+        62
+      ]
+    },
+    {
+      "id": "D09",
+      "label": "Tabletop depth",
+      "category": "obstacle",
+      "origin_m": [
+        -21,
+        12.5,
+        0.74
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -21.0,
+          12.467000007629395,
+          0.74
+        ],
+        [
+          -21.0,
+          13.366999626159668,
+          0.74
+        ]
+      ],
+      "reference_m": 0.8999996185302734,
+      "search_boxes": [
+        {
+          "min_m": [
+            -21.15,
+            12.317000007629394,
+            0.59
+          ],
+          "max_m": [
+            -20.85,
+            12.617000007629395,
+            0.89
+          ]
+        },
+        {
+          "min_m": [
+            -21.15,
+            13.216999626159668,
+            0.59
+          ],
+          "max_m": [
+            -20.85,
+            13.516999626159668,
+            0.89
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        31,
+        47
+      ],
+      "surface_neighbors_B": [
+        38,
+        56
+      ]
+    },
+    {
+      "id": "D10",
+      "label": "North pillar depth",
+      "category": "obstacle",
+      "origin_m": [
+        -17.5,
+        24,
+        0.5
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ],
+      "surface_points_m": [
+        [
+          -17.5,
+          23.5,
+          0.5
+        ],
+        [
+          -17.5,
+          24.5,
+          0.5
+        ]
+      ],
+      "reference_m": 1.0,
+      "search_boxes": [
+        {
+          "min_m": [
+            -17.65,
+            23.35,
+            0.35
+          ],
+          "max_m": [
+            -17.35,
+            23.65,
+            0.65
+          ]
+        },
+        {
+          "min_m": [
+            -17.65,
+            24.35,
+            0.35
+          ],
+          "max_m": [
+            -17.35,
+            24.65,
+            0.65
+          ]
+        }
+      ],
+      "search_half_extent_m": 0.15,
+      "measurement_contract": "find reconstructed surfaces in both boxes; do not use GT endpoints as the measured result",
+      "surface_neighbors_A": [
+        41,
+        103
+      ],
+      "surface_neighbors_B": [
+        42,
+        77
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "door_southwest",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "width_m": 0.8788757622241974,
+      "height_m": 2.065050423145294,
+      "corners_m": [
+        [
+          -18.970001250505447,
+          10.5,
+          0.004950582981109619
+        ],
+        [
+          -18.09112548828125,
+          10.5,
+          0.004950582981109619
+        ],
+        [
+          -18.09112548828125,
+          10.5,
+          2.070001006126404
+        ],
+        [
+          -18.970001250505447,
+          10.5,
+          2.070001006126404
+        ]
+      ],
+      "body_fits": true,
+      "interior_rays": 425,
+      "interior_margin_m": 0.05,
+      "tested_wall_thickness_m": 0.5
+    },
+    {
+      "id": "door_northeast",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "width_m": 1.8404639959335327,
+      "height_m": 2.457122027873993,
+      "corners_m": [
+        [
+          -16.420085310935974,
+          24.0,
+          0.004950582981109619
+        ],
+        [
+          -14.579621315002441,
+          24.0,
+          0.004950582981109619
+        ],
+        [
+          -14.579621315002441,
+          24.0,
+          2.4620726108551025
+        ],
+        [
+          -16.420085310935974,
+          24.0,
+          2.4620726108551025
+        ]
+      ],
+      "body_fits": true,
+      "interior_rays": 425,
+      "interior_margin_m": 0.05,
+      "tested_wall_thickness_m": 0.5
+    },
+    {
+      "id": "door_southeast",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "width_m": 1.9999951720237732,
+      "height_m": 2.499999761581421,
+      "corners_m": [
+        [
+          -16.499998092651367,
+          14.0,
+          -2.384185791015625e-07
+        ],
+        [
+          -14.500002920627594,
+          14.0,
+          -2.384185791015625e-07
+        ],
+        [
+          -14.500002920627594,
+          14.0,
+          2.499999523162842
+        ],
+        [
+          -16.499998092651367,
+          14.0,
+          2.499999523162842
+        ]
+      ],
+      "body_fits": true,
+      "interior_rays": 425,
+      "interior_margin_m": 0.05,
+      "tested_wall_thickness_m": 0.5
+    }
+  ],
+  "region": {
+    "radius_m": 0.1,
+    "min_neighbors": 10,
+    "min_common_samples": 1000,
+    "predicate": "neighbors_in_A >= min_neighbors AND neighbors_in_B >= min_neighbors",
+    "sampling": "uniform_triangle_area",
+    "seed": 18,
+    "samples": 300000,
+    "common_samples": 85462,
+    "common_fraction_of_gt_area": 0.2848733333333333,
+    "a_observed_samples": 88423,
+    "b_observed_samples": 87849,
+    "file": "eval_region.npz",
+    "query_contract": "apply the identical predicate to query points using the pinned A and B; never infer region from reconstructed meshes"
+  },
+  "physics": {
+    "evidence_file": "docs/validation/hackathon-12-physics.json",
+    "evidence_sha256": "241e4bf0dc78d4cb656dd7cd173f4a3dfc989a67fc6f1c1d046fbb824fb3fdc0",
+    "summary": {
+      "floor": "10/10",
+      "obstacles": "10/10",
+      "routes": "5/5",
+      "passed": true
+    },
+    "inputs": {
+      "scene_sha256": "c9e014af7b31eb98e6f98eaaedb1bafaf6ab0b4848da120ff9609f182fec9dfd",
+      "config_sha256": "55ecd0b6fda38e20782025b6bbd665a02ea99382a073423466bc03234073227a",
+      "runner_sha256": "1c6059095f2b84319b074e451c68a3e1f06b6c128743714022490fed69a1d3cb"
+    },
+    "body": {
+      "size": [
+        0.4,
+        0.4,
+        0.3
+      ],
+      "mass": 20.0
+    },
+    "scope": "existing GT physical qualification reused after exact input hash checks; no new Isaac run"
+  },
+  "inputs_sha256": {
+    "gt_mesh.ply": "409489b61e4c335374d4f93c84dd27318e72eb2a58ce4e284f9d4a7197669b21",
+    "scan_manifest.json": "a6ee119dd1357dfb76b5e79299a185f25bca2a5dfbb5012f081fdfec7c0dabc7",
+    "definition.json": "6fc36f9611851f98c2c1274883b1bbbca79147ddf8ec2d1fca0f29ed790e37cf",
+    "A.ply": "3a8efcc63ad90a0217139f0e68a79472a5b75de6162e564b38167b374de7f83d",
+    "trajectory_A.csv": "095fd0e64cc09e1b0c3f2efc9f7a2782b60f66958d2f66b61e863a65650e9073",
+    "B.ply": "4182518a68f04d178b936b6b00c19715e5719d7879f99f5cf21429ff2d2a7473",
+    "trajectory_B.csv": "65ca0cd6dc6797308a65acf646fa5b1acadb9f312b9c6229ad56eff8c82cd39e"
+  },
+  "code_sha256": {
+    "builder": "7f4ea24c6792c358166940663fe3ff8d3fd8a0a089b464b55902ada48996c7f0",
+    "annotations": "d350595301ef7106ac3f0b45db6163f4bbaaba870350a36ac79dfd73f809d621"
+  },
+  "versions": {
+    "python": "3.11.13",
+    "numpy": "2.4.6",
+    "open3d": "0.20.0"
+  },
+  "artifacts_sha256": {
+    "eval_region.npz": "8376777eeb57bb93e6c397a76211b8c6c27b73b748dc7583bb822015721f87a1"
+  },
+  "validation": {
+    "repeated_build_identical": true,
+    "artifacts_sha256": {
+      "annotations.json": "31e1a465181e317eabea4db091ecef90c3d7d1094ae030f11254df09c70ade56",
+      "eval_region.npz": "8376777eeb57bb93e6c397a76211b8c6c27b73b748dc7583bb822015721f87a1"
+    },
+    "local_directory": "out/annotations-v1-observed",
+    "visual_overlay": "docs/img/annotations-v1.png",
+    "panels": "top left GT; top right A; bottom left B; bottom right common region; 1 m grid; red numbers = dimension IDs; orange = doors",
+    "all_20_dimension_endpoints_observed_in_both_scans": true,
+    "tests_passed": 42,
+    "server_directory": "/home/unknown641/lidar2sim-data/annotations-v1",
+    "server_hash_verification": "all four artifacts match",
+    "visual_overlay_sha256": "f58ec87674869aa18afb928db6daa6ab45009581f44f66d1319ad66ea86e46b4"
+  }
+}
