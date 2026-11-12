@@ -11,13 +11,15 @@ from tools.jury_compare import compare, sha
 
 def protocol(jury, batches, performance, repeats, out):
     jury, performance, out = map(lambda p: Path(p).resolve(), (jury, performance, out))
-    runs, environments, completions = [], [], []
+    runs, environments, completions, configurations = [], [], [], []
     for batch in map(Path, batches):
         batch = batch.resolve()
         completion = json.loads((batch / 'complete.json').read_text())
         environment = json.loads((batch / 'environment.json').read_text())
         if completion['image_id'] != environment['image_id']:
             raise ValueError('Batch image mismatch')
+        configuration = batch / 'configuration.json'
+        configurations.append(json.loads(configuration.read_text())['final']['sha256'] if configuration.exists() else None)
         environments.append(environment)
         completions.append({'directory': str(batch), **completion})
         for case in json.loads((batch / 'cases.json').read_text()):
@@ -28,6 +30,9 @@ def protocol(jury, batches, performance, repeats, out):
                          'repeat': case['repeat'], 'directory': str(folder)})
     if not environments or any(e != environments[0] for e in environments):
         raise ValueError('All repetitions require the same execution environment')
+    if len(set(configurations)) != 1:
+        raise ValueError('All batches require the same pinned final configuration')
+    final_config_sha = configurations[0] or sha(ROOT/'configs/poc-high-detail.yaml')
     datasets = {}
     for scene in ['scene_a', 'scene_c']:
         path = jury / scene
@@ -41,8 +46,8 @@ def protocol(jury, batches, performance, repeats, out):
                 'profile_sha256': sha(ROOT/'configs/acceptance/lidar2sim-rules-v2.yaml'),
                 'dimension_measurer_sha256': sha(ROOT/'lidar2sim/dimensions.py'),
                 'evaluator_sha256': sha(ROOT/'tools/eval_scene.py'),
-                'config_sha256': {'reference/'+v: sha(ROOT/'configs'/c) for v,c in
-                                  [('baseline','baseline.yaml'),('final','poc-high-detail.yaml')]},
+                'config_sha256': {'reference/baseline': sha(ROOT/'configs/baseline.yaml'),
+                                  'reference/final': final_config_sha},
                 'scoring_environment': environments[0],
                 'performance_input_sha256': json.loads((performance/'baseline/benchmark.json').read_text())['input_sha256'],
                 'performance': {'reference/'+v: str(performance/v/'benchmark.json') for v in ['baseline','final']},

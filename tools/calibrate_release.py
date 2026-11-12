@@ -1,5 +1,6 @@
 """Operator-only five-repeat A/C calibration, isolated CPU and serialized Isaac."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -39,7 +40,9 @@ def run(jury,out,image,repeats=5,start_repeat=1,final_config=None):
            for i in range(start_repeat,start_repeat+repeats) for scene in ['scene_a','scene_c'] for variant in ['baseline','final']]
     (out/'cases.json').write_text(json.dumps(cases,indent=2))
     (out/'environment.json').write_text(json.dumps({'image_id':pinned,'cpus':4,'memory_gib':16,
-                                                    'network':'none','final_config':str(final_config)},indent=2))
+                                                    'network':'none'},indent=2))
+    (out/'configuration.json').write_text(json.dumps({'final': {'path': str(final_config),
+        'sha256': hashlib.sha256(final_config.read_bytes()).hexdigest()}}, indent=2))
     failures=[]
     def produce():
         try:

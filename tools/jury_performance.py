@@ -6,21 +6,25 @@ import platform
 import subprocess
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 from tools.calibrate_release import docker_cpu
 
 
-def run(data, out, image):
+def run(data, out, image, final_config=None):
     data, out = Path(data).resolve(), Path(out).resolve()
+    final_config = Path(final_config).resolve() if final_config else ROOT/'configs/poc-high-detail.yaml'
+    if not final_config.is_file():
+        raise FileNotFoundError(final_config)
     out.mkdir(mode=0o700)
     image = subprocess.check_output(['docker', 'image', 'inspect', image, '--format', '{{.Id}}'], text=True).strip()
     execution = {'image_id': image, 'cpus': 4, 'memory_gib': 16, 'network': 'none'}
-    for variant, config in [('baseline', 'baseline.yaml'), ('final', 'poc-high-detail.yaml')]:
+    for variant, config in [('baseline', ROOT/'configs/baseline.yaml'), ('final', final_config)]:
         folder = out / variant
         folder.mkdir()
-        code = docker_cpu(image, [f'{data}:/input:ro', f'{folder}:/output:rw'],
+        code = docker_cpu(image, [f'{data}:/input:ro', f'{folder}:/output:rw', f'{config}:/candidate-config.yaml:ro'],
                           ['/app/tools/benchmark_10m.py', '--data', '/input', '--config',
-                           '/app/configs/' + config, '--out', '/output'], folder / 'driver.log', 1900)
+                           '/candidate-config.yaml', '--out', '/output'], folder / 'driver.log', 1900)
         path = folder / 'benchmark.json'
         if not path.exists():
             raise RuntimeError(f'{variant}: no measurement, exit {code}; inspect driver.log')
@@ -39,5 +43,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ['data', 'out', 'image']:
         parser.add_argument('--' + name, required=True)
+    parser.add_argument("--final-config")
     args = parser.parse_args()
-    run(args.data, args.out, args.image)
+    run(args.data, args.out, args.image, args.final_config)
