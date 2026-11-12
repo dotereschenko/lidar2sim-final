@@ -1,0 +1,20 @@
+{
+  "task": "H33",
+  "source_commit": "5dad4e7",
+  "host": "Spark Ubuntu aarch64",
+  "dependency_image_id": "sha256:69df0342b54ccdbff0042e10331e46f5dd78ca7c08dd0e71f95d4b845a355eb4",
+  "source_mount": "read-only checkout at /workspace; PYTHONPATH=/workspace",
+  "command": "python -m pytest -o addopts= -p no:dash -p no:cacheprovider -q",
+  "exit_code": 0,
+  "tests_passed": 209,
+  "subtests_passed": 185,
+  "pytest_wall_s": 20.63,
+  "operator_wall_s": 21.361,
+  "cpus": 4,
+  "memory_gib": 16,
+  "network": "none",
+  "new_isaac_runs": 0,
+  "quality_envelope": "uncalibrated; no general PLY quality claim",
+  "h26_profile_changed": false,
+  "server_log": "/home/unknown641/lidar2sim-h33-tests.log"
+}
