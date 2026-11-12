@@ -1,0 +1,21 @@
+{
+  "status": "runtime_smoke_passed",
+  "quality_status": "not_verified",
+  "fixture": "unit_fibonacci_sphere_8192",
+  "checkpoint_sha256": "c2edb6437d6485c2ed48a756523849628f0c34e232c601113ff657db8714e955",
+  "upstream_commit": "e40336845e67761343a756788e5a98b827d4a143",
+  "machine": "x86_64",
+  "python": "3.11.9",
+  "torch": "2.7.0+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA A100-PCIE-40GB",
+  "capability": [
+    8,
+    0
+  ],
+  "vertices": 2000,
+  "triangles": 3994,
+  "seconds": 0.894904064014554,
+  "peak_cuda_allocated_bytes": 115831808,
+  "mesh_sha256": "c1838212f1498e4152d55dfdfe6ceb940cfcbdec78135129ba74e40ce4044fdf"
+}

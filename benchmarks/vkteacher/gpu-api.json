@@ -1,0 +1,74 @@
+{
+  "job": {
+    "id": "955fc2fb8804401cb75ca2c2668c628a",
+    "status": "completed",
+    "settings": {
+      "method": "nksr",
+      "scale": 1.0,
+      "up": "Z"
+    },
+    "created_at": "2026-11-12T15:08:47.371088+00:00",
+    "error": null,
+    "files": [
+      "input.ply",
+      "visual.ply",
+      "collision.ply",
+      "scene.usd",
+      "report.json",
+      "run.log"
+    ],
+    "result": {
+      "solution": "nksr",
+      "total_s": 4.648338,
+      "outputs": {
+        "visual_triangles": 3920,
+        "collision_triangles": 3920
+      },
+      "input": {
+        "path": "/home/vkteacher/lidar2sim-denis/jobs/955fc2fb8804401cb75ca2c2668c628a/input.ply",
+        "sha256": "0e3e694647edbe85acbc707e552e731192a214d9ef27e32c43f0495b8bf112d8",
+        "points": 8192
+      },
+      "acceptance": {
+        "status": "not_run"
+      },
+      "timings_s": {
+        "preprocess": 0.021,
+        "nksr": 1.174,
+        "decimate": 0.005,
+        "load": 0.002424,
+        "provenance": 0.011046,
+        "imports": 1.59203,
+        "export_and_validation": 0.200719
+      },
+      "normal_orientation": {
+        "method": "provided",
+        "orientation_verified": false
+      }
+    }
+  },
+  "backend": {
+    "name": "nksr",
+    "model": "ks",
+    "upstream_commit": "e40336845e67761343a756788e5a98b827d4a143",
+    "checkpoint_sha256": "c2edb6437d6485c2ed48a756523849628f0c34e232c601113ff657db8714e955",
+    "torch": "2.7.0+cu128",
+    "compatibility_patches": [
+      "explicit_thrust_tuple_include_cuda13",
+      "rename_unused_lerp_cpp20",
+      "cusparse_cublas_exceptions_instead_of_malformed_printf_abort",
+      "nanovdb_vec3_pybind_input_caster"
+    ],
+    "cuda": "12.8",
+    "image_id": null,
+    "detail_level": 0.0,
+    "mise_iter": 1,
+    "chunk_size": null,
+    "peak_cuda_allocated_bytes": 115504128,
+    "code_license": "NVIDIA Source Code License (research/evaluation)",
+    "weights_license": "CC-BY-SA-4.0"
+  },
+  "artifact_sha256_verified": true,
+  "usd_collision_verified": true,
+  "quality_status": "not_verified"
+}
