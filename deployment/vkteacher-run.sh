@@ -13,5 +13,6 @@ exec systemd-run --user --unit=lidar2sim-ui \
   --setenv="CUDA_VISIBLE_DEVICES=$gpu" --setenv="TORCH_HOME=$PWD/weights" \
   --setenv=OMP_NUM_THREADS=4 --setenv=OPENBLAS_NUM_THREADS=4 \
   --setenv=MKL_NUM_THREADS=4 --setenv=LIDAR2SIM_JOB_TIMEOUT_S=600 \
+  --setenv="LIDAR2SIM_NEWTON_COMMAND=${LIDAR2SIM_NEWTON_COMMAND:-}" \
   --setenv=LIDAR2SIM_MIN_FREE_BYTES=10737418240 \
   "$PWD/.venv/bin/python" -m lidar2sim.web.server --port 8768 --jobs "$PWD/jobs"

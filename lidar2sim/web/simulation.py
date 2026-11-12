@@ -1,6 +1,7 @@
-"""Scene A catalog and an opt-in Isaac runner; never substitute preview for physics."""
+"""Scene A catalog and opt-in physics runners; never substitute preview for physics."""
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -14,7 +15,7 @@ class Simulations:
     def __init__(self, jobs, root):
         self.jobs, self.root = jobs, root
         self.directory = jobs.root/'simulations'
-        self.lock = threading.RLock()
+        self.lock = jobs.lock
         self.processes = {}
         for path in self.directory.glob('*/state.json'):
             state = json.loads(path.read_text())
@@ -56,10 +57,17 @@ class Simulations:
         return folder/name if name == 'run.log' else folder/'result'/name
 
     def command(self):
-        command = json.loads(os.environ.get('LIDAR2SIM_ISAAC_COMMAND', '[]'))
+        command = json.loads(os.environ.get('LIDAR2SIM_NEWTON_COMMAND') or os.environ.get('LIDAR2SIM_ISAAC_COMMAND', '[]'))
         if not isinstance(command, list) or not all(isinstance(x, str) and x for x in command):
-            raise ValueError('Некорректная настройка Isaac runner')
+            raise ValueError('Некорректная настройка физического исполнителя')
         return command
+
+    def backend(self):
+        return 'newton' if os.environ.get('LIDAR2SIM_NEWTON_COMMAND') else 'isaac'
+
+    def active(self):
+        return any(json.loads(p.read_text())['status'] in ('queued', 'running')
+                   for p in self.directory.glob('*/state.json'))
 
     def catalog(self):
         config = json.loads((self.root/'data/scene_a/test_config.json').read_text())
@@ -75,6 +83,7 @@ class Simulations:
             except (FileNotFoundError, ValueError):
                 pass
         return {'scene': scene, 'routes': config['routes'], 'body': config['body'],
+                'backend': self.backend(),
                 'speed': config['speed'], 'robot': 'velocity_body',
                 'runner_configured': bool(self.command()),
                 'reason': 'Isaac-сервер не подключён. Spark недоступен; A100 не поддерживается Isaac Sim.',
@@ -97,9 +106,11 @@ class Simulations:
                 raise ValueError('Неизвестный маршрут')
             if not 0 <= start < end < len(catalog['routes'][route]['points']):
                 raise ValueError('Цель должна находиться после старта на выбранном маршруте')
-            if any(json.loads(p.read_text())['status'] in ('queued', 'running')
-                   for p in self.directory.glob('*/state.json')):
+            if self.active():
                 raise ValueError('Уже выполняется симуляция')
+            if any(json.loads(p.read_text())['status'] in ('queued', 'running')
+                   for p in self.jobs.root.glob('*/job.json')):
+                raise ValueError('Сначала дождитесь завершения реконструкции')
             self.jobs.ensure_free_space()
             ident = uuid.uuid4().hex
             folder = self.folder(ident); folder.mkdir(parents=True)
@@ -109,7 +120,7 @@ class Simulations:
             shutil.copyfile(scene, folder/'scene.usd')
             shutil.copyfile(self.root/'data/scene_a/test_config.json', folder/'config.json')
             state = self.update(ident, status='queued', error=None, scene_job=catalog['scene']['id'],
-                                route=route, start=start, end=end, robot='velocity_body')
+                                route=route, start=start, end=end, robot='velocity_body', backend=self.backend())
             thread = threading.Thread(target=self.run, args=(ident, command), daemon=True)
             thread.start()
             return state
@@ -147,16 +158,19 @@ class Simulations:
                 raise RuntimeError('Превышен лимит симуляции: 15 минут')
             with self.lock:
                 if self.read(ident)['status'] == 'cancelled': return
-                if code: raise RuntimeError('Isaac завершился с ошибкой. См. журнал запуска.')
+                if code: raise RuntimeError('Физический исполнитель завершился с ошибкой. См. журнал запуска.')
                 record = json.loads(self.file(ident, 'recording.json').read_text())
                 digest = hashlib.sha256((folder/'scene.usd').read_bytes()).hexdigest()
                 config_digest = hashlib.sha256((folder/'config.json').read_bytes()).hexdigest()
                 video = self.file(ident, 'simulation.mp4')
                 if (record.get('scene_sha256') != digest or record.get('config_sha256') != config_digest
                     or any(record.get(k) != state[k] for k in ('robot', 'route', 'start', 'end'))
-                    or record.get('outcome') not in ('reached', 'blocked', 'fell', 'timeout')
-                    or not video.is_file() or video.stat().st_size == 0):
-                    raise RuntimeError('Нет видео или запись относится к другой сцене')
+                    or record.get('outcome') not in ('reached', 'blocked', 'fell', 'timeout')):
+                    raise RuntimeError('Запись не соответствует сцене или выбранному маршруту')
+                if state.get('backend') == 'newton':
+                    validate_newton_record(record)
+                elif not video.is_file() or video.stat().st_size == 0:
+                    raise RuntimeError('Нет видео физического прогона')
                 self.update(ident, status='completed', result=record, error=None)
         except Exception as exc:
             with self.lock:
@@ -164,3 +178,24 @@ class Simulations:
                     self.update(ident, status='failed', error=str(exc))
         finally:
             with self.lock: self.processes.pop(ident, None)
+
+
+def validate_newton_record(record):
+    if record.get('backend') != 'newton' or record.get('device') != 'cuda:0':
+        raise ValueError('Не подтверждён физический расчёт Newton на CUDA')
+    size = record.get('body_size_m', [])
+    if len(size) != 3 or not all(type(x) in (int, float) and math.isfinite(x) and x > 0 for x in size):
+        raise ValueError('Некорректный размер корпуса')
+    poses = record.get('trajectory')
+    if not isinstance(poses, list) or not 1 <= len(poses) <= 3600:
+        raise ValueError('Нет измеренной траектории')
+    previous = -1
+    for pose in poses:
+        position, quaternion, timestamp = pose.get('position', []), pose.get('quaternion_xyzw', []), pose.get('t')
+        if (len(position) != 3 or len(quaternion) != 4
+            or not all(type(x) in (int, float) and math.isfinite(x) for x in [timestamp, *position, *quaternion])
+            or not previous < timestamp <= 180 or abs(sum(x*x for x in quaternion)-1) > .01):
+            raise ValueError('Некорректная измеренная траектория')
+        previous = timestamp
+    if record.get('duration_s') != previous:
+        raise ValueError('Длительность не соответствует траектории')

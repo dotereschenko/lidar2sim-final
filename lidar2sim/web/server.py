@@ -98,6 +98,8 @@ class Jobs:
 
     def start(self, ident):
         with self.lock:
+            if self.simulations.active():
+                raise ValueError('Сначала дождитесь завершения физической симуляции')
             self.ensure_free_space()
             job = self.read(ident)
             if job['status'] != 'uploaded':

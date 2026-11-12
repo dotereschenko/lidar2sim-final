@@ -7,12 +7,13 @@ import time
 import pytest
 
 from lidar2sim.web.server import Jobs
-from lidar2sim.web.simulation import Simulations
+from lidar2sim.web.simulation import Simulations, validate_newton_record
 
 
 @pytest.fixture
 def simulation(tmp_path, monkeypatch):
     monkeypatch.delenv('LIDAR2SIM_ISAAC_COMMAND', raising=False)
+    monkeypatch.delenv('LIDAR2SIM_NEWTON_COMMAND', raising=False)
     monkeypatch.setenv('LIDAR2SIM_SCENE_A_JOB', 'a'*32)
     jobs = Jobs(tmp_path/'jobs')
     folder = jobs.root/('a'*32)/'result'; folder.mkdir(parents=True)
@@ -59,7 +60,8 @@ def test_invalid_selection_never_starts_runner(simulation, monkeypatch, payload)
 
 
 @pytest.mark.parametrize('valid', [True, False])
-def test_output_must_match_scene_and_requested_route(simulation, monkeypatch, tmp_path, valid):
+@pytest.mark.parametrize('backend', ['isaac', 'newton'])
+def test_output_must_match_scene_and_requested_route(simulation, monkeypatch, tmp_path, valid, backend):
     # Contract fixture, not an Isaac simulation or a physics acceptance test.
     runner = tmp_path/'runner.py'
     runner.write_text('''import argparse,pathlib,json,hashlib
@@ -69,14 +71,15 @@ a=p.parse_args();out=pathlib.Path(a.out);out.mkdir()
 r={'scene_sha256':hashlib.sha256(pathlib.Path(a.scene).read_bytes()).hexdigest(),
 'config_sha256':hashlib.sha256(pathlib.Path(a.config).read_bytes()).hexdigest(),
 'robot':'velocity_body','route':int(a.route),'start':int(a.start_index),'end':int(a.end_index),'outcome':'reached'}
-''' + ('' if valid else "r['route']=123\n") + '''
-(out/'recording.json').write_text(json.dumps(r));(out/'simulation.mp4').write_bytes(b'test video fixture')
-''')
-    monkeypatch.setenv('LIDAR2SIM_ISAAC_COMMAND', json.dumps([sys.executable, str(runner)]))
+''' + ('' if valid else "r['route']=123\n") + (
+        "r.update(backend='newton',device='cuda:0',body_size_m=[.4,.4,.3],duration_s=.1,trajectory=[dict(t=.1,position=[0,0,.2],quaternion_xyzw=[0,0,0,1])])\n"
+        if backend == 'newton' else "(out/'simulation.mp4').write_bytes(b'test video fixture')\n") +
+        "(out/'recording.json').write_text(json.dumps(r))\n")
+    monkeypatch.setenv('LIDAR2SIM_'+backend.upper()+'_COMMAND', json.dumps([sys.executable, str(runner)]))
     job = simulation.start({'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
     state = wait_for(simulation, job['id'])
     assert state['status'] == ('completed' if valid else 'failed')
-    assert ('simulation.mp4' in state['files']) is valid
+    assert ('simulation.mp4' in state['files']) is (valid and backend == 'isaac')
     with pytest.raises(ValueError): simulation.file(job['id'], '../scene.usd')
 
 
@@ -101,3 +104,32 @@ def test_restart_marks_incomplete_run_failed(simulation):
     simulation.update(ident, status='running')
     Simulations(simulation.jobs, simulation.root)
     assert simulation.read(ident)['status'] == 'failed'
+
+
+def test_newton_requires_measured_cuda_states():
+    record = {'backend': 'newton', 'device': 'cuda:0', 'body_size_m': [.4, .4, .3],
+              'duration_s': .1, 'trajectory': [{'t': .1, 'position': [0, 0, .2],
+                                              'quaternion_xyzw': [0, 0, 0, 1]}]}
+    validate_newton_record(record)
+    with pytest.raises(ValueError): validate_newton_record(dict(record, device='cpu'))
+    with pytest.raises(ValueError): validate_newton_record(dict(record, trajectory=[]))
+    record['trajectory'][0]['position'][2] = float('nan')
+    with pytest.raises(ValueError): validate_newton_record(record)
+
+
+def test_simulation_waits_for_reconstruction(simulation, monkeypatch):
+    monkeypatch.setenv('LIDAR2SIM_NEWTON_COMMAND', json.dumps([sys.executable]))
+    ident = 'c'*32
+    (simulation.jobs.root/ident).mkdir()
+    simulation.jobs.update(ident, status='running')
+    with pytest.raises(ValueError, match='реконструкции'):
+        simulation.start({'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
+    assert not simulation.directory.exists()
+
+
+def test_reconstruction_waits_for_simulation(simulation):
+    ident = 'b'*32
+    simulation.folder(ident).mkdir(parents=True)
+    simulation.update(ident, status='running')
+    with pytest.raises(ValueError, match='симуляции'):
+        simulation.jobs.start('a'*32)
