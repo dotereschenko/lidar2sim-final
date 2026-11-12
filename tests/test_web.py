@@ -165,7 +165,7 @@ def test_cancel_targets_only_the_selected_worker_group(server, monkeypatch):
     base, jobs = server
     ident = post(base, '/api/jobs', b'ply\nend_header\n')['id']
     jobs.update(ident, status='running')
-    jobs.processes[ident] = SimpleNamespace(pid=12345)
+    jobs.processes[ident] = SimpleNamespace(pid=12345, poll=lambda: None)
     calls = []
     monkeypatch.setattr('os.killpg', lambda pid, sig: calls.append((pid, sig)))
     jobs.cancel(ident)

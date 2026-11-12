@@ -1,5 +1,5 @@
 {
-  "status": "in_progress",
+  "status": "runtime_verified",
   "task": "HACKATHON-42",
   "observed_date": "2026-11-12",
   "upstream_commit": "e40336845e67761343a756788e5a98b827d4a143",
@@ -16,12 +16,27 @@
     "torch": "2.13.0a0+8145d630e8.nv26.06",
     "cuda": "13.3",
     "gpu": "NVIDIA GB10",
-    "capability": [12, 1],
+    "capability": [
+      12,
+      1
+    ],
     "nvcc": "/usr/local/cuda/bin/nvcc",
-    "cuda_result": [2.0, 2.0, 2.0]
+    "cuda_result": [
+      2.0,
+      2.0,
+      2.0
+    ]
   },
-  "nksr_inference_passed": false,
-  "offline_repeat_passed": false,
+  "nksr_inference_passed": true,
+  "offline_repeat_passed": true,
   "quality_status": "not_verified",
-  "remaining": ["build native extension", "freeze resolved dependencies", "run smoke inference", "repeat offline"]
+  "remaining": [
+    "independent real-scene qualification"
+  ],
+  "image_id": "sha256:186a032dde5f98e32f7f25ea0053e2d60674f52da45db8284f67fa4214b7a7b0",
+  "evidence": [
+    "nksr/repeat-summary.json",
+    "nksr/installed-packages.json",
+    "nksr/ui-validation.json"
+  ]
 }

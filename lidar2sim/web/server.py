@@ -142,7 +142,7 @@ class Jobs:
 
     def stop_process(self, ident):
         process = self.processes.get(ident)
-        if process is not None:
+        if process is not None and process.poll() is None:
             try:
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:

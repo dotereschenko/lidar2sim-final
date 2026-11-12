@@ -3,6 +3,7 @@ FROM lidar2sim-nksr:spike-e403368
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1 libegl1 && rm -rf /var/lib/apt/lists/*
 RUN python -m pip install --no-cache-dir open3d==0.20.0 pyyaml 'jsonschema>=4,<5' 'pytest>=8,<10'
+RUN apt-get update && apt-get install -y --no-install-recommends libgfortran5 libidn2-0 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY lidar2sim ./lidar2sim
 COPY configs ./configs
