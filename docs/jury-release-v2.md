@@ -19,14 +19,37 @@ python3 tools/jury_protocol.py --jury "$JURY" --batch "$RUNS" --performance "$PE
 python3 tools/jury_compare.py "$PROTOCOL/manifest.json" --out "$PROTOCOL/table"
 ```
 
-Для экспериментального финального конфига можно передать `--final-config PATH`;
-без этого флага остаётся закреплённый `configs/poc-high-detail.yaml`. Путь
-выбранного конфига записывается в `environment.json`. Можно разбить серию на
+Для экспериментального финального конфига передавайте один и тот же файл
+через `--final-config PATH` **обоим** скриптам: `calibrate_release.py` и
+`jury_performance.py`. Без этого флага каждый использует
+`configs/poc-high-detail.yaml`. Например, для кандидата с поддержкой границы пола:
+
+```sh
+FINAL_CONFIG=configs/poc-planar-floor-support.yaml
+python3 tools/calibrate_release.py --jury "$JURY" --out "$RUNS" --image "$IMAGE_ID" --final-config "$FINAL_CONFIG" --repeats 5
+python3 tools/jury_performance.py --data "$DENSE" --out "$PERFORMANCE" --image "$IMAGE_ID" --final-config "$FINAL_CONFIG"
+python3 tools/jury_protocol.py --jury "$JURY" --batch "$RUNS" --performance "$PERFORMANCE" --out "$PROTOCOL" --repeats 5
+python3 tools/jury_compare.py "$PROTOCOL/manifest.json" --out "$PROTOCOL/table"
+```
+
+Калибровка сохраняет путь и SHA256 выбранного конфига в `configuration.json`;
+`environment.json` содержит только образ и ограничения исполнения.
+Протокол берёт хеш из метаданных партии и сверяет его с отчётами и 10M-замером.
+Можно разбить серию на
 завершённые партии: `--start-repeat 2 --repeats 4` продолжает нумерацию после
 первого повтора. Передать каждый каталог отдельным `--batch` в
 `jury_protocol.py`. Дубликат повтора, недостающий JSON, изменённые артефакты и
 разные окружения не дают полного зачёта. Не копировать физический отчёт
 первого запуска на остальные повторы.
+
+Завершение процесса и наличие `baseline_report.json` сами по себе не означают
+зачёт: в `groups` финальный вариант должен иметь `complete_repetitions=true`,
+`performance_passed=true` и `eligible=true`, а все его строки — `valid=true` и
+`scene_passed=true`. Baseline может не пройти критерии качества: это измеряемый
+результат сравнения, а не ошибка выполнения. После обрыва SSH сначала проверьте
+состояние партии (`complete.json`, `failure.json`, `.abort`,
+`physics-progress.json`) и работающие процессы на сервере. Не запускайте вторую
+копию поверх активной серии и не перезаписывайте существующий каталог результатов.
 
 Сценарий запускает 20 отдельных реконструкций и 20 свежих процессов Isaac для матрицы baseline/final × A/C × 5. Реконструктор получает только A, минимальный manifest, траекторию и конфигурацию: сеть отключена, UID 65534, корневая FS read-only, capabilities удалены, 4 CPU, 16 GiB, 1800 с. На текущем Docker Snap флаг `no-new-privileges` приводит к отказу запуска даже `/bin/sh`, поэтому этот дополнительный флаг не используется. Это ограничение записано явно; данный стенд не заявлен как песочница для произвольного враждебного кода.
 
