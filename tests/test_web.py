@@ -193,3 +193,21 @@ def test_disk_reserve_rechecked_before_start(server, monkeypatch):
     with pytest.raises(ValueError, match='резерв диска'):
         jobs.start(ident)
     assert jobs.read(ident)['status'] == 'uploaded'
+
+
+def test_completed_job_exposes_recorded_gpu_without_inventing_one(server):
+    base, jobs = server
+    ident = post(base, '/api/jobs', b'ply\nend_header\n')['id']
+    result = jobs.folder(ident)/'result'
+    result.mkdir()
+    report = {'solution': 'nksr', 'neural_backend': {'device': 'NVIDIA A100'},
+              'timings_s': {'nksr': 0.5, 'preprocess': 2.0}}
+    (result/'report.json').write_text(json.dumps(report))
+    jobs.update(ident, status='completed')
+    with urllib.request.urlopen(base+f'/api/jobs/{ident}') as response:
+        data = json.load(response)['result']
+    assert data['neural_backend'] == report['neural_backend']
+    assert data['timings_s'] == report['timings_s']
+    del report['neural_backend']
+    (result/'report.json').write_text(json.dumps(report))
+    assert jobs.read(ident)['result']['neural_backend'] is None

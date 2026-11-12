@@ -91,7 +91,7 @@ class Jobs:
                 data['stage'] = stages[-1]
         if data['status'] == 'completed':
             report = json.loads((folder/'result/report.json').read_text())
-            data['result'] = {key: report.get(key) for key in ('solution', 'total_s', 'outputs', 'input', 'acceptance', 'timings_s', 'normal_orientation')}
+            data['result'] = {key: report.get(key) for key in ('solution', 'total_s', 'outputs', 'input', 'acceptance', 'timings_s', 'normal_orientation', 'neural_backend')}
         return data
 
     def start(self, ident):
