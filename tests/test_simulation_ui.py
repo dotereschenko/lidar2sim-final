@@ -42,7 +42,7 @@ def test_unconfigured_runner_cannot_report_preview_as_physics(simulation):
     assert catalog['scene']['id'] == 'a'*32
     assert not catalog['runner_configured']
     with pytest.raises(ValueError, match='недоступен'):
-        simulation.start({'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
+        simulation.start({'scene_job': 'a'*32, 'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
     assert not simulation.directory.exists()
 
 
@@ -55,7 +55,7 @@ def test_unconfigured_runner_cannot_report_preview_as_physics(simulation):
 ])
 def test_invalid_selection_never_starts_runner(simulation, monkeypatch, payload):
     monkeypatch.setenv('LIDAR2SIM_ISAAC_COMMAND', json.dumps([sys.executable]))
-    with pytest.raises(ValueError): simulation.start(payload)
+    with pytest.raises(ValueError): simulation.start({'scene_job': 'a'*32, **payload})
     assert not simulation.directory.exists()
 
 
@@ -76,7 +76,7 @@ r={'scene_sha256':hashlib.sha256(pathlib.Path(a.scene).read_bytes()).hexdigest()
         if backend == 'newton' else "(out/'simulation.mp4').write_bytes(b'test video fixture')\n") +
         "(out/'recording.json').write_text(json.dumps(r))\n")
     monkeypatch.setenv('LIDAR2SIM_'+backend.upper()+'_COMMAND', json.dumps([sys.executable, str(runner)]))
-    job = simulation.start({'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
+    job = simulation.start({'scene_job': 'a'*32, 'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
     state = wait_for(simulation, job['id'])
     assert state['status'] == ('completed' if valid else 'failed')
     assert ('simulation.mp4' in state['files']) is (valid and backend == 'isaac')
@@ -86,9 +86,9 @@ r={'scene_sha256':hashlib.sha256(pathlib.Path(a.scene).read_bytes()).hexdigest()
 def test_single_flight_and_cancel_only_managed_process(simulation, monkeypatch):
     monkeypatch.setenv('LIDAR2SIM_ISAAC_COMMAND', json.dumps([sys.executable, '-c', 'import time;time.sleep(30)']))
     payload = {'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1}
-    job = simulation.start(payload)
+    job = simulation.start({'scene_job': 'a'*32, **payload})
     try:
-        with pytest.raises(ValueError, match='Уже выполняется'): simulation.start(payload)
+        with pytest.raises(ValueError, match='Уже выполняется'): simulation.start({'scene_job': 'a'*32, **payload})
     finally:
         simulation.cancel(job['id'])
     assert wait_for(simulation, job['id'])['status'] == 'cancelled'
@@ -123,7 +123,7 @@ def test_simulation_waits_for_reconstruction(simulation, monkeypatch):
     (simulation.jobs.root/ident).mkdir()
     simulation.jobs.update(ident, status='running')
     with pytest.raises(ValueError, match='реконструкции'):
-        simulation.start({'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
+        simulation.start({'scene_job': 'a'*32, 'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
     assert not simulation.directory.exists()
 
 
@@ -133,3 +133,11 @@ def test_reconstruction_waits_for_simulation(simulation):
     simulation.update(ident, status='running')
     with pytest.raises(ValueError, match='симуляции'):
         simulation.jobs.start('a'*32)
+
+
+@pytest.mark.parametrize('scene_job', [None, 'b'*32])
+def test_missing_or_different_scene_cannot_silently_launch_scene_a(simulation, monkeypatch, scene_job):
+    monkeypatch.setenv('LIDAR2SIM_NEWTON_COMMAND', json.dumps([sys.executable]))
+    with pytest.raises(ValueError, match='только для сцены A'):
+        simulation.start({'scene_job': scene_job, 'robot': 'velocity_body', 'route': 0, 'start': 0, 'end': 1})
+    assert not simulation.directory.exists()

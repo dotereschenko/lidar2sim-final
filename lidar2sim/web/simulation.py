@@ -97,6 +97,8 @@ class Simulations:
             catalog = self.catalog()
             if not catalog['scene']:
                 raise ValueError('Реконструкция сцены A ещё не подготовлена')
+            if payload.get('scene_job') != catalog['scene']['id']:
+                raise ValueError('Маршруты настроены только для сцены A. Откройте её явно перед запуском.')
             if payload.get('robot') != 'velocity_body':
                 raise ValueError('Неизвестная модель робота')
             route, start, end = (payload.get(k) for k in ('route', 'start', 'end'))

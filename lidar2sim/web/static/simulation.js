@@ -1,12 +1,18 @@
-export function initSimulationPanel({THREE,api,openJob,view}){
+export function initSimulationPanel({THREE,api,openJob,view,selectedJob}){
  const $=id=>document.getElementById(id);
  let catalog=null,overlay=null,animation=0,poll=0,active=null;
  const fail=error=>{$('sim-error').hidden=!error;$('sim-error').textContent=error?.message||error||'';};
  function clear(){
   cancelAnimationFrame(animation);animation=0;
-  if(overlay){view().scene?.remove(overlay);overlay.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});overlay=null;}
+  if(overlay){$('sim-status').textContent='Воспроизведение остановлено.';view().scene?.remove(overlay);overlay.traverse(x=>{x.geometry?.dispose();x.material?.dispose();});overlay=null;}
   if(view().renderer)view().renderer.clippingPlanes=[];
   $('sim-stop').disabled=true;
+ }
+ function sceneChanged(){
+  const job=selectedJob(), matches=!!catalog?.scene && job?.id===catalog.scene.id && job.status==='completed';
+  $('sim-preview').disabled=!matches;
+  $('sim-run').disabled=!matches||!catalog?.runner_configured||!!active;
+  $('sim-scene').textContent=matches?`Открыта сцена A · ${job.id}. Маршруты и новый прогон используют эту сцену.`:`Маршруты и физика здесь только для подготовленной сцены A${catalog?.scene?' · '+catalog.scene.id:''}. Для загруженного PLY маршрут не настроен. Чтобы перейти к примеру, нажмите «Открыть сцену A».`;
  }
  function endpoints(){
   const points=catalog?.routes[Number($('sim-route').value)]?.points||[];
@@ -19,33 +25,31 @@ export function initSimulationPanel({THREE,api,openJob,view}){
   const route=Number($('sim-route').value),start=Number($('sim-start').value),end=Number($('sim-end').value);
   if(!catalog?.scene)throw new Error('Сцена A ещё не подготовлена');
   if(!Number.isInteger(start)||!Number.isInteger(end)||start>=end)throw new Error('Цель должна быть после старта');
-  return {robot:$('sim-robot').value,route,start,end};
+  if(selectedJob()?.id!==catalog.scene.id || selectedJob()?.status!=='completed')throw new Error('Сначала явно откройте сцену A. Маршрут не относится к загруженному PLY.');
+  return {scene_job:selectedJob().id,robot:$('sim-robot').value,route,start,end};
  }
  async function refresh(){
   try{
    fail('');catalog=await api('/api/simulation-scene');
    $('sim-run').textContent=catalog.backend==='newton'?'Запустить физику · Newton GPU':'Запустить Isaac Sim';
    $('sim-route').replaceChildren();catalog.routes.forEach((r,i)=>{const o=document.createElement('option');o.value=i;o.textContent=r.name;$('sim-route').append(o);});endpoints();
-   $('sim-open').disabled=$('sim-preview').disabled=!catalog.scene;
-   $('sim-run').disabled=!catalog.scene||!catalog.runner_configured||!!active;
+   $('sim-open').disabled=!catalog.scene;
+   sceneChanged();
    $('sim-backend').textContent=!catalog.scene?'Сцена A ещё не подготовлена.':catalog.runner_configured?`Сцена готова. Исполнитель: ${catalog.backend==='newton'?'Newton · CUDA, без RTX-видео':'Isaac Sim'}. Результат маршрута определяется физикой.`:catalog.reason;
    $('sim-archive').hidden=!catalog.archive;
    const history=await api('/api/simulations');$('sim-history').replaceChildren();
-   for(const job of history){const b=document.createElement('button');b.textContent=`${job.id.slice(0,8)} · ${job.status} · маршрут ${job.route+1}`;b.disabled=!!active;b.onclick=()=>watch(job.id).catch(fail);$('sim-history').append(b);}
+   for(const job of history){const b=document.createElement('button');b.textContent=`${job.id.slice(0,8)} · ${job.status} · сцена ${job.scene_job.slice(0,8)} · маршрут ${job.route+1}`;b.disabled=!!active;b.onclick=()=>watch(job.id).catch(fail);$('sim-history').append(b);}
    const running=history.find(j=>['queued','running'].includes(j.status));if(running&&!active)watch(running.id).catch(fail);
   }catch(e){fail(e);$('sim-run').disabled=true;}
  }
  async function preview(){
-  const selected=selection();clear();await openJob(catalog.scene.id);
+  const selected=selection();clear();
   const {scene,camera,controls,renderer}=view();if(!renderer)throw new Error('Для предпросмотра нужен WebGL');
   const points=catalog.routes[selected.route].points.slice(selected.start,selected.end+1).map(p=>new THREE.Vector3(p[0],p[1],.24));
   overlay=new THREE.Group();scene.add(overlay);
   overlay.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0xb4ed86})));
   const robot=new THREE.Group();overlay.add(robot);
   robot.add(new THREE.Mesh(new THREE.BoxGeometry(...catalog.body.size),new THREE.MeshStandardMaterial({color:0xff983e})));
-  for(const y of [-.23,.23])for(const x of [-.13,.13]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,.055,16),new THREE.MeshStandardMaterial({color:0x20242b}));wheel.position.set(x,y,-.12);robot.add(wheel);
-  }
   for(const [point,color] of [[points[0],0x7ce2ae],[points.at(-1),0xff7f75]]){const marker=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8),new THREE.MeshBasicMaterial({color}));marker.position.copy(point);overlay.add(marker);}
   robot.position.copy(points[0]);controls.target.copy(points[0]);camera.position.copy(points[0]).add(new THREE.Vector3(4,-6,6));controls.update();
   renderer.clippingPlanes=[new THREE.Plane(new THREE.Vector3(0,0,-1),1.6)];
@@ -62,16 +66,16 @@ export function initSimulationPanel({THREE,api,openJob,view}){
   animation=requestAnimationFrame(tick);$('viewer').scrollIntoView({block:'center',behavior:'auto'});
  }
  async function watch(id){
-  const generation=++poll;active=id;$('sim-replay').hidden=true;$('sim-run').disabled=true;$('sim-video').pause();$('sim-video').hidden=$('sim-frame').hidden=true;$('sim-video-label').textContent=`Прогон ${id.slice(0,8)}`;for(const b of $('sim-history').querySelectorAll('button'))b.disabled=true;
+  clear();const generation=++poll;active=id;$('sim-replay').hidden=true;$('sim-run').disabled=true;$('sim-video').pause();$('sim-video').hidden=$('sim-frame').hidden=true;$('sim-video-label').textContent=`Прогон ${id.slice(0,8)}`;for(const b of $('sim-history').querySelectorAll('button'))b.disabled=true;
   while(generation===poll){
    const job=await api('/api/simulations/'+id);$('sim-status').textContent=({queued:'Ожидание физического запуска',running:'Выполняется физическая симуляция',completed:'Физический прогон записан. См. результат маршрута в отчёте.',failed:'Ошибка физического запуска',cancelled:'Запуск отменён'})[job.status];
-   fail(job.error);$('sim-log').textContent=job.log_tail||'';$('sim-cancel').hidden=!['queued','running'].includes(job.status);
+   $('sim-video-label').textContent=`Прогон ${id.slice(0,8)} · сцена ${job.scene_job} · ${job.backend}`;fail(job.error);$('sim-log').textContent=job.log_tail||'';$('sim-cancel').hidden=!['queued','running'].includes(job.status);
    const root=`/api/simulations/${id}/files/`;
    const frame=job.files.includes('preview.jpg')?'preview.jpg':job.files.includes('overview.png')?'overview.png':null;if(frame){$('sim-frame').src=root+frame+'?t='+Date.now();$('sim-frame').hidden=false;}
    $('sim-files').replaceChildren();for(const name of job.files){const a=document.createElement('a');a.textContent='↓ '+name;a.href=root+name;a.download=name;$('sim-files').append(a);}
    if(!['queued','running'].includes(job.status)){
-    if(job.status==='completed'){if(job.files.includes('simulation.mp4')){$('sim-video').src=root+'simulation.mp4';$('sim-video').hidden=false;}if(job.backend==='newton'){$('sim-replay').hidden=false;$('sim-replay').onclick=()=>replay(job).catch(fail);}$('sim-video-label').textContent=`Запись выбранного прогона · ${id.slice(0,8)} · ${({reached:'Цель достигнута',blocked:'Движение заблокировано',fell:'Проваливание',timeout:'Цель не достигнута за отведённое время'})[job.result?.outcome]||'См. отчёт'}`;}
-    active=null;for(const b of $('sim-history').querySelectorAll('button'))b.disabled=false;$('sim-run').disabled=!catalog?.runner_configured;return;
+    if(job.status==='completed'){if(job.files.includes('simulation.mp4')){$('sim-video').src=root+'simulation.mp4';$('sim-video').hidden=false;}if(job.backend==='newton'){$('sim-replay').hidden=false;$('sim-replay').onclick=()=>replay(job).catch(fail);}$('sim-video-label').textContent=`Запись ${job.backend} · прогон ${id.slice(0,8)} · сцена ${job.scene_job} · маршрут ${job.route+1}, точки ${job.start+1}–${job.end+1} · ${({reached:'Цель достигнута',blocked:'Движение заблокировано',fell:'Проваливание',timeout:'Цель не достигнута за отведённое время'})[job.result?.outcome]||'См. отчёт'}`;}
+    active=null;for(const b of $('sim-history').querySelectorAll('button'))b.disabled=false;sceneChanged();return;
    }
    await new Promise(r=>setTimeout(r,2000));
   }
@@ -79,6 +83,7 @@ export function initSimulationPanel({THREE,api,openJob,view}){
  async function replay(job){
   clear();fail('');const record=await api(`/api/simulations/${job.id}/files/recording.json`);
   await openJob(job.scene_job);
+  if(selectedJob()?.id!==job.scene_job)throw new Error('Не удалось открыть сцену записи. Воспроизведение отменено.');
   const {scene,camera,controls,renderer}=view();if(!renderer)throw new Error('Для воспроизведения нужен WebGL');
   const poses=record.trajectory,points=poses.map(p=>new THREE.Vector3(...p.position));
   overlay=new THREE.Group();scene.add(overlay);
@@ -92,7 +97,7 @@ export function initSimulationPanel({THREE,api,openJob,view}){
    while(index<poses.length-1&&poses[index+1].t<=t)index++;
    const pose=poses[index],previous=robot.position.clone();robot.position.copy(points[index]);robot.quaternion.set(...pose.quaternion_xyzw);
    camera.position.add(robot.position.clone().sub(previous));controls.target.copy(robot.position);
-   $('sim-status').textContent=`Запись физики Newton · ${pose.t.toFixed(2)} / ${record.duration_s.toFixed(2)} с · контактов: ${pose.contacts} · результат: ${record.outcome}. Измеренные состояния, не прямой эфир.`;
+   $('sim-status').textContent=`Запись физики Newton · сцена ${job.scene_job.slice(0,8)} · ${pose.t.toFixed(2)} / ${record.duration_s.toFixed(2)} с · контактов: ${pose.contacts} · результат: ${record.outcome}. Измеренные состояния, не прямой эфир.`;
    if(index<poses.length-1)animation=requestAnimationFrame(tick);else $('sim-stop').disabled=true;
   }
   animation=requestAnimationFrame(tick);$('viewer').scrollIntoView({block:'center',behavior:'auto'});
@@ -101,7 +106,7 @@ export function initSimulationPanel({THREE,api,openJob,view}){
  $('sim-preview').onclick=()=>preview().catch(fail);$('sim-stop').onclick=()=>{clear();$('sim-status').textContent='Воспроизведение остановлено.';};
  $('sim-route').onchange=endpoints;for(const id of ['sim-start','sim-end'])$(id).onchange=clear;
  $('sim-refresh').onclick=refresh;
- $('sim-run').onclick=async()=>{try{const params=selection();clear();$('sim-run').disabled=true;fail('');$('sim-video').hidden=$('sim-frame').hidden=true;$('sim-video-label').textContent='Ожидаем запись нового прогона…';const job=await api('/api/simulations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(params)});await watch(job.id);}catch(e){active=null;fail(e);$('sim-run').disabled=!catalog?.runner_configured;}};
+ $('sim-run').onclick=async()=>{try{const params=selection();clear();$('sim-run').disabled=true;fail('');$('sim-video').hidden=$('sim-frame').hidden=true;$('sim-video-label').textContent='Ожидаем запись нового прогона…';const job=await api('/api/simulations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(params)});await watch(job.id);}catch(e){active=null;fail(e);sceneChanged();}};
  $('sim-cancel').onclick=async()=>{try{if(active)await api(`/api/simulations/${active}/cancel`,{method:'POST'});}catch(e){fail(e);}};
- refresh();return clear;
+ refresh();return {clear,sceneChanged};
 }
