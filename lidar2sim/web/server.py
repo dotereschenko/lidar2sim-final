@@ -46,6 +46,10 @@ class Jobs:
         self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
         self.processes = {}
+        self.timeout_s = int(os.environ.get('LIDAR2SIM_JOB_TIMEOUT_S', '1800'))
+        self.min_free_bytes = int(os.environ.get('LIDAR2SIM_MIN_FREE_BYTES', '0'))
+        if self.timeout_s <= 0 or self.min_free_bytes < 0:
+            raise ValueError('Некорректные лимиты сервера')
         self.pool = ThreadPoolExecutor(max_workers=1)
         from lidar2sim.neural import availability
         self.backends = {'nksr': availability()}
@@ -92,6 +96,7 @@ class Jobs:
 
     def start(self, ident):
         with self.lock:
+            self.ensure_free_space()
             job = self.read(ident)
             if job['status'] != 'uploaded':
                 raise ValueError('Это задание уже запущено')
@@ -101,6 +106,10 @@ class Jobs:
             self.update(ident, status='queued')
             self.pool.submit(self.run, ident)
 
+    def ensure_free_space(self, incoming_bytes=0):
+        if shutil.disk_usage(self.root).free < self.min_free_bytes + incoming_bytes:
+            raise ValueError('Недостаточно свободного места: сервер сохраняет резерв диска')
+
     def run(self, ident):
         folder = self.folder(ident)
         with self.lock:
@@ -108,6 +117,7 @@ class Jobs:
                 return
             self.update(ident, status='running')
         try:
+            self.ensure_free_space()
             with (folder/'run.log').open('w') as log:
                 # Worker and reconstruction share a process group for timeout cleanup.
                 process = subprocess.Popen([sys.executable, '-m', 'lidar2sim.web.worker', str(folder)],
@@ -117,11 +127,11 @@ class Jobs:
                     if self.read(ident)['status'] == 'cancelled':
                         self.stop_process(ident)
                 try:
-                    code = process.wait(timeout=1800)
+                    code = process.wait(timeout=self.timeout_s)
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
-                    raise RuntimeError('Превышен лимит обработки: 30 минут')
+                    raise RuntimeError(f'Превышен лимит обработки: {self.timeout_s} секунд')
             if self.read(ident)['status'] == 'cancelled':
                 return
             if code:
@@ -173,6 +183,7 @@ def handler(jobs):
             length = int(self.headers.get('Content-Length', '0'))
             if length <= 0 or length > maximum:
                 raise ValueError(f'Размер файла должен быть от 1 до {maximum//1048576} МБ')
+            jobs.ensure_free_space(length)
             self.connection.settimeout(60)
             try:
                 with path.open('wb') as stream:

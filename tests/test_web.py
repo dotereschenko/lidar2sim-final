@@ -171,3 +171,25 @@ def test_cancel_targets_only_the_selected_worker_group(server, monkeypatch):
     jobs.cancel(ident)
     assert calls == [(12345, signal.SIGKILL)]
     assert jobs.read(ident)['status'] == 'cancelled'
+
+
+def test_disk_reserve_rejects_upload_before_writing(server, monkeypatch):
+    from types import SimpleNamespace
+    base, jobs = server
+    jobs.min_free_bytes = 1000
+    monkeypatch.setattr('shutil.disk_usage', lambda path: SimpleNamespace(free=1003))
+    with pytest.raises(urllib.error.HTTPError) as exc:
+        post(base, '/api/jobs', b'ply\nend_header\n')
+    assert exc.value.code == 400
+    assert not list(jobs.root.iterdir())
+
+
+def test_disk_reserve_rechecked_before_start(server, monkeypatch):
+    from types import SimpleNamespace
+    base, jobs = server
+    ident = post(base, '/api/jobs', b'ply\nend_header\n')['id']
+    jobs.min_free_bytes = 1000
+    monkeypatch.setattr('shutil.disk_usage', lambda path: SimpleNamespace(free=999))
+    with pytest.raises(ValueError, match='резерв диска'):
+        jobs.start(ident)
+    assert jobs.read(ident)['status'] == 'uploaded'
