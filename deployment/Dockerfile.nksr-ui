@@ -1,0 +1,13 @@
+# Build on Spark after Dockerfile.nksr-spike succeeds.
+FROM lidar2sim-nksr:spike-e403368
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1 libegl1 && rm -rf /var/lib/apt/lists/*
+RUN python -m pip install --no-cache-dir open3d==0.20.0 pyyaml 'jsonschema>=4,<5' 'pytest>=8,<10'
+WORKDIR /app
+COPY lidar2sim ./lidar2sim
+COPY configs ./configs
+COPY tools ./tools
+COPY tests ./tests
+COPY pyproject.toml uv.lock .python-version ./
+ENV PYTHONPATH=/app OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+ENTRYPOINT ["python", "-m", "lidar2sim.web.server"]

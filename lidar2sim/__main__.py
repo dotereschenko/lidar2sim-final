@@ -8,7 +8,7 @@ import time
 _IMPORT_STARTED = time.perf_counter()
 
 from . import baseline
-from .common import load_inputs, write_failure_report, write_outputs
+from .common import announce_stage, load_inputs, write_failure_report, write_outputs
 from .validation import load_config
 from .reporting import initialize_report
 
@@ -22,17 +22,24 @@ def main():
     ap.add_argument("--trajectory", help="trajectory.csv: положения лидара t,x,y,z")
     ap.add_argument("--config", help="YAML с параметрами; не заданные берутся по умолчанию")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--backend", choices=("poisson", "nksr"), default="poisson")
     a = ap.parse_args()
 
     t0 = time.perf_counter() - _IMPORT_S
     try:
+        announce_stage("loading")
         params = load_config(a.config, baseline.PARAMS)
         pcd, meta, traj = load_inputs(a.input, a.manifest, a.trajectory)
         loaded = time.perf_counter()
         context = initialize_report({}, cloud=a.input, manifest=a.manifest,
                                     trajectory=a.trajectory, config=a.config)
         prepared = time.perf_counter()
-        visual, collision, report = baseline.run(pcd, meta, traj, params)
+        backend = baseline
+        if a.backend == "nksr":
+            from . import neural
+            backend = neural
+        announce_stage("reconstructing")
+        visual, collision, report = backend.run(pcd, meta, traj, params)
         report.update(context)
         report["timings_s"]["load"] = round(loaded - (t0 + _IMPORT_S), 6)
         report["timings_s"]["provenance"] = round(prepared - loaded, 6)
@@ -41,6 +48,7 @@ def main():
                            "points": len(pcd.points)}
         report["config"] = a.config
         report["total_s"] = round(time.perf_counter() - t0, 3)
+        announce_stage("exporting")
         write_outputs(a.out, visual, collision, report, started_at=t0)
     except (ValueError, OSError, RuntimeError) as exc:
         error = {"status": "failed", "error": str(exc)}

@@ -5,9 +5,11 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
+import os
 from pathlib import Path
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -20,6 +22,7 @@ STATIC = Path(__file__).parent/'static'
 ARTIFACTS = {'input.ply': 'preview.ply', 'visual.ply': 'result/visual.ply',
              'collision.ply': 'result/collision.ply', 'scene.usd': 'result/scene.usd',
              'report.json': 'result/report.json', 'run.log': 'run.log'}
+STAGES = {'loading', 'reconstructing', 'normals', 'nksr', 'collision', 'exporting'}
 
 
 def failure_message(lines):
@@ -35,7 +38,10 @@ class Jobs:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
+        self.processes = {}
         self.pool = ThreadPoolExecutor(max_workers=1)
+        from lidar2sim.neural import availability
+        self.backends = {'nksr': availability()}
         for path in self.root.glob('*/job.json'):
             job = json.loads(path.read_text())
             if job['status'] in ('queued', 'running'):
@@ -63,9 +69,18 @@ class Jobs:
         folder = self.folder(ident)
         data = json.loads((folder/'job.json').read_text())
         data['files'] = [name for name, relative in ARTIFACTS.items() if (folder/relative).is_file() and (data['status'] == 'completed' or name in ('input.ply', 'run.log') or (data['status'] == 'failed' and name == 'report.json'))]
+        log = folder/'run.log'
+        if data['status'] == 'running' and log.exists():
+            with log.open('rb') as stream:
+                stream.seek(max(0, log.stat().st_size - 65536))
+                lines = stream.read().decode(errors='replace').splitlines()
+            stages = [line.removeprefix('LIDAR2SIM_STAGE ') for line in lines
+                      if line.startswith('LIDAR2SIM_STAGE ')]
+            if stages and stages[-1] in STAGES:
+                data['stage'] = stages[-1]
         if data['status'] == 'completed':
             report = json.loads((folder/'result/report.json').read_text())
-            data['result'] = {key: report.get(key) for key in ('total_s', 'outputs', 'input', 'acceptance', 'timings_s')}
+            data['result'] = {key: report.get(key) for key in ('solution', 'total_s', 'outputs', 'input', 'acceptance', 'timings_s', 'normal_orientation')}
         return data
 
     def start(self, ident):
@@ -81,27 +96,57 @@ class Jobs:
 
     def run(self, ident):
         folder = self.folder(ident)
-        self.update(ident, status='running')
+        with self.lock:
+            if self.read(ident)['status'] == 'cancelled':
+                return
+            self.update(ident, status='running')
         try:
             with (folder/'run.log').open('w') as log:
                 # Worker and reconstruction share a process group for timeout cleanup.
-                import os, signal
                 process = subprocess.Popen([sys.executable, '-m', 'lidar2sim.web.worker', str(folder)],
                     stdout=log, stderr=subprocess.STDOUT, cwd=ROOT, start_new_session=True)
+                with self.lock:
+                    self.processes[ident] = process
+                    if self.read(ident)['status'] == 'cancelled':
+                        self.stop_process(ident)
                 try:
                     code = process.wait(timeout=1800)
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
                     raise RuntimeError('Превышен лимит обработки: 30 минут')
+            if self.read(ident)['status'] == 'cancelled':
+                return
             if code:
                 lines = (folder/'run.log').read_text(errors='replace').strip().splitlines()
                 raise RuntimeError(failure_message(lines))
             from lidar2sim.validation import validate_outputs
             validate_outputs(folder/'result')
-            self.update(ident, status='completed', error=None)
+            with self.lock:
+                if self.read(ident)['status'] != 'cancelled':
+                    self.update(ident, status='completed', error=None)
         except Exception as exc:
-            self.update(ident, status='failed', error=str(exc))
+            with self.lock:
+                if self.read(ident)['status'] != 'cancelled':
+                    self.update(ident, status='failed', error=str(exc))
+        finally:
+            with self.lock:
+                self.processes.pop(ident, None)
+
+    def stop_process(self, ident):
+        process = self.processes.get(ident)
+        if process is not None:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+    def cancel(self, ident):
+        with self.lock:
+            if self.read(ident)['status'] not in ('uploaded', 'queued', 'running'):
+                raise ValueError('Это задание уже завершено')
+            self.update(ident, status='cancelled', error=None)
+            self.stop_process(ident)
 
 
 def handler(jobs):
@@ -141,8 +186,10 @@ def handler(jobs):
                     query = parse_qs(url.query)
                     method = query.get('method', ['improved'])[0]
                     scale = float(query.get('scale', ['1'])[0]); up = query.get('up', ['Z'])[0]
-                    if method not in ('baseline', 'improved', 'high-detail') or scale not in (1, .01, .001) or up not in ('Y', 'Z'):
+                    if method not in ('baseline', 'improved', 'high-detail', 'nksr') or scale not in (1, .01, .001) or up not in ('Y', 'Z'):
                         raise ValueError('Некорректные параметры обработки')
+                    if method == 'nksr' and not jobs.backends['nksr']['available']:
+                        raise ValueError(jobs.backends['nksr'].get('reason', 'NKSR недоступен'))
                     ident = uuid.uuid4().hex; folder = jobs.root/ident; folder.mkdir()
                     try:
                         self.receive(folder/'source.ply', LIMITS['max_file_bytes'])
@@ -152,7 +199,7 @@ def handler(jobs):
                         settings = {'method': method, 'scale': scale, 'up': up}
                         (folder/'settings.json').write_text(json.dumps(settings))
                         config = {'baseline': 'baseline.yaml', 'improved': 'poc-detailed.yaml',
-                                  'high-detail': 'poc-high-detail.yaml'}[method]
+                                  'high-detail': 'poc-high-detail.yaml', 'nksr': 'nksr.yaml'}[method]
                         shutil.copyfile(ROOT/'configs'/config, folder/'config.yaml')
                         jobs.update(ident, status='uploaded', settings=settings,
                                     created_at=datetime.now(timezone.utc).isoformat())
@@ -163,6 +210,8 @@ def handler(jobs):
                     ident, action = parts[2:]; folder = jobs.folder(ident)
                     if action == 'start':
                         jobs.start(ident)
+                    elif action == 'cancel':
+                        jobs.cancel(ident)
                     elif action == 'trajectory':
                         with jobs.lock:
                             if jobs.read(ident)['status'] != 'uploaded':
@@ -180,6 +229,8 @@ def handler(jobs):
             try:
                 self.safe()
                 path = urlsplit(self.path).path; parts = path.strip('/').split('/')
+                if parts == ['api', 'backends']:
+                    return self.json(jobs.backends)
                 if parts == ['api', 'input-contract']:
                     return self.json(contract())
                 if parts == ['api', 'jobs']:

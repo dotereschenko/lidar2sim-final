@@ -122,3 +122,50 @@ def test_validation_error_survives_buffered_native_warning():
     from lidar2sim.web.server import failure_message
     assert failure_message(['WEB_ERROR "Empty cloud"', '\x1b[1;33mwarning\x1b[0;m']) == 'Empty cloud'
     assert failure_message(['\x1b[1;33mwarning\x1b[0;m']) == 'warning'
+
+
+def test_unavailable_nksr_rejects_upload_without_fallback(server):
+    base, jobs = server
+    jobs.backends['nksr'] = {'available': False, 'reason': 'Model missing'}
+    with urllib.request.urlopen(base+'/api/backends') as response:
+        assert json.load(response)['nksr']['available'] is False
+    with pytest.raises(urllib.error.HTTPError) as exc:
+        post(base, '/api/jobs?method=nksr', b'ply\nend_header\n')
+    assert exc.value.code == 400
+    assert not list(jobs.root.iterdir())
+
+
+def test_available_nksr_pins_distinct_config(server):
+    base, jobs = server
+    jobs.backends['nksr'] = {'available': True}
+    result = post(base, '/api/jobs?method=nksr', b'ply\nend_header\n')
+    assert result['settings']['method'] == 'nksr'
+    assert 'kitchen-sink' in (jobs.folder(result['id'])/'config.yaml').read_text()
+
+
+def test_cancelled_queued_job_never_starts_a_process(server, monkeypatch):
+    base, jobs = server
+    result = post(base, '/api/jobs', b'ply\nend_header\n')
+    ident = result['id']
+    jobs.update(ident, status='queued')
+    post(base, f'/api/jobs/{ident}/cancel')
+    def must_not_start(*args, **kwargs):
+        raise AssertionError('Cancelled job started')
+    monkeypatch.setattr('subprocess.Popen', must_not_start)
+    jobs.run(ident)
+    assert jobs.read(ident)['status'] == 'cancelled'
+    assert not (jobs.folder(ident)/'run.log').exists()
+
+
+def test_cancel_targets_only_the_selected_worker_group(server, monkeypatch):
+    from types import SimpleNamespace
+    import signal
+    base, jobs = server
+    ident = post(base, '/api/jobs', b'ply\nend_header\n')['id']
+    jobs.update(ident, status='running')
+    jobs.processes[ident] = SimpleNamespace(pid=12345)
+    calls = []
+    monkeypatch.setattr('os.killpg', lambda pid, sig: calls.append((pid, sig)))
+    jobs.cancel(ident)
+    assert calls == [(12345, signal.SIGKILL)]
+    assert jobs.read(ident)['status'] == 'cancelled'

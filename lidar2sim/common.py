@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -12,6 +13,11 @@ from scipy.spatial import cKDTree
 
 from .validation import (ContractError, load_trajectory, validate_manifest,
                          validate_mesh, validate_outputs, validate_point_cloud)
+
+
+def announce_stage(stage):
+    if os.environ.get("LIDAR2SIM_WEB_PROGRESS") == "1":
+        print("LIDAR2SIM_STAGE " + stage, file=sys.stderr, flush=True)
 from .input_contract import validate_limits
 
 
@@ -60,7 +66,7 @@ def load_inputs(ply, manifest=None, trajectory=None):
     return pcd, meta, traj
 
 
-def preprocess(pcd, meta, traj, p, normal_diagnostics=None):
+def preprocess(pcd, meta, traj, p, normal_diagnostics=None, *, preserve_normals=False):
     """Обрезка, выбросы, воксель, нормали к ближайшей точке траектории."""
     if "bounds_min" in meta and "bounds_max" in meta:
         box = o3d.geometry.AxisAlignedBoundingBox(meta["bounds_min"], meta["bounds_max"])
@@ -70,9 +76,30 @@ def preprocess(pcd, meta, traj, p, normal_diagnostics=None):
                                             std_ratio=p["outlier_std"])
     pcd = pcd.voxel_down_sample(p["voxel"])
     validate_point_cloud(pcd, "облако после фильтрации и прореживания")
-    pcd.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=p["normal_radius"],
-                                                              max_nn=p["normal_max_nn"]))
-    orient_normals(pcd, traj)
+    if preserve_normals and pcd.has_normals():
+        normals = np.asarray(pcd.normals)
+        if not np.isfinite(normals).all() or (np.linalg.norm(normals, axis=1) < 1e-8).any():
+            raise ContractError("NKSR: входные нормали некорректны или взаимно погашаются")
+        pcd.normalize_normals()
+        if normal_diagnostics is not None:
+            normal_diagnostics.update(method="provided", orientation_verified=False)
+    else:
+        pcd.estimate_normals(o3d.geometry.KDTreeSearchParamHybrid(radius=p["normal_radius"],
+                                                                  max_nn=p["normal_max_nn"]))
+        if preserve_normals and traj is None:
+            pcd.orient_normals_consistent_tangent_plane(min(30, len(pcd.points) - 1))
+            normals = np.asarray(pcd.normals).copy()
+            inward = np.asarray(pcd.points).mean(axis=0) - np.asarray(pcd.points)
+            if np.einsum("ij,ij->i", normals, inward).sum() < 0:
+                pcd.normals = o3d.utility.Vector3dVector(-normals)
+            if normal_diagnostics is not None:
+                normal_diagnostics.update(method="estimated_consistent_tangent_plane",
+                    orientation_verified=False,
+                    warning="Без позиций сенсора направление поверхностей неоднозначно; требуется проверка")
+        else:
+            orient_normals(pcd, traj)
+            if preserve_normals and normal_diagnostics is not None:
+                normal_diagnostics.update(method="estimated_nearest_trajectory", orientation_verified=False)
     if p["visibility_normals"]:
         from .normals import correct_occluded_normals
         info = correct_occluded_normals(pcd, traj, p["voxel"])
@@ -140,7 +167,10 @@ def export_usd(path, visual, collision):
         m.CreateDoubleSidedAttr(True)
         return m
 
-    add("/World/Visual", visual)
+    vis = add("/World/Visual", visual)
+    if visual.has_vertex_colors():
+        vis.CreateDisplayColorPrimvar(UsdGeom.Tokens.vertex).Set(
+            Vt.Vec3fArray.FromNumpy(np.asarray(visual.vertex_colors, dtype=np.float32)))
     col = add("/World/Collision", collision)
     UsdPhysics.CollisionAPI.Apply(col.GetPrim())
     UsdPhysics.MeshCollisionAPI.Apply(col.GetPrim()).CreateApproximationAttr(UsdPhysics.Tokens.none)
