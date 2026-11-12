@@ -13,6 +13,8 @@ RUN python -m pip install --no-cache-dir ninja GitPython python-pycg pykdtree om
 RUN sed -i '1i#include <thrust/tuple.h>' package/csrc/pcproc/cuda_kdtree.cu
 # The unused global lerp overload collides with std::lerp in C++20.
 RUN sed -i 's/ lerp(/ nksr_lerp(/g' package/csrc/common/math_util.h
+COPY patch_nksr_error_checks.py /opt/patch_nksr_error_checks.py
+RUN python /opt/patch_nksr_error_checks.py
 RUN --mount=type=cache,id=nksr-build-sm121,target=/opt/NKSR/package/build \
     --mount=type=cache,id=nksr-external,target=/opt/NKSR/package/external \
     python -m pip install --no-cache-dir --no-build-isolation --no-deps ./package
