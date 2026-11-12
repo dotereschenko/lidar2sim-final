@@ -36,7 +36,7 @@ def test_generated_report_is_valid_and_does_not_claim_unevaluated_quality(report
     assert report["sources"]["cloud"]["sha256"] == report["input"]["sha256"]
     assert report["sources"]["trajectory"] is None
     assert report["threshold_profile"]["status"] == "not_provided"
-    assert report["runtime"]["packages"]["open3d"] == "0.20.0"
+    assert report["runtime"]["packages"]["open3d"] == o3d.__version__
     assert report["total_s"] >= report["timings_s"]["export_and_validation"]
     for name, record in report["artifacts"].items():
         assert record["sha256"] == hashlib.sha256((report_output / name).read_bytes()).hexdigest()

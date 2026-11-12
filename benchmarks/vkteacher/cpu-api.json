@@ -1,0 +1,45 @@
+{
+  "id": "9ad747e228b04e4db31a98be45658a33",
+  "status": "completed",
+  "settings": {
+    "method": "baseline",
+    "scale": 1.0,
+    "up": "Z"
+  },
+  "created_at": "2026-11-12T14:44:11.371154+00:00",
+  "error": null,
+  "files": [
+    "input.ply",
+    "visual.ply",
+    "collision.ply",
+    "scene.usd",
+    "report.json",
+    "run.log"
+  ],
+  "result": {
+    "solution": "baseline",
+    "total_s": 3.316191,
+    "outputs": {
+      "visual_triangles": 30245,
+      "collision_triangles": 20000
+    },
+    "input": {
+      "path": "/home/vkteacher/lidar2sim-denis/jobs/9ad747e228b04e4db31a98be45658a33/input.ply",
+      "sha256": "0ec89c7c99393d41e58199c4f093a2cf102b33e4bd5cca8127a9673883b50c23",
+      "points": 8192
+    },
+    "acceptance": {
+      "status": "not_run"
+    },
+    "timings_s": {
+      "preprocess": 0.037,
+      "poisson": 1.387,
+      "decimate": 0.065,
+      "load": 0.002142,
+      "provenance": 0.010871,
+      "imports": 1.578657,
+      "export_and_validation": 0.23485
+    },
+    "normal_orientation": null
+  }
+}
