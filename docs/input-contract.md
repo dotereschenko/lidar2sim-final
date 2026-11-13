@@ -1,7 +1,7 @@
 # Контракт стороннего PLY v1 — H33
 
 Реализация `5dad4e7` прошла на Spark 209 тестов и 185 подпроверок;
-см. [запись проверки](../benchmarks/input-contract-v1.json). Новые физические
+см. [запись проверки](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/input-contract-v1.json). Новые физические
 прогоны не выполнялись: эта задача определяет контракт, а не качество новых сцен.
 
 Источник технических ограничений — `lidar2sim/schemas/input-contract-v1.json`.

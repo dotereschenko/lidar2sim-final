@@ -12,3 +12,13 @@ data/scene_a/gt_mesh.ply
 data/scene_a/gt_scene.usd
 data/scene_a/gt_build.json
 data/scene_a/nvidia/
+
+# Runtime data and credentials
+.env
+.env.*
+!.env.example
+jobs/
+weights/
+nksr-source/
+*.log
+.DS_Store

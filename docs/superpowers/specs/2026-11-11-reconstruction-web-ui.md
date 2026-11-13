@@ -1,7 +1,0 @@
-# SDD: local reconstruction UI
-
-Upload PLY (<=512 MiB), optionally t,x,y,z CSV (<=10 MiB), choose meters/centimeters/millimeters and Z/Y up, select baseline or improved Poisson. Normalize both cloud and trajectory into meters/Z-up. Preserve original input and settings. Submit explicit reconstruction, queue one subprocess at a time with 30-minute timeout. Save job status and artifacts under out/web-jobs; interrupted jobs become failed on server restart. Serve only fixed artifacts and bundled frontend assets, never arbitrary paths. Bind localhost only; same-origin mutations. This is a local single-user application, not a public multi-user service.
-
-Viewer: original point cloud before submission, normalized input after processing, visual and collision layers, orbit/zoom/reset/wireframe. Report actual processing outcome and timings, never fabricated progress percentages or quality scores. Without GT/B/physical evaluation, reconstruction success does not mean acceptance. Downloads: USD, visual/collision PLY, report and execution log. Isaac automation and new reconstruction algorithms are subsequent integrations; current improved method is labeled Poisson with floor recovery.
-
-Validate: malformed/oversized upload, invalid method/axes, path traversal, single worker, failed process, interrupted restart; full real PLY through HTTP to validated USD/PLY/report. Browser inspect initial, processing, result, error and mobile layout. No changes to existing CLI semantics.

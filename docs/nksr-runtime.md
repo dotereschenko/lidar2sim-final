@@ -1,7 +1,7 @@
 # NKSR runtime: эксперимент H42
 
-SDD и распределение: [2026-11-12-nksr-pretrained.md](superpowers/specs/2026-11-12-nksr-pretrained.md).
-Состояние: [nksr-runtime-spike.json](../benchmarks/nksr-runtime-spike.json).
+SDD и распределение: [2026-11-12-nksr-pretrained.md](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/docs/superpowers/specs/2026-11-12-nksr-pretrained.md).
+Состояние: [nksr-runtime-spike.json](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/nksr-runtime-spike.json).
 Все тяжёлые операции выполняются на Spark. Runtime подключён к отдельному UI на
 `http://127.0.0.1:8767` через SSH-туннель.
 Образ собирается для исследования и оценки; учитывать лицензию NKSR при распространении.

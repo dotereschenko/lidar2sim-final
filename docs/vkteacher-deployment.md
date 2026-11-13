@@ -10,7 +10,7 @@ Open3D 0.20 из основного lock-файла требует glibc 2.35, �
 используется Open3D 0.19. Это отдельное окружение совместимости, не установка из lock.
 Полный набор тестов и сквозной HTTP-прогон на 8192 точках прошли;
 артефакты PLY/USD скачаны и сверены с SHA256 в отчёте.
-Результат: [cpu-api.json](../benchmarks/vkteacher/cpu-api.json).
+Результат: [cpu-api.json](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/vkteacher/cpu-api.json).
 
 Целевой метод в UI — **NKSR на GPU**, он выбран по умолчанию. При недоступном
 NKSR запуск блокируется; CPU-метод можно выбрать явно. Нормали, упрощение сеток
@@ -23,9 +23,9 @@ NKSR запуск блокируется; CPU-метод можно выбрат
 предобработки; visual/collision PLY и USD скачаны, SHA256 совпадают с отчётом,
 в USD присутствует CollisionAPI. Сфера проверяет работоспособность, но не
 качество реконструкции комнаты и не физику.
-Доказательства: [GPU runtime](../benchmarks/vkteacher/gpu-runtime.json),
-[GPU API](../benchmarks/vkteacher/gpu-api.json),
-[версии пакетов](../benchmarks/vkteacher/installed-packages.json).
+Доказательства: [GPU runtime](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/vkteacher/gpu-runtime.json),
+[GPU API](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/vkteacher/gpu-api.json),
+[версии пакетов](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/vkteacher/installed-packages.json).
 Полный `python -m pytest -q` повторно прошёл в установленном GPU-окружении.
 Проверены API и логика выбора метода; интерактивная браузерная проверка
 загрузки и вращения модели отдельно не выполнялась.
@@ -35,8 +35,8 @@ NKSR запуск блокируется; CPU-метод можно выбрат
 В UI открыть «Последние задания», результат `3d29e7614cb5449d9e6cf02d5544bca4`.
 Время подготовки 17.12 с; отдельный профиль показал 15.12 с на ориентацию нормалей.
 Масштаб m/Z не подтверждён, качество комнаты и физика не квалифицированы.
-[Отчёт без геометрии скана](../benchmarks/vkteacher/kitchen-runtime.json),
-[спецификация GPU-ориентации](superpowers/specs/2026-11-12-gpu-normal-orientation.md).
+[Отчёт без геометрии скана](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/vkteacher/kitchen-runtime.json),
+[спецификация GPU-ориентации](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/docs/superpowers/specs/2026-11-12-gpu-normal-orientation.md).
 Результат UI показывает записанное в отчёте устройство и время GPU/CPU-этапов;
 для старых отчётов без имени устройства используется общее обозначение CUDA.
 
@@ -87,5 +87,5 @@ ssh -N -L 8768:127.0.0.1:8768 vkteacher@172.20.21.105
 NKSR включается только после успешной проверки CUDA, импорта расширения и SHA256 весов.
 
 Isaac Sim на A100 официально не поддерживается: отсутствуют RT cores.
-Здесь можно подготовить USD, но симуляцию и проверку физики нужно выполнять на
-совместимой машине: https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html
+Здесь можно подготовить USD и запустить Newton CUDA (см. [маршруты](scene-a-simulation.md)).
+Для симуляции именно в Isaac нужна совместимая RTX-машина: https://docs.isaacsim.omniverse.nvidia.com/latest/installation/requirements.html

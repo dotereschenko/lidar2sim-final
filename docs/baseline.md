@@ -145,7 +145,7 @@ GT и позиции проверок загружаются отдельным�
 1,72 / 4,74 см, полный CPU-конвейер 27,44 с. Его USD проверен в Isaac;
 хеши всех четырёх USD и обоих оценщиков сверены до и после проверки.
 Результаты, хеши и условия запуска сохранены в
-[benchmarks/reconstruction/validation.json](../benchmarks/reconstruction/validation.json).
+[benchmarks/reconstruction/validation.json](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/reconstruction/validation.json).
 Время физики включает запуск и прогрев Isaac и не сравнивается с временем
 CPU-конвейера. У сцены A запас по проникновению около 0,5 мм: дальнейшие
 изменения коллайдера требуют повторной проверки физики.
@@ -179,7 +179,7 @@ CPU-конвейера. У сцены A запас по проникновени
 Обе сетки проходят пороги геометрии. Больший вес границ в этом наборе ухудшил
 точность, поэтому оставлен стандартный `collision_boundary_weight=1`.
 Таблица всех вариантов находится в
-[benchmarks/collision/scene-a-ablation.json](../benchmarks/collision/scene-a-ablation.json)
+[benchmarks/collision/scene-a-ablation.json](https://github.com/dotereschenko/lidar2sim/blob/15766f2fbc7666d757d7ea57dcca0be8bb7f2373/benchmarks/collision/scene-a-ablation.json)
 и создаётся `tools/compare_collision.py`.
 
 Полный запуск с выбранной конфигурацией на A дал 96,9% visual и 98,2%
