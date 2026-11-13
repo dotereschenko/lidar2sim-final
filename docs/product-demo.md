@@ -43,3 +43,38 @@
 
 Сохранять исходную запись и итоговый MP4 в `out/product-demo/` (не в Git).
 Вместе с видео сохранить ID реконструкции/прогона и фактическую версию кода.
+
+## Проморолик из реальных результатов (13 ноября)
+
+Подготовлен отдельный монтаж на 45 секунд, 1920×1080, 20 fps. Это офлайн-визуализация
+реальных PLY и состояний Newton, **не запись UI**. Данный факт подписан в ролике.
+Вид сверху использует срез только для отображения; collision mesh физического
+прогона не изменён. Для облака используется прореженный серверный preview,
+для движения — позиции и quaternion из сохранённого прогона `893a56a2`.
+Синтезированная музыкальная дорожка создана специально для ролика, без сэмплов.
+
+Артефакты в `out/product-demo/`:
+
+- `lidar2sim-promo-music.mp4` — итог с музыкой;
+- `lidar2sim-promo.mp4` — версия без музыки;
+- `provenance.json` — источник данных и SHA256;
+- `reconstruction.json`, `simulation.json`, исходные PLY и USD — доказательства.
+
+Рендер: `tools/render_product_promo.py`; музыка: `tools/promo_soundtrack.py`.
+Скрипт проверяет принадлежность симуляции реконструкции, SHA256 USD и соответствие
+метрик фиксированным титрам. Для другого примера нужно обновить сценарий и проверки.
+Зависимости монтажа (Pillow, NumPy, FFmpeg) не добавлены в зависимости продукта.
+Arial берётся из macOS; для другого ОС нужен путь к шрифту с кириллицей.
+
+```sh
+uv run --no-project --python .venv/bin/python --with pillow --with numpy \
+  python tools/render_product_promo.py out/product-demo
+.venv/bin/python tools/promo_soundtrack.py out/product-demo/original-music.wav
+ffmpeg -y -i out/product-demo/lidar2sim-promo.mp4 \
+  -i out/product-demo/original-music.wav -c:v copy -c:a aac -b:a 160k \
+  -shortest -movflags +faststart out/product-demo/lidar2sim-promo-music.mp4
+```
+
+`geometry.npz` содержит массивы `v/f` из visual.ply, `cv/cf` из collision.ply,
+`p` из input.ply (серверный preview), прочитанные Open3D. Внешний рендер не является
+новым физическим тестом и не доказывает пригодность произвольного PLY.
