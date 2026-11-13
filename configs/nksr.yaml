@@ -1,0 +1,6 @@
+# Pretrained kitchen-sink; experimental, no independent quality qualification.
+voxel: 0.03
+normal_radius: 0.10
+normal_max_nn: 30
+visual_triangles: 300000
+collision_triangles: 60000

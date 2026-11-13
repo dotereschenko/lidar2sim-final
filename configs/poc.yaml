@@ -1,0 +1,12 @@
+# Poisson с опорой на наблюдения и локальным восстановлением пола. Метры.
+# Остальные параметры совпадают с configs/baseline.yaml.
+support_distance: 0.06
+floor_distance: 0.04
+floor_cell: 0.08
+floor_max_edge: 1.0
+floor_max_slope_deg: 10.0
+floor_min_points: 100
+floor_clearance: 0.4
+collision_triangles: 20000
+collision_floor_fraction: 0.25
+collision_boundary_weight: 1.0

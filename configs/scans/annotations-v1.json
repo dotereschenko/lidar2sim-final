@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "profile_id": "scene-a-annotations-candidate-v1",
+  "units": "m",
+  "up_axis": "Z",
+  "samples": 300000,
+  "seed": 18,
+  "region": {
+    "radius_m": 0.1,
+    "min_neighbors": 10,
+    "min_common_samples": 1000
+  },
+  "dimensions": [
+    {
+      "id": "D01",
+      "label": "Southwest open doorway width",
+      "category": "door",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "D02",
+      "label": "Southeast open doorway width",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "D03",
+      "label": "Northeast open doorway width",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "axis": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "D04",
+      "label": "Southwest doorway height",
+      "category": "door",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "D05",
+      "label": "Southeast doorway height",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "D06",
+      "label": "Northeast doorway height",
+      "category": "door",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "D07",
+      "label": "South room depth",
+      "category": "room",
+      "origin_m": [
+        -21,
+        12,
+        2.3
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "D08",
+      "label": "South room floor to ceiling",
+      "category": "height",
+      "origin_m": [
+        -21,
+        11.5,
+        1.5
+      ],
+      "axis": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "D09",
+      "label": "Tabletop depth",
+      "category": "obstacle",
+      "origin_m": [
+        -21,
+        12.5,
+        0.74
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "D10",
+      "label": "North pillar depth",
+      "category": "obstacle",
+      "origin_m": [
+        -17.5,
+        24,
+        0.5
+      ],
+      "axis": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "door_southwest",
+      "origin_m": [
+        -18.5,
+        10.5,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "door_northeast",
+      "origin_m": [
+        -15.5,
+        24,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "door_southeast",
+      "origin_m": [
+        -15.5,
+        14,
+        1
+      ],
+      "width_axis": [
+        1,
+        0,
+        0
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "excluded_closed_frames": [
+    {
+      "origin_m": [
+        -18,
+        22.5,
+        1
+      ],
+      "frame_width_m": 0.94,
+      "reason": "GT door leaf blocks all 425 interior probe rays"
+    },
+    {
+      "origin_m": [
+        -18,
+        16.5,
+        1
+      ],
+      "frame_width_m": 0.94,
+      "reason": "GT door leaf blocks all 425 interior probe rays"
+    }
+  ]
+}

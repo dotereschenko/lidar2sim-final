@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 libgomp1 libidn2-0 libgfortran5 libegl1 && rm -rf /var/lib/apt/lists/*
+COPY wheelhouse /wheelhouse
+RUN cd /wheelhouse && sha256sum -c SHA256SUMS && pip install --no-cache-dir --no-index --find-links=/wheelhouse uv==0.8.14
+WORKDIR /app
+COPY pyproject.toml uv.lock .python-version ./
+COPY lidar2sim ./lidar2sim
+COPY configs/baseline.yaml configs/poc-detailed.yaml configs/poc-high-detail.yaml ./configs/
+COPY configs/acceptance ./configs/acceptance
+COPY tools ./tools
+RUN uv venv --python /usr/local/bin/python .venv && uv pip install --python .venv/bin/python --no-index --find-links=/wheelhouse /wheelhouse/*.whl && uv pip install --python .venv/bin/python --no-index --no-deps --no-build-isolation -e . && uv pip check --python .venv/bin/python
+ENV PATH="/app/.venv/bin:$PATH" OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
+USER 65534:65534
+ENTRYPOINT ["python"]

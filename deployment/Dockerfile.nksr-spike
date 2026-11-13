@@ -1,0 +1,24 @@
+# Experimental ARM64/GB10 build. Not a qualified production runtime.
+# Reuses an image already present on Spark; do not pull large images locally.
+FROM nvcr.io/nvidia/vllm@sha256:6e537fc8d84beb9b60e789236168141d2ef4420bc28cbb85ec7d4318ca918b6c
+ENV NKSR_COMMIT=e40336845e67761343a756788e5a98b827d4a143 \
+    TORCH_CUDA_ARCH_LIST=12.1 MAX_JOBS=4 TORCH_HOME=/weights
+WORKDIR /opt/NKSR
+COPY NKSR/ /opt/NKSR/
+RUN test "$(git rev-parse HEAD)" = "$NKSR_COMMIT"
+# Upstream dependency ranges are intentional for this compatibility spike.
+# Freeze the resolved environment and dependency commits before promotion (H42).
+RUN python -m pip install --no-cache-dir ninja GitPython python-pycg pykdtree omegaconf
+# CUDA 13 no longer provides tuple via the transitive Thrust includes.
+RUN sed -i '1i#include <thrust/tuple.h>' package/csrc/pcproc/cuda_kdtree.cu
+# The unused global lerp overload collides with std::lerp in C++20.
+RUN sed -i 's/ lerp(/ nksr_lerp(/g' package/csrc/common/math_util.h
+COPY patch_nksr_error_checks.py /opt/patch_nksr_error_checks.py
+RUN python /opt/patch_nksr_error_checks.py
+RUN --mount=type=cache,id=nksr-build-sm121,target=/opt/NKSR/package/build \
+    --mount=type=cache,id=nksr-external,target=/opt/NKSR/package/external \
+    python -m pip install --no-cache-dir --no-build-isolation --no-deps ./package
+ENV FORCE_CUDA=1
+RUN python -m pip install --no-cache-dir --no-build-isolation --no-deps torch-scatter==2.1.2
+COPY nksr_smoke.py /opt/nksr_smoke.py
+ENTRYPOINT ["python", "/opt/nksr_smoke.py"]
