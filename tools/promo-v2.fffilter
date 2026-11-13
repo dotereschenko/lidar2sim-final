@@ -1,0 +1,13 @@
+[0:v]split=6[s0][s1][s2][s3][s4][s5];
+[s0]trim=start=0:end=3,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v0];
+[s1]trim=start=6:end=11,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v1];
+[s2]trim=start=14:end=19,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v2];
+[s3]trim=start=22:end=25,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v3];
+[s4]trim=start=27:end=36,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v4];
+[s5]trim=start=40:end=44,setpts=PTS-STARTPTS,fps=20,settb=1/20,format=yuv420p[v5];
+[v0][v1]xfade=transition=fade:duration=0.4:offset=2.6,fps=20[x1];
+[x1][v2]xfade=transition=fade:duration=0.4:offset=7.2,fps=20[x2];
+[x2][v3]xfade=transition=fade:duration=0.4:offset=11.8,fps=20[x3];
+[x3][v4]xfade=transition=fade:duration=0.4:offset=14.4,fps=20[x4];
+[x4][v5]xfade=transition=fade:duration=0.4:offset=23.0[x5];
+[x5]fade=t=out:st=26.5:d=0.5[out]

@@ -78,3 +78,17 @@ ffmpeg -y -i out/product-demo/lidar2sim-promo.mp4 \
 `geometry.npz` содержит массивы `v/f` из visual.ply, `cv/cf` из collision.ply,
 `p` из input.ply (серверный preview), прочитанные Open3D. Внешний рендер не является
 новым физическим тестом и не доказывает пригодность произвольного PLY.
+
+### Монтаж v2
+
+`out/product-demo/lidar2sim-promo-v2.mp4`: сокращение до ~27 секунд,
+без синтезированной музыки, переходы dissolve по 0.4 с. Полный интервал
+измеренного движения сохранён внутри физического эпизода. Геометрия не исправлялась
+в монтаже: разрывы скана/реконструкции нельзя скрывать как якобы устранённые дефекты.
+
+```sh
+ffmpeg -y -filter_complex_threads 2 -i out/product-demo/lidar2sim-promo.mp4 \
+  -filter_complex_script tools/promo-v2.fffilter -map '[out]' -an \
+  -c:v libx264 -preset fast -crf 19 -pix_fmt yuv420p -movflags +faststart \
+  out/product-demo/lidar2sim-promo-v2.mp4
+```
